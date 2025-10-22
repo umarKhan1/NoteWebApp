@@ -1,0 +1,22 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Flutter: Analyze & Format",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"analyze",
+				"&&",
+				"dart",
+				"format",
+				"."
+			],
+			"group": "build",
+			"problemMatcher": [
+				"$dart-flutter_analyzer"
+			],
+			"isBackground": false
+		}
+	]
+}

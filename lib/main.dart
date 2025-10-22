@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+/// Entry point of the application.
 void main() {
   runApp(const MyApp());
 }
 
+/// Main application widget that sets up the MaterialApp.
 class MyApp extends StatelessWidget {
+  /// Creates a new instance of [MyApp].
   const MyApp({super.key});
 
   // This widget is the root of your application.
@@ -35,7 +38,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Home page widget that displays a counter with increment functionality.
 class MyHomePage extends StatefulWidget {
+  /// Creates a new instance of [MyHomePage].
   const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -47,6 +52,7 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
+  /// The title of the home page.
   final String title;
 
   @override

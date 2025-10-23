@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/constants/app_strings.dart';
+
 /// A custom markdown preview widget with basic formatting support
 class MarkdownPreview extends StatelessWidget {
 ///// Constructor [markdown preview widget]
@@ -31,7 +33,7 @@ class MarkdownPreview extends StatelessWidget {
                 ),
                 SizedBox(height: isSmallScreen ? 12 : 16),
                 Text(
-                  'Preview will appear here',
+                  AppStrings.previewPlaceholder,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                     fontSize: isSmallScreen ? 16 : 18,
@@ -40,7 +42,7 @@ class MarkdownPreview extends StatelessWidget {
                 ),
                 SizedBox(height: isSmallScreen ? 6 : 8),
                 Text(
-                  'Start writing to see a live preview\nof your markdown formatting',
+                  AppStrings.previewEmptyDescription,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                     fontSize: isSmallScreen ? 14 : 16,

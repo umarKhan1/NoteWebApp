@@ -242,7 +242,7 @@ class AppStrings {
   static const String newNote = 'New Note';
   
   /// Note title text.
-  static const String noteTitle = 'Note Title';
+  static const String noteTitleText = 'Note Title';
   
   /// Note content text.
   static const String noteContent = 'Note Content';
@@ -329,4 +329,66 @@ class AppStrings {
   
   /// User plan.
   static const String userPlan = 'Premium';
+  
+  // Notes Feature
+  /// Create new note title.
+  static const String createNewNote = 'Create New Note';
+  
+  /// Note title label.
+  static const String noteTitleLabel = 'Note Title';
+  
+  /// Note title hint.
+  static const String createNoteTitleHint = 'Enter a catchy title...';
+  
+  /// Title validation message.
+  static const String titleRequired = 'Please enter a title';
+  
+  /// Category label.
+  static const String category = 'Category';
+  
+  /// Create note button.
+  static const String createNote = 'Create Note';
+  
+  /// Success message for note creation.
+  static const String noteCreatedSuccess = '✅ Note created successfully!';
+  
+  /// Error message for note creation failure.
+  static const String noteCreationFailed = '❌ Failed to create note';
+  
+  /// Write tab label.
+  static const String writeTab = 'Write';
+  
+  /// Preview tab label.
+  static const String previewTab = 'Preview';
+  
+  /// Preview placeholder.
+  static const String previewPlaceholder = 'Preview will appear here';
+  
+  /// Preview empty description.
+  static const String previewEmptyDescription = 'Start writing to see a live preview\nof your markdown formatting';
+  
+  /// Markdown hints for small screens.
+  static const String markdownHintsSmall = '📝 Start writing your note...\n\n✨ Markdown tips:\n• **bold** or *italic*\n• # Header\n• - List item\n• `code`';
+  
+  /// Markdown hints for large screens.
+  static const String markdownHintsLarge = '📝 Start writing your note...\n\n✨ Markdown tips:\n• **bold** or *italic*\n• # Header\n• - List item\n• `code` or ~~strikethrough~~\n• [link](url) or > quote';
+  
+  // Note Categories
+  /// Personal category.
+  static const String personalCategory = 'Personal';
+  
+  /// Work category.
+  static const String workCategory = 'Work';
+  
+  /// Study category.
+  static const String studyCategory = 'Study';
+  
+  /// Ideas category.
+  static const String ideasCategory = 'Ideas';
+  
+  /// Shopping category.
+  static const String shoppingCategory = 'Shopping';
+  
+  /// Other category.
+  static const String otherCategory = 'Other';
 }

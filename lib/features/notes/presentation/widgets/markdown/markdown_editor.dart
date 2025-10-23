@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/constants/app_strings.dart';
+import '../../cubit/markdown_editor_cubit.dart';
 import 'markdown_preview.dart';
 import 'markdown_write_tab.dart';
 
 /// A complete markdown editor with Write and Preview tabs
-class MarkdownEditor extends StatefulWidget {
-/// Constructor 
+class MarkdownEditor extends StatelessWidget {
+  /// Constructor 
   const MarkdownEditor({
     super.key,
     required this.tabController,
@@ -16,13 +19,14 @@ class MarkdownEditor extends StatefulWidget {
     required this.onInsertMarkdown,
     required this.onContentChanged,
   });
+  
   /// Controller for managing tab selection
   final TabController tabController;
   /// Controller for the markdown content
   final TextEditingController contentController;
   /// Responsive flags
   final bool isSmallMobile;
-  ///// Responsive flags
+  /// Responsive flags
   final bool isMobile;
   /// Responsive flags  
   final bool isTablet;
@@ -32,10 +36,58 @@ class MarkdownEditor extends StatefulWidget {
   final VoidCallback onContentChanged;
 
   @override
-  State<MarkdownEditor> createState() => _MarkdownEditorState();
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isSmallScreen = isMobile;
+    
+    return BlocProvider(
+      create: (context) => MarkdownEditorCubit(),
+      child: BlocListener<MarkdownEditorCubit, MarkdownEditorState>(
+        listener: (context, state) {
+          onContentChanged();
+        },
+        child: _MarkdownEditorContent(
+          tabController: tabController,
+          contentController: contentController,
+          isSmallMobile: isSmallMobile,
+          isMobile: isMobile,
+          isTablet: isTablet,
+          onInsertMarkdown: onInsertMarkdown,
+          theme: theme,
+          isSmallScreen: isSmallScreen,
+        ),
+      ),
+    );
+  }
 }
 
-class _MarkdownEditorState extends State<MarkdownEditor> {
+/// Internal widget for markdown editor content
+class _MarkdownEditorContent extends StatefulWidget {
+  const _MarkdownEditorContent({
+    required this.tabController,
+    required this.contentController,
+    required this.isSmallMobile,
+    required this.isMobile,
+    required this.isTablet,
+    required this.onInsertMarkdown,
+    required this.theme,
+    required this.isSmallScreen,
+  });
+
+  final TabController tabController;
+  final TextEditingController contentController;
+  final bool isSmallMobile;
+  final bool isMobile;
+  final bool isTablet;
+  final Function(String before, String after) onInsertMarkdown;
+  final ThemeData theme;
+  final bool isSmallScreen;
+
+  @override
+  State<_MarkdownEditorContent> createState() => _MarkdownEditorContentState();
+}
+
+class _MarkdownEditorContentState extends State<_MarkdownEditorContent> {
   @override
   void initState() {
     super.initState();
@@ -49,19 +101,15 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
   }
 
   void _onTextChanged() {
-    setState(() {}); // Rebuild to update preview
-    widget.onContentChanged();
+    context.read<MarkdownEditorCubit>().updateContent(widget.contentController.text);
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isSmallScreen = widget.isMobile;
-    
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha:  0.5),
+          color: widget.theme.colorScheme.outline.withValues(alpha: 0.5),
         ),
         borderRadius: BorderRadius.circular(12),
       ),
@@ -71,7 +119,7 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
           Container(
             height: widget.isSmallMobile ? 36 : widget.isMobile ? 40 : 48,
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest,
+              color: widget.theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(widget.isSmallMobile ? 6 : widget.isMobile ? 8 : 12),
                 topRight: Radius.circular(widget.isSmallMobile ? 6 : widget.isMobile ? 8 : 12),
@@ -91,12 +139,12 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
               tabs: [
                 Tab(
                   icon: Icon(Icons.edit, size: widget.isSmallMobile ? 14 : widget.isMobile ? 16 : 18),
-                  text: 'Write',
+                  text: AppStrings.writeTab,
                   height: widget.isSmallMobile ? 32 : widget.isMobile ? 36 : 44,
                 ),
                 Tab(
                   icon: Icon(Icons.visibility, size: widget.isSmallMobile ? 14 : widget.isMobile ? 16 : 18),
-                  text: 'Preview',
+                  text: AppStrings.previewTab,
                   height: widget.isSmallMobile ? 32 : widget.isMobile ? 36 : 44,
                 ),
               ],
@@ -110,12 +158,22 @@ class _MarkdownEditorState extends State<MarkdownEditor> {
               children: [
                 MarkdownWriteTab(
                   contentController: widget.contentController,
-                  isSmallScreen: isSmallScreen,
+                  isSmallScreen: widget.isSmallScreen,
                   onInsertMarkdown: widget.onInsertMarkdown,
                 ),
-                MarkdownPreview(
-                  content: widget.contentController.text,
-                  isSmallScreen: isSmallScreen,
+                BlocBuilder<MarkdownEditorCubit, MarkdownEditorState>(
+                  builder: (context, state) {
+                    String content = '';
+                    if (state is MarkdownEditorContentUpdated) {
+                      content = state.content;
+                    } else {
+                      content = widget.contentController.text;
+                    }
+                    return MarkdownPreview(
+                      content: content,
+                      isSmallScreen: widget.isSmallScreen,
+                    );
+                  },
                 ),
               ],
             ),

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../../../../core/constants/app_strings.dart';
+import '../../cubit/add_note_form_cubit.dart';
 import '../../cubit/notes_cubit.dart';
 import '../markdown/markdown_editor.dart';
 
 /// Beautiful sliding bottom sheet for adding notes
-class AddNoteBottomSheet extends StatefulWidget {
+class AddNoteBottomSheet extends StatelessWidget {
   /// Constructor for add note bottom sheet [AddNoteBottomSheet]
   const AddNoteBottomSheet({super.key});
 
@@ -27,15 +29,28 @@ class AddNoteBottomSheet extends StatefulWidget {
                 : size.width,
         maxHeight: size.height,
       ),
-      builder: (context) => const AddNoteBottomSheet(),
+      builder: (context) => BlocProvider(
+        create: (context) => AddNoteFormCubit(),
+        child: const AddNoteBottomSheet(),
+      ),
     );
   }
 
   @override
-  State<AddNoteBottomSheet> createState() => _AddNoteBottomSheetState();
+  Widget build(BuildContext context) {
+    return const _AddNoteBottomSheetContent();
+  }
 }
 
-class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
+/// Internal content widget for the bottom sheet
+class _AddNoteBottomSheetContent extends StatefulWidget {
+  const _AddNoteBottomSheetContent();
+
+  @override
+  State<_AddNoteBottomSheetContent> createState() => _AddNoteBottomSheetContentState();
+}
+
+class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
     with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
@@ -43,15 +58,14 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
   
   late TabController _tabController;
   String? _selectedCategory;
-  bool _isLoading = false;
   
   final List<String> _categories = [
-    'Personal',
-    'Work',
-    'Study',
-    'Ideas',
-    'Shopping',
-    'Other',
+    AppStrings.personalCategory,
+    AppStrings.workCategory,
+    AppStrings.studyCategory,
+    AppStrings.ideasCategory,
+    AppStrings.shoppingCategory,
+    AppStrings.otherCategory,
   ];
 
   @override
@@ -70,12 +84,12 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
   }
 
   void _onContentChanged() {
-    setState(() {}); // Refresh preview
+    context.read<AddNoteFormCubit>().updateContent(_contentController.text);
   }
 
   void _handleSave() async {
     if (_formKey.currentState?.validate() ?? false) {
-      setState(() => _isLoading = true);
+      context.read<AddNoteFormCubit>().setLoading(true);
       
       try {
         await context.read<NotesCubit>().createNote(
@@ -88,7 +102,7 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('✅ Note created successfully!'),
+              content: Text(AppStrings.noteCreatedSuccess),
               backgroundColor: Colors.green,
             ),
           );
@@ -97,14 +111,14 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('❌ Failed to create note: $e'),
+              content: Text('${AppStrings.noteCreationFailed}: $e'),
               backgroundColor: Colors.red,
             ),
           );
         }
       } finally {
         if (mounted) {
-          setState(() => _isLoading = false);
+          context.read<AddNoteFormCubit>().setLoading(false);
         }
       }
     }
@@ -132,7 +146,7 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
       offset: start + before.length + selectedText.length + after.length,
     );
     
-    setState(() {}); // Refresh preview
+    context.read<AddNoteFormCubit>().updateContent(newText);
   }
 
   @override
@@ -252,7 +266,7 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
       child: Row(
         children: [
           Text(
-            'Create New Note',
+            AppStrings.createNewNote,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: isSmallMobile ? 13 : isMobile ? 12 : isTablet ? 15 : 20,
@@ -268,8 +282,8 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
     return TextFormField(
       controller: _titleController,
       decoration: InputDecoration(
-        labelText: 'Note Title',
-        hintText: 'Enter a catchy title...',
+        labelText: AppStrings.noteTitleLabel,
+        hintText: AppStrings.createNoteTitleHint,
         prefixIcon: Icon(Icons.title, size: isSmallMobile ? 18 : isMobile ? 20 : isTablet ? 15 : 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(isSmallMobile ? 6 : isMobile ? 8 : isTablet ? 12 : 14),
@@ -282,7 +296,7 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
       style: TextStyle(fontSize: isSmallMobile ? 13 : isMobile ? 14 : isTablet ? 16 : 18),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'Please enter a title';
+          return AppStrings.titleRequired;
         }
         return null;
       },
@@ -296,7 +310,7 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Category',
+          AppStrings.category,
           style: theme.textTheme.titleSmall?.copyWith(
             fontSize: isSmallMobile ? 13 : isMobile ? 14 : isTablet ? 16 : 18,
           ),
@@ -320,9 +334,9 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
                 ),
                 selected: isSelected,
                 onSelected: (selected) {
-                  setState(() {
-                    _selectedCategory = selected ? category : null;
-                  });
+                  final newCategory = selected ? category : null;
+                  _selectedCategory = newCategory;
+                  context.read<AddNoteFormCubit>().selectCategory(newCategory);
                 },
                 backgroundColor: theme.colorScheme.surfaceContainerHighest,
                 selectedColor: theme.colorScheme.primaryContainer,
@@ -345,117 +359,123 @@ class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
 
 
   Widget _buildActionButtons(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 24 : 28),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha:  0.3),
-        border: Border(
-          top: BorderSide(
-            color: theme.colorScheme.outline.withValues(alpha:  0.1),
-          ),
-        ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: isMobile
-            ? Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Create button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _handleSave,
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: isSmallMobile ? 12 : 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(isSmallMobile ? 6 : 8),
-                        ),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.add_circle, size: isSmallMobile ? 16 : 18),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Create Note',
-                                  style: TextStyle(fontSize: isSmallMobile ? 13 : 14),
-                                ),
-                              ],
-                            ),
-                    ),
-                  ),
-                  SizedBox(height: isSmallMobile ? 6 : 8),
-                  // Cancel button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: _isLoading ? null : _handleCancel,
-                      style: OutlinedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: isSmallMobile ? 12 : 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(isSmallMobile ? 6 : 8),
-                        ),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(fontSize: isSmallMobile ? 13 : 14),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _isLoading ? null : _handleCancel,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text('Cancel'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _handleSave,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.add_circle, size: 20),
-                                SizedBox(width: 8),
-                                Text('Create Note'),
-                              ],
-                            ),
-                    ),
-                  ),
-                ],
+    return BlocBuilder<AddNoteFormCubit, AddNoteFormState>(
+      builder: (context, state) {
+        final isLoading = state is AddNoteFormLoading;
+        
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 24 : 28),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            border: Border(
+              top: BorderSide(
+                color: theme.colorScheme.outline.withValues(alpha: 0.1),
               ),
-      ),
+            ),
+          ),
+          child: SafeArea(
+            top: false,
+            child: isMobile
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Create button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: isLoading ? null : _handleSave,
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: isSmallMobile ? 12 : 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(isSmallMobile ? 6 : 8),
+                            ),
+                          ),
+                          child: isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.add_circle, size: isSmallMobile ? 16 : 18),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      AppStrings.createNote,
+                                      style: TextStyle(fontSize: isSmallMobile ? 13 : 14),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                      SizedBox(height: isSmallMobile ? 6 : 8),
+                      // Cancel button
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: isLoading ? null : _handleCancel,
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: isSmallMobile ? 12 : 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(isSmallMobile ? 6 : 8),
+                            ),
+                          ),
+                          child: Text(
+                            AppStrings.cancel,
+                            style: TextStyle(fontSize: isSmallMobile ? 13 : 14),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: isLoading ? null : _handleCancel,
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(AppStrings.cancel),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton(
+                          onPressed: isLoading ? null : _handleSave,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.add_circle, size: 20),
+                                    const SizedBox(width: 8),
+                                    Text(AppStrings.createNote),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        );
+      },
     );
   }
 }

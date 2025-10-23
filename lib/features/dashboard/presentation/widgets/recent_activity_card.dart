@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/base/base_stateless_widget.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/constants/app_animations.dart';
+import '../../../../shared/widgets/animations/animation_widgets.dart';
 
 /// Recent activity card widget
 class RecentActivityCard extends BaseStatelessWidget {
@@ -19,15 +21,18 @@ class RecentActivityCard extends BaseStatelessWidget {
     final responsiveInfo = getResponsiveInfo(context);
     final padding = responsiveInfo.isMobile ? 16.0 : 20.0;
     
-    return Container(
-      padding: EdgeInsets.all(padding),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
-          width: 1,
-        ),
+    return FadeSlideInAnimation(
+      delay: AppAnimations.shortStagger,
+      offsetFrom: AppAnimations.slideFromRight,
+      child: Container(
+        padding: EdgeInsets.all(padding),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.outline.withOpacity(0.2),
+            width: 1,
+          ),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor.withOpacity(0.02),
@@ -85,7 +90,7 @@ class RecentActivityCard extends BaseStatelessWidget {
               _buildActivityItem(activity, responsiveInfo, theme)),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildActivityItem(String activity, ResponsiveInfo responsiveInfo, ThemeData theme) {

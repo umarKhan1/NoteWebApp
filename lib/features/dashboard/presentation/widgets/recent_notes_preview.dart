@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../../../core/base/base_stateless_widget.dart';
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../notes/presentation/cubit/notes_cubit.dart';
 import '../../../notes/presentation/cubit/notes_state.dart';
 
@@ -21,12 +24,12 @@ class RecentNotesPreview extends BaseStatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFFE5E7EB),
+          color: theme.colorScheme.outline.withOpacity(0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: theme.shadowColor.withOpacity(0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -39,11 +42,11 @@ class RecentNotesPreview extends BaseStatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Recent Notes',
+                AppStrings.recentNotes,
                 style: TextStyle(
                   fontSize: responsiveInfo.isMobile ? 14 : 16,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1F2937),
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
               TextButton(
@@ -51,10 +54,10 @@ class RecentNotesPreview extends BaseStatelessWidget {
                   // TODO: Navigate to all notes
                 },
                 child: Text(
-                  'View all',
+                  AppStrings.viewAll,
                   style: TextStyle(
                     fontSize: responsiveInfo.isMobile ? 11 : 12,
-                    color: const Color(0xFF6366F1),
+                    color: theme.colorScheme.primary,
                   ),
                 ),
               ),
@@ -76,6 +79,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
                 final recentNotes = state.notes.take(3).toList();
                 return Column(
                   children: recentNotes.map((note) => _buildNoteItem(
+                    context: context,
                     title: note.title,
                     content: note.content,
                     updatedAt: note.updatedAt,
@@ -92,18 +96,20 @@ class RecentNotesPreview extends BaseStatelessWidget {
   }
 
   Widget _buildNoteItem({
+    required BuildContext context,
     required String title,
     required String content,
     required DateTime updatedAt,
   }) {
+    final theme = getTheme(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
+        color: theme.colorScheme.surface.withOpacity(0.5),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: const Color(0xFFF1F5F9),
+          color: theme.colorScheme.outline.withOpacity(0.1),
           width: 1,
         ),
       ),
@@ -113,12 +119,12 @@ class RecentNotesPreview extends BaseStatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFF6366F1).withOpacity(0.1),
+              color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.description_outlined,
-              color: Color(0xFF6366F1),
+              color: theme.colorScheme.primary,
               size: 20,
             ),
           ),
@@ -129,10 +135,10 @@ class RecentNotesPreview extends BaseStatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1F2937),
+                    color: theme.colorScheme.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -142,7 +148,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
                   content,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey.shade600,
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -152,7 +158,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
                   _formatDate(updatedAt),
                   style: TextStyle(
                     fontSize: 10,
-                    color: Colors.grey.shade500,
+                    color: theme.colorScheme.onSurface.withOpacity(0.4),
                   ),
                 ),
               ],
@@ -164,7 +170,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
             },
             icon: Icon(
               Icons.arrow_forward_ios,
-              color: Colors.grey.shade400,
+              color: theme.colorScheme.onSurface.withOpacity(0.4),
               size: 16,
             ),
           ),
@@ -174,57 +180,71 @@ class RecentNotesPreview extends BaseStatelessWidget {
   }
 
   Widget _buildEmptyState() {
-    return Container(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        children: [
-          Icon(
-            Icons.note_add_outlined,
-            size: 48,
-            color: Colors.grey.shade400,
+    return Builder(
+      builder: (context) {
+        final theme = getTheme(context);
+        return Container(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            children: [
+              SizedBox(
+                width: 120,
+                height: 120,
+                child: Lottie.asset(
+                  AppAssets.notesAnimation,
+                  repeat: true,
+                  animate: true,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppStrings.noNotesYet,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                AppStrings.createFirstNote,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            'No notes yet',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Create your first note to get started',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade500,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildErrorState() {
-    return Container(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        children: [
-          Icon(
-            Icons.error_outline,
-            size: 48,
-            color: Colors.red.shade400,
+    return Builder(
+      builder: (context) {
+        final theme = getTheme(context);
+        return Container(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: theme.colorScheme.error,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                AppStrings.failedToLoadNotes,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: theme.colorScheme.error,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Failed to load notes',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.red.shade600,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 

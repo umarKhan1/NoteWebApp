@@ -3,33 +3,171 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../shared/widgets/responsive_sidebar.dart';
 import '../cubit/notes_cubit.dart';
 import '../cubit/notes_state.dart';
+import '../cubit/notes_ui_cubit.dart';
+import '../cubit/notes_ui_state.dart';
 import '../widgets/notes_list/notes_empty_state.dart';
 import '../widgets/notes_list/notes_list_item.dart';
 import '../widgets/notes_list/notes_loading_shimmer.dart';
 
 /// Notes list page displaying all user notes
-class NotesListPage extends StatefulWidget {
+class NotesListPage extends StatelessWidget {
   // ignore: public_member_api_docs
   const NotesListPage({super.key});
 
   @override
-  State<NotesListPage> createState() => _NotesListPageState();
+  Widget build(BuildContext context) {
+    return const _NotesView();
+  }
 }
 
-class _NotesListPageState extends State<NotesListPage> {
+class _NotesView extends StatefulWidget {
+  const _NotesView();
+
+  @override
+  State<_NotesView> createState() => _NotesViewState();
+}
+
+class _NotesViewState extends State<_NotesView> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
     // Load notes when page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotesCubit>().loadNotes();
+      
+      // Initialize sidebar state based on screen size
+      final screenWidth = MediaQuery.of(context).size.width;
+      context.read<NotesUiCubit>().initializeSidebar(screenWidth);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 768;
+    final showSidebar = !isMobile;
+
+    return BlocBuilder<NotesUiCubit, NotesUiState>(
+      builder: (context, uiState) {
+          return Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: theme.colorScheme.surface,
+            drawer: isMobile 
+              ? Drawer(
+                  child: ResponsiveSidebar(
+                    isExpanded: true,
+                    currentPath: '/notes',
+                    onToggle: () => Navigator.of(context).pop(),
+                  ),
+                )
+              : null,
+            body: Row(
+              children: [
+                // Desktop/Tablet Sidebar
+                if (showSidebar)
+                  ResponsiveSidebar(
+                    isExpanded: uiState.sidebarExpanded,
+                    currentPath: '/notes',
+                    onToggle: () => context.read<NotesUiCubit>().toggleSidebar(),
+                  ),
+                
+                // Main Content
+                Expanded(
+                  child: Column(
+                    children: [
+                      // Header
+                      _buildNotesHeader(isMobile),
+                      
+                      // Content
+                      Expanded(
+                        child: _buildNotesContent(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+  }
+
+  Widget _buildNotesHeader(bool isMobile) {
+    final theme = Theme.of(context);
+    
+    return Container(
+      height: 70,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 24, 
+        vertical: 8,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        border: Border(
+          bottom: BorderSide(
+            color: theme.colorScheme.outline.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Menu button for mobile
+          if (isMobile) ...[
+            IconButton(
+              onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+              icon: Icon(
+                Icons.menu,
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+          
+          // Title
+          Text(
+            AppStrings.notes,
+            style: TextStyle(
+              fontSize: isMobile ? 16 : 18,
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+          
+          const Spacer(),
+          
+          // Actions
+          IconButton(
+            onPressed: () {
+              // TODO: Implement search
+            },
+            icon: Icon(
+              Icons.search,
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
+            ),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            onPressed: () {
+              // TODO: Implement add note
+            },
+            icon: Icon(
+              Icons.add,
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotesContent() {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(

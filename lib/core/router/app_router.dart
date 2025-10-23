@@ -3,8 +3,9 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/signup_page.dart';
-import '../../features/dashboard/presentation/pages/dashboard_page.dart';
-import '../../features/notes/presentation/pages/notes_list_page.dart';
+import '../../features/dashboard/presentation/widgets/dashboard_content.dart';
+import '../../features/notes/presentation/widgets/notes_content.dart';
+import '../../shared/widgets/main_shell.dart';
 import 'route_names.dart';
 
 /// Application router configuration using GoRouter for navigation.
@@ -17,7 +18,7 @@ class AppRouter {
     initialLocation: RouteNames.login,
     debugLogDiagnostics: true,
     routes: [
-      // Authentication Routes
+      // Authentication Routes (standalone pages)
       GoRoute(
         path: RouteNames.login,
         name: RouteNames.loginName,
@@ -34,18 +35,70 @@ class AppRouter {
         builder: (context, state) => const ForgotPasswordView(),
       ),
       
-      // Dashboard Routes
-      GoRoute(
-        path: RouteNames.dashboard,
-        name: RouteNames.dashboardName,
-        builder: (context, state) => const DashboardPage(),
-      ),
-      
-      // Notes Routes
-      GoRoute(
-        path: RouteNames.notes,
-        name: RouteNames.notesName,
-        builder: (context, state) => const NotesListPage(),
+      // Shell Route - Contains persistent sidebar
+      ShellRoute(
+        builder: (context, state, child) => MainShell(child: child),
+        routes: [
+          // Dashboard Route
+          GoRoute(
+            path: RouteNames.dashboard,
+            name: RouteNames.dashboardName,
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const _DashboardContent(),
+            ),
+          ),
+          
+          // Notes Route
+          GoRoute(
+            path: RouteNames.notes,
+            name: RouteNames.notesName,
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const _NotesContent(),
+            ),
+          ),
+          
+          // Categories Route
+          GoRoute(
+            path: '/categories',
+            name: 'categories',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const _CategoriesContent(),
+            ),
+          ),
+          
+          // Search Route
+          GoRoute(
+            path: '/search',
+            name: 'search',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const _SearchContent(),
+            ),
+          ),
+          
+          // Analytics Route
+          GoRoute(
+            path: '/analytics',
+            name: 'analytics',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const _AnalyticsContent(),
+            ),
+          ),
+          
+          // Settings Route
+          GoRoute(
+            path: '/settings',
+            name: 'settings',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const _SettingsContent(),
+            ),
+          ),
+        ],
       ),
       
       // TODO: Add more routes here (profile, etc.)
@@ -82,4 +135,108 @@ class AppRouter {
       ),
     ),
   );
+}
+
+/// Dashboard content widget (without shell)
+class _DashboardContent extends StatelessWidget {
+  const _DashboardContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return const DashboardContent();
+  }
+}
+
+/// Notes content widget (without shell)
+class _NotesContent extends StatelessWidget {
+  const _NotesContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return const NotesContent();
+  }
+}
+
+/// Categories content widget (without shell)
+class _CategoriesContent extends StatelessWidget {
+  const _CategoriesContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.folder_outlined, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text('Categories Page', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+          SizedBox(height: 8),
+          Text('Categories feature coming soon...'),
+        ],
+      ),
+    );
+  }
+}
+
+/// Search content widget (without shell)
+class _SearchContent extends StatelessWidget {
+  const _SearchContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_outlined, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text('Search Page', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+          SizedBox(height: 8),
+          Text('Search feature coming soon...'),
+        ],
+      ),
+    );
+  }
+}
+
+/// Analytics content widget (without shell)
+class _AnalyticsContent extends StatelessWidget {
+  const _AnalyticsContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.analytics_outlined, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text('Analytics Page', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+          SizedBox(height: 8),
+          Text('Analytics feature coming soon...'),
+        ],
+      ),
+    );
+  }
+}
+
+/// Settings content widget (without shell)
+class _SettingsContent extends StatelessWidget {
+  const _SettingsContent();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.settings_outlined, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text('Settings Page', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+          SizedBox(height: 8),
+          Text('Settings feature coming soon...'),
+        ],
+      ),
+    );
+  }
 }

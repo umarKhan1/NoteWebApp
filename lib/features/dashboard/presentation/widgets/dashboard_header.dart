@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/base/base_stateless_widget.dart';
+import '../../../../core/constants/app_animations.dart';
+import '../../../../shared/widgets/animations/animation_widgets.dart';
 
 /// Dashboard header with menu and actions
 class DashboardHeader extends BaseStatelessWidget {
@@ -16,6 +18,7 @@ class DashboardHeader extends BaseStatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsiveInfo = getResponsiveInfo(context);
+    final theme = getTheme(context);
     
     return Container(
       height: 70,
@@ -23,62 +26,65 @@ class DashboardHeader extends BaseStatelessWidget {
         horizontal: responsiveInfo.isMobile ? 16 : 24, 
         vertical: 8,
       ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: Color(0xFFF1F5F9),
+            color: theme.colorScheme.outline.withOpacity(0.2),
             width: 1,
           ),
         ),
       ),
-      child: Row(
-        children: [
-          // Menu button for mobile
-          if (onMenuPressed != null) ...[
+      child: FadeInAnimation(
+        duration: AppAnimations.normal,
+        child: Row(
+          children: [
+            // Menu button for mobile
+            if (onMenuPressed != null) ...[
+              IconButton(
+                onPressed: onMenuPressed,
+                icon: Icon(
+                  Icons.menu,
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            
+            // Title
+            Text(
+              'Dashboard',
+              style: TextStyle(
+                fontSize: responsiveInfo.isMobile ? 16 : 18,
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            
+            const Spacer(),
+            
+            // Actions
             IconButton(
-              onPressed: onMenuPressed,
-              icon: const Icon(
-                Icons.menu,
-                color: Color(0xFF6B7280),
+              onPressed: () {
+              
+              },
+              icon: Icon(
+                Icons.notifications_outlined,
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
             const SizedBox(width: 8),
+            IconButton(
+              onPressed: () {
+             
+              },
+              icon: Icon(
+                Icons.search,
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
           ],
-          
-          // Title
-          Text(
-            'Dashboard',
-            style: TextStyle(
-              fontSize: responsiveInfo.isMobile ? 16 : 18,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF1F2937),
-            ),
-          ),
-          
-          const Spacer(),
-          
-          // Actions
-          IconButton(
-            onPressed: () {
-            
-            },
-            icon: const Icon(
-              Icons.notifications_outlined,
-              color: Color(0xFF6B7280),
-            ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            onPressed: () {
-           
-            },
-            icon: const Icon(
-              Icons.search,
-              color: Color(0xFF6B7280),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../shared/extensions/widget_extensions.dart';
 import '../../cubit/dashboard_cubit.dart';
 import '../../cubit/dashboard_state.dart';
 import '../recent_activity_card.dart';
@@ -22,7 +23,7 @@ class DashboardContentGrid extends StatelessWidget {
       return Column(
         children: [
           const RecentNotesPreview(),
-          const SizedBox(height: 16),
+          AppSpacing.md.verticalSpace,
           BlocBuilder<DashboardCubit, DashboardState>(
             builder: (context, state) {
               List<String> activity = [];
@@ -32,7 +33,7 @@ class DashboardContentGrid extends StatelessWidget {
               return RecentActivityCard(activities: activity);
             },
           ),
-          const SizedBox(height: 16),
+          AppSpacing.md.verticalSpace,
           const UpcomingDeadlinesCard(),
         ],
       );
@@ -47,12 +48,12 @@ class DashboardContentGrid extends StatelessWidget {
           child: Column(
             children: [
               const RecentNotesPreview(),
-              const SizedBox(height: 16),
+              AppSpacing.md.verticalSpace,
               const UpcomingDeadlinesCard(),
             ],
           ),
         ),
-        SizedBox(width: isTablet ? 16 : 20),
+        (isTablet ? AppSpacing.md : AppSpacing.lg).horizontalSpace,
         
         // Right Column
         Expanded(

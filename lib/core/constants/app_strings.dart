@@ -177,6 +177,12 @@ class AppStrings {
   /// Empty notes message.
   static const String noNotesFound = 'No notes found';
   
+  /// No notes yet message.
+  static const String noNotesYet = 'No notes yet';
+  
+  /// Failed to load notes message.
+  static const String failedToLoadNotes = 'Failed to load notes';
+  
   /// Search notes hint.
   static const String searchNotes = 'Search notes...';
   

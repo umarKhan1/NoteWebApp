@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_strings.dart';
+import '../../../../../shared/extensions/widget_extensions.dart';
 
 /// Welcome section widget for dashboard
 class DashboardWelcomeSection extends StatelessWidget {
@@ -24,12 +25,12 @@ class DashboardWelcomeSection extends StatelessWidget {
             color: theme.colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: 8),
+        AppSpacing.sm.verticalSpace,
         Text(
           AppStrings.dashboardSubtitle,
           style: TextStyle(
             fontSize: isMobile ? 13 : 14,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],

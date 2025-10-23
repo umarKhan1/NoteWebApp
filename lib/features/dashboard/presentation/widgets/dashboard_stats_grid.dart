@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/base/base_stateless_widget.dart';
+import '../../../../core/constants/app_animations.dart';
+import '../../../../shared/extensions/widget_extensions.dart';
+import '../../../../shared/widgets/animations/animation_widgets.dart';
 import '../../domain/entities/dashboard_stats.dart';
 
 /// Dashboard statistics grid
@@ -17,10 +20,17 @@ class DashboardStatsGrid extends BaseStatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsiveInfo = getResponsiveInfo(context);
+    final theme = getTheme(context);
     
+    // Return empty container if no stats
+    if (stats == null) {
+      return const SizedBox.shrink();
+    }
+
     // For mobile: 2x2 grid
     if (responsiveInfo.isMobile) {
-      return Column(
+      return StaggeredListAnimation(
+        staggerDelay: AppAnimations.shortStagger,
         children: [
           Row(
             children: [
@@ -30,26 +40,26 @@ class DashboardStatsGrid extends BaseStatelessWidget {
                   title: 'Total Notes',
                   value: stats?.totalNotes.toString() ?? '0',
                   subtitle: 'All notes',
-                  color: const Color(0xFF6366F1),
+                  color: theme.colorScheme.primary,
                   icon: Icons.description_outlined,
                   isMobile: true,
                 ),
               ),
-              const SizedBox(width: 12),
+              AppSpacing.sm.horizontalSpace,
               Expanded(
                 child: _buildStatCard(
                   context: context,
                   title: 'Today',
                   value: stats?.todayNotes.toString() ?? '0',
                   subtitle: 'New notes',
-                  color: const Color(0xFF10B981),
+                  color: _getAccentColor(theme, 0),
                   icon: Icons.today_outlined,
                   isMobile: true,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          AppSpacing.sm.verticalSpace,
           Row(
             children: [
               Expanded(
@@ -58,19 +68,19 @@ class DashboardStatsGrid extends BaseStatelessWidget {
                   title: 'Categories',
                   value: stats?.totalCategories.toString() ?? '0',
                   subtitle: 'Active',
-                  color: const Color(0xFFF59E0B),
+                  color: _getAccentColor(theme, 1),
                   icon: Icons.folder_outlined,
                   isMobile: true,
                 ),
               ),
-              const SizedBox(width: 12),
+              AppSpacing.sm.horizontalSpace,
               Expanded(
                 child: _buildStatCard(
                   context: context,
                   title: 'Pinned',
                   value: stats?.pinnedNotes.toString() ?? '0',
                   subtitle: 'Important',
-                  color: const Color(0xFFEF4444),
+                  color: _getAccentColor(theme, 2),
                   icon: Icons.push_pin_outlined,
                   isMobile: true,
                 ),
@@ -93,26 +103,26 @@ class DashboardStatsGrid extends BaseStatelessWidget {
                   title: 'Total Notes',
                   value: stats?.totalNotes.toString() ?? '0',
                   subtitle: 'All notes',
-                  color: const Color(0xFF6366F1),
+                  color: theme.colorScheme.primary,
                   icon: Icons.description_outlined,
                   isMobile: false,
                 ),
               ),
-              const SizedBox(width: 16),
+              AppSpacing.md.horizontalSpace,
               Expanded(
                 child: _buildStatCard(
                   context: context,
                   title: 'Today',
                   value: stats?.todayNotes.toString() ?? '0',
                   subtitle: 'New notes',
-                  color: const Color(0xFF10B981),
+                  color: _getAccentColor(theme, 0),
                   icon: Icons.today_outlined,
                   isMobile: false,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          AppSpacing.md.verticalSpace,
           Row(
             children: [
               Expanded(
@@ -121,19 +131,19 @@ class DashboardStatsGrid extends BaseStatelessWidget {
                   title: 'Categories',
                   value: stats?.totalCategories.toString() ?? '0',
                   subtitle: 'Active',
-                  color: const Color(0xFFF59E0B),
+                  color: _getAccentColor(theme, 1),
                   icon: Icons.folder_outlined,
                   isMobile: false,
                 ),
               ),
-              const SizedBox(width: 16),
+              AppSpacing.md.horizontalSpace,
               Expanded(
                 child: _buildStatCard(
                   context: context,
                   title: 'Pinned',
                   value: stats?.pinnedNotes.toString() ?? '0',
                   subtitle: 'Important',
-                  color: const Color(0xFFEF4444),
+                  color: _getAccentColor(theme, 2),
                   icon: Icons.push_pin_outlined,
                   isMobile: false,
                 ),
@@ -153,43 +163,43 @@ class DashboardStatsGrid extends BaseStatelessWidget {
             title: 'Total Notes',
             value: stats?.totalNotes.toString() ?? '0',
             subtitle: 'All notes',
-            color: const Color(0xFF6366F1),
+            color: theme.colorScheme.primary,
             icon: Icons.description_outlined,
             isMobile: false,
           ),
         ),
-        const SizedBox(width: 20),
+        AppSpacing.lg.horizontalSpace,
         Expanded(
           child: _buildStatCard(
             context: context,
             title: 'Today',
             value: stats?.todayNotes.toString() ?? '0',
             subtitle: 'New notes',
-            color: const Color(0xFF10B981),
+            color: _getAccentColor(theme, 0),
             icon: Icons.today_outlined,
             isMobile: false,
           ),
         ),
-        const SizedBox(width: 20),
+        AppSpacing.lg.horizontalSpace,
         Expanded(
           child: _buildStatCard(
             context: context,
             title: 'Categories',
             value: stats?.totalCategories.toString() ?? '0',
             subtitle: 'Active',
-            color: const Color(0xFFF59E0B),
+            color: _getAccentColor(theme, 1),
             icon: Icons.folder_outlined,
             isMobile: false,
           ),
         ),
-        const SizedBox(width: 20),
+        AppSpacing.lg.horizontalSpace,
         Expanded(
           child: _buildStatCard(
             context: context,
             title: 'Pinned',
             value: stats?.pinnedNotes.toString() ?? '0',
             subtitle: 'Important',
-            color: const Color(0xFFEF4444),
+            color: _getAccentColor(theme, 2),
             icon: Icons.push_pin_outlined,
             isMobile: false,
           ),
@@ -207,32 +217,36 @@ class DashboardStatsGrid extends BaseStatelessWidget {
     required IconData icon,
     required bool isMobile,
   }) {
+    final theme = getTheme(context);
     final padding = isMobile ? 12.0 : 16.0;
     final titleFontSize = isMobile ? 11.0 : 13.0;
     final valueFontSize = isMobile ? 20.0 : 28.0;
     final subtitleFontSize = isMobile ? 9.0 : 11.0;
     final iconSize = isMobile ? 16.0 : 20.0;
     
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.all(padding),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFFE5E7EB),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha:  0.02),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+    return ScaleInAnimation(
+      duration: AppAnimations.normal,
+      curve: AppAnimations.fastOutSlowIn,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.all(padding),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: theme.colorScheme.outline.withOpacity(0.2),
+              width: 1,
             ),
-          ],
-        ),
+            boxShadow: [
+              BoxShadow(
+                color: theme.shadowColor.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -245,7 +259,7 @@ class DashboardStatsGrid extends BaseStatelessWidget {
                   title,
                   style: TextStyle(
                     fontSize: titleFontSize,
-                    color: const Color(0xFF6B7280),
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
                     fontWeight: FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -272,7 +286,7 @@ class DashboardStatsGrid extends BaseStatelessWidget {
             style: TextStyle(
               fontSize: valueFontSize,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF1F2937),
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 4),
@@ -280,12 +294,33 @@ class DashboardStatsGrid extends BaseStatelessWidget {
             subtitle,
             style: TextStyle(
               fontSize: subtitleFontSize,
-              color: const Color(0xFF9CA3AF),
+              color: theme.colorScheme.onSurface.withOpacity(0.5),
             ),
           ),
         ],
       ),
       ),
-    );
+    ));
+  }
+
+  /// Gets accent color based on theme and index
+  Color _getAccentColor(ThemeData theme, int index) {
+    final isDark = theme.brightness == Brightness.dark;
+    
+    // Use theme-appropriate colors
+    const lightColors = [
+      Color(0xFF10B981), // Green
+      Color(0xFFF59E0B), // Amber
+      Color(0xFFEF4444), // Red
+    ];
+    
+    const darkColors = [
+      Color(0xFF34D399), // Green (lighter for dark theme)
+      Color(0xFFFBBF24), // Amber (lighter for dark theme)
+      Color(0xFFF87171), // Red (lighter for dark theme)
+    ];
+    
+    final colors = isDark ? darkColors : lightColors;
+    return colors[index % colors.length];
   }
 }

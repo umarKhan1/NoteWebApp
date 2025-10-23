@@ -10,6 +10,7 @@ import '../../features/dashboard/domain/usecases/load_dashboard_usecase.dart';
 import '../../features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import '../../features/dashboard/presentation/cubit/dashboard_ui_cubit.dart';
 import '../../features/notes/presentation/cubit/notes_cubit.dart';
+import '../../features/notes/presentation/cubit/notes_ui_cubit.dart';
 import '../../shared/cubit/responsive_sidebar_cubit.dart';
 
 /// Provides a list of application-wide Bloc providers following OOP principles
@@ -39,6 +40,9 @@ class ApplicationProviders {
     ),
     BlocProvider<NotesCubit>(
       create: (context) => NotesCubit(),
+    ),
+    BlocProvider<NotesUiCubit>(
+      create: (context) => NotesUiCubit(),
     ),
   ];
   

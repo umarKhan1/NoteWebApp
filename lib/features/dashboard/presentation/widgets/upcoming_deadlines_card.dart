@@ -39,12 +39,12 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFFE5E7EB),
+          color: theme.colorScheme.outline.withOpacity(0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: theme.shadowColor.withOpacity(0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -61,7 +61,7 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
                 style: TextStyle(
                   fontSize: responsiveInfo.isMobile ? 14 : 16,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1F2937),
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
               TextButton(
@@ -72,7 +72,7 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
                   'View all',
                   style: TextStyle(
                     fontSize: responsiveInfo.isMobile ? 11 : 12,
-                    color: const Color(0xFF6366F1),
+                    color: theme.colorScheme.primary,
                   ),
                 ),
               ),
@@ -81,6 +81,7 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
           const SizedBox(height: 16),
           
           ...deadlines.map((deadline) => _buildDeadlineItem(
+            context: context,
             title: deadline['title']!,
             project: deadline['project']!,
             time: deadline['time']!,
@@ -92,11 +93,13 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
   }
 
   Widget _buildDeadlineItem({
+    required BuildContext context,
     required String title,
     required String project,
     required String time,
     required String priority,
   }) {
+    final theme = getTheme(context);
     Color priorityColor;
     Color priorityBgColor;
     
@@ -149,10 +152,10 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1F2937),
+                    color: theme.colorScheme.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

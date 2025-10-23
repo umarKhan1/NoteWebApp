@@ -1,121 +1,144 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/constants/app_strings.dart';
+import '../../../../../shared/extensions/widget_extensions.dart';
 import '../../cubit/notes_cubit.dart';
+import '../../cubit/simple_note_form_cubit.dart';
 
 /// Simple note dialog for testing
-class SimpleNoteDialog extends StatefulWidget {
+class SimpleNoteDialog extends StatelessWidget {
+  /// Constructor
   const SimpleNoteDialog({super.key});
 
-  @override
-  State<SimpleNoteDialog> createState() => _SimpleNoteDialogState();
-
+  /// Show the simple note dialog
   static Future<void> show(BuildContext context) {
     return showDialog<void>(
       context: context,
-      builder: (context) => const SimpleNoteDialog(),
+      builder: (context) => BlocProvider(
+        create: (context) => SimpleNoteFormCubit(),
+        child: const SimpleNoteDialog(),
+      ),
     );
   }
-}
-
-class _SimpleNoteDialogState extends State<SimpleNoteDialog> {
-  final _titleController = TextEditingController();
-  final _contentController = TextEditingController();
-  bool _isLoading = false;
 
   @override
-  void dispose() {
-    _titleController.dispose();
-    _contentController.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    return BlocListener<SimpleNoteFormCubit, SimpleNoteFormState>(
+      listener: (context, state) {
+        if (state.error.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.error),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: AlertDialog(
+        title: const Text(AppStrings.addNote),
+        content: SizedBox(
+          width: 400,
+          child: _SimpleNoteForm(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(AppStrings.cancel),
+          ),
+          BlocBuilder<SimpleNoteFormCubit, SimpleNoteFormState>(
+            builder: (context, state) {
+              return ElevatedButton(
+                onPressed: state.isLoading
+                    ? null
+                    : () => _handleSave(context),
+                child: state.isLoading
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text(AppStrings.save),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 
-  void _handleSave() async {
-    if (_titleController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a title')),
-      );
+  Future<void> _handleSave(BuildContext context) async {
+    final formCubit = context.read<SimpleNoteFormCubit>();
+    final notesCubit = context.read<NotesCubit>();
+    
+    final validationError = formCubit.validateForm();
+    if (validationError != null) {
+      formCubit.setError(validationError);
       return;
     }
 
-    setState(() => _isLoading = true);
+    formCubit.setLoading(true);
 
     try {
-      await context.read<NotesCubit>().createNote(
-        title: _titleController.text.trim(),
-        content: _contentController.text.trim(),
-        category: 'Personal',
+      await notesCubit.createNote(
+        title: formCubit.state.title.trim(),
+        content: formCubit.state.content.trim(),
+        category: AppStrings.personalCategory,
       );
 
-      if (mounted) {
+      if (context.mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Note created successfully!'),
+            content: Text(AppStrings.noteCreatedSuccessfully),
             backgroundColor: Colors.green,
           ),
         );
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to create note: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      formCubit.setError('${AppStrings.noteCreationFailed}: $e');
     }
   }
+}
 
+/// Simple note form widget
+class _SimpleNoteForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Add Note'),
-      content: SizedBox(
-        width: 400,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                hintText: 'Enter note title...',
-                border: OutlineInputBorder(),
+    final cubit = context.read<SimpleNoteFormCubit>();
+    
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        BlocBuilder<SimpleNoteFormCubit, SimpleNoteFormState>(
+          builder: (context, state) {
+            return TextField(
+              onChanged: cubit.updateTitle,
+              decoration: InputDecoration(
+                labelText: AppStrings.noteTitleText,
+                hintText: AppStrings.enterNoteTitleHint,
+                border: const OutlineInputBorder(),
+                errorText: state.error.isNotEmpty && 
+                          state.error.contains('title') 
+                    ? state.error 
+                    : null,
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _contentController,
+            );
+          },
+        ),
+        16.verticalSpace,
+        BlocBuilder<SimpleNoteFormCubit, SimpleNoteFormState>(
+          builder: (context, state) {
+            return TextField(
+              onChanged: cubit.updateContent,
               decoration: const InputDecoration(
-                labelText: 'Content',
-                hintText: 'Enter note content...',
+                labelText: AppStrings.noteContent,
+                hintText: AppStrings.enterNoteContentHint,
                 border: OutlineInputBorder(),
               ),
               maxLines: 5,
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: _isLoading ? null : _handleSave,
-          child: _isLoading
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Add'),
+            );
+          },
         ),
       ],
     );

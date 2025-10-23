@@ -62,7 +62,7 @@ class CustomTextField extends BaseStatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        8.vSpace,
+        2.vSpace,
         TextFormField(
           controller: controller,
           onChanged: onChanged,

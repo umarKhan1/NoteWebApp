@@ -66,7 +66,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
               fontSize: isMobile ? 17.sp : 18.sp,
             ),
           ),
-          isMobile ? 20.vSpace : 32.vSpace,
+          isMobile ? 2.vSpace : 3.vSpace,
           
           // Login Form
           BlocConsumer<LoginCubit, LoginState>(
@@ -99,7 +99,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
                         ? AppStrings.emailInvalid
                         : null,
                   ),
-                  isMobile ? 16.vSpace : 24.vSpace,
+                  isMobile ? 2.vSpace : 3.vSpace,
                   
                   // Password Field
                   CustomTextField(
@@ -121,7 +121,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
                         ? AppStrings.passwordTooShort
                         : null,
                   ),
-                  isMobile ? 12.vSpace : 16.vSpace,
+                  isMobile ? 2.vSpace : 3.vSpace,
                   
                   // Forgot Password
                   Align(
@@ -145,7 +145,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
                       ),
                     ),
                   ),
-                  isMobile ? 16.vSpace : 24.vSpace,
+                  isMobile ? 2.vSpace : 3.vSpace,
                   
                   // Sign In Button
                   SizedBox(
@@ -173,7 +173,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
                             ),
                     ),
                   ),
-                  isMobile ? 15.vSpace : 32.vSpace,  
+                  isMobile ? 2.vSpace : 3.vSpace,  
                   // Sign Up Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

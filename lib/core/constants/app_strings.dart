@@ -243,10 +243,15 @@ class AppStrings {
   
   /// Note title text.
   static const String noteTitleText = 'Note Title';
-  
-  /// Note content text.
+   /// Note content text.
   static const String noteContent = 'Note Content';
   
+  /// Enter note title hint.
+  static const String enterNoteTitleHint = 'Enter note title...';
+  
+  /// Enter note content hint.
+  static const String enterNoteContentHint = 'Enter note content...';
+
   /// No notes available message.
   static const String noNotesAvailable = 'No notes available';
   
@@ -391,4 +396,91 @@ class AppStrings {
   
   /// Other category.
   static const String otherCategory = 'Other';
+  
+  // Note Actions
+  /// Print action text.
+  static const String print = 'Print';
+  
+  /// Download PDF action text.
+  static const String downloadPdf = 'Download PDF';
+  
+  /// Edit note action text.
+  static const String editNote = 'Edit Note';
+  
+  /// Delete note action text.
+  static const String deleteNote = 'Delete Note';
+  
+  /// Pin note action text.
+  static const String pinNote = 'Pin Note';
+  
+  /// Unpin note action text.
+  static const String unpinNote = 'Unpin Note';
+  
+  /// More options text.
+  static const String moreOptions = 'More Options';
+  
+  // Note Messages
+  /// Note creation success message.
+  static const String noteCreatedSuccessfully = 'Note created successfully';
+  
+  /// Note updated successfully message.
+  static const String noteUpdatedSuccessfully = 'Note updated successfully';
+  
+  /// Note update failed message.
+  static const String noteUpdateFailed = 'Failed to update note';
+  
+  /// Note deleted successfully message.
+  static const String noteDeletedSuccessfully = 'Note deleted successfully';
+  
+  /// Note deletion failed message.
+  static const String noteDeletionFailed = 'Failed to delete note';
+  
+  /// Empty note message.
+  static const String emptyNoteMessage = 'This note is empty';
+  
+  /// Start writing message.
+  static const String startWritingMessage = 'Start writing to see your note here';
+  
+  /// Untitled note text.
+  static const String untitledNote = 'Untitled Note';
+  
+  // Note Detail Modal
+  /// Close modal text.
+  static const String closeModal = 'Close';
+  
+  /// Note details title.
+  static const String noteDetails = 'Note Details';
+  
+  // Form Validation
+  /// Required field message.
+  static const String requiredField = 'This field is required';
+  
+  /// Note title required message.
+  static const String noteTitleRequired = 'Note title is required';
+  
+  /// Note content required message.
+  static const String noteContentRequired = 'Note content is required';
+  
+  // Loading States
+  /// Creating note message.
+  static const String creatingNote = 'Creating note...';
+  
+  /// Updating note message.
+  static const String updatingNote = 'Updating note...';
+  
+  /// Deleting note message.
+  static const String deletingNote = 'Deleting note...';
+  
+  /// Loading notes message.
+  static const String loadingNotes = 'Loading notes...';
+  
+  // Error Messages
+  /// Generic error message.
+  static const String genericError = 'Something went wrong. Please try again.';
+  
+  /// Network error message.
+  static const String networkError = 'Network error. Please check your connection.';
+  
+  /// Validation error message.
+  static const String validationError = 'Please check your input and try again.';
 }

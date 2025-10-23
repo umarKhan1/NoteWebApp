@@ -6,6 +6,7 @@ import '../../../../shared/extensions/widget_extensions.dart';
 import '../cubit/notes_cubit.dart';
 import '../cubit/notes_state.dart';
 
+import '../widgets/note_detail/note_detail_modal.dart';
 import '../widgets/notes_list/add_note_bottom_sheet.dart';
 import '../widgets/notes_list/notes_empty_state.dart';
 import '../widgets/notes_list/notes_list_item.dart';
@@ -119,33 +120,38 @@ class NotesContent extends BaseStatelessWidget {
       return const NotesEmptyState();
     }
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: isMobile ? 1 : (context.mounted ? 
-          (MediaQuery.of(context).size.width > 1200 ? 3 : 2) : 2),
-        childAspectRatio: isMobile ? 4 : 3,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
-      itemCount: state.notes.length,
-      itemBuilder: (context, index) {
-        final note = state.notes[index];
-        return NotesListItem(
-          note: note,
-          onTap: () {
-            // TODO: Navigate to note detail
-          },
-          onEdit: () {
-            // TODO: Navigate to note edit
-          },
-          onDelete: () {
-            // TODO: Show delete confirmation
-          },
-          onTogglePin: () {
-            // TODO: Toggle pin status
-          },
+    final screenWidth = MediaQuery.of(context).size.width;
+    final crossAxisCount = isMobile ? 1 : (screenWidth > 1200 ? 3 : 2);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Wrap(
+          spacing: 16,
+          runSpacing: 16,
+          children: state.notes.map((note) {
+            final itemWidth = isMobile 
+              ? constraints.maxWidth 
+              : (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
+            
+            return SizedBox(
+              width: itemWidth,
+              child: NotesListItem(
+                note: note,
+                onTap: () {
+                  NoteDetailModal.show(context, note);
+                },
+                onEdit: () {
+                  // TODO: Navigate to note edit
+                },
+                onDelete: () {
+                  // TODO: Show delete confirmation
+                },
+                onTogglePin: () {
+                  // TODO: Toggle pin status
+                },
+              ),
+            );
+          }).toList(),
         );
       },
     );

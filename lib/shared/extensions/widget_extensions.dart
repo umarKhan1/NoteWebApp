@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 /// Extension for adding convenient spacing methods to widgets.
 extension WidgetExtensions on Widget {
@@ -9,7 +9,7 @@ extension WidgetExtensions on Widget {
       mainAxisSize: MainAxisSize.min,
       children: [
         this,
-        SizedBox(height: height.h),
+        SizedBox(height: height),
       ],
     );
   }
@@ -20,7 +20,7 @@ extension WidgetExtensions on Widget {
       mainAxisSize: MainAxisSize.min,
       children: [
         this,
-        SizedBox(width: width.w),
+        SizedBox(width: width),
       ],
     );
   }
@@ -30,7 +30,7 @@ extension WidgetExtensions on Widget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(height: height.h),
+        SizedBox(height: height),
         this,
       ],
     );
@@ -41,9 +41,46 @@ extension WidgetExtensions on Widget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(width: width.w),
+        SizedBox(width: width),
         this,
       ],
+    );
+  }
+
+  /// Adds all-around padding to this widget.
+  Widget paddingAll(double padding) {
+    return Padding(
+      padding: EdgeInsets.all(padding),
+      child: this,
+    );
+  }
+
+  /// Adds symmetric padding to this widget.
+  Widget paddingSymmetric({double? horizontal, double? vertical}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontal ?? 0,
+        vertical: vertical ?? 0,
+      ),
+      child: this,
+    );
+  }
+
+  /// Adds custom padding to this widget.
+  Widget paddingOnly({
+    double? left,
+    double? top,
+    double? right,
+    double? bottom,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: left ?? 0,
+        top: top ?? 0,
+        right: right ?? 0,
+        bottom: bottom ?? 0,
+      ),
+      child: this,
     );
   }
 }
@@ -56,11 +93,29 @@ extension SpacingExtensions on num {
   /// Horizontal spacing
   Widget get horizontalSpace => SizedBox(width: toDouble());
   
+  /// Creates a vertical SizedBox with this height.
+  Widget get heightBox => SizedBox(height: toDouble());
+
+  /// Creates a horizontal SizedBox with this width.
+  Widget get widthBox => SizedBox(width: toDouble());
+
+  /// Creates a square SizedBox with this dimension.
+  Widget get box => SizedBox(
+        width: toDouble(),
+        height: toDouble(),
+      );
+  
   /// Square spacing (both width and height)
   Widget get squareSpace => SizedBox(
         width: toDouble(),
         height: toDouble(),
       );
+  
+  /// Creates responsive vertical space using responsive_sizer.
+  Widget get vSpace => SizedBox(height: toDouble().h);
+  
+  /// Creates responsive horizontal space using responsive_sizer.
+  Widget get hSpace => SizedBox(width: toDouble().w);
 }
 
 /// Common spacing values
@@ -85,28 +140,4 @@ class AppSpacing {
   
   /// Massive spacing - 64
   static const double massive = 64.0;
-}
-
-/// Extension for creating common SizedBox instances.
-extension SizedBoxExtensions on num {
-  /// Creates a vertical SizedBox with this height.
-  Widget get heightBox => SizedBox(height: toDouble().h);
-
-  /// Creates a horizontal SizedBox with this width.
-  Widget get widthBox => SizedBox(width: toDouble().w);
-
-  /// Creates a square SizedBox with this dimension.
-  Widget get box => SizedBox(
-        width: toDouble().w,
-        height: toDouble().h,
-      );
-}
-
-/// Commonly used spacing widgets as extensions.
-extension CommonSpacing on int {
-  /// Vertical spacing widgets.
-  Widget get vSpace => SizedBox(height: toDouble().h);
-  
-  /// Horizontal spacing widgets.
-  Widget get hSpace => SizedBox(width: toDouble().w);
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../domain/entities/note.dart';
 
@@ -31,32 +30,50 @@ class NotesListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(2.w),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(2.w),
-        child: Container(
-          padding: EdgeInsets.all(3.w),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(2.w),
-            color: _getNoteColor(context),
+    final noteColors = _getNoteColors(context);
+    
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            noteColors.primary,
+            noteColors.secondary,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: noteColors.primary.withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context),
-              SizedBox(height: 1.h),
-              _buildTitle(context),
-              SizedBox(height: 1.h),
-              _buildContent(context),
-              const Spacer(),
-              _buildFooter(context),
-            ],
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            constraints: const BoxConstraints(
+              minHeight: 120,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildHeader(context),
+                const SizedBox(height: 12),
+                _buildTitle(context),
+                const SizedBox(height: 8),
+                _buildContent(context),
+                const SizedBox(height: 12),
+                _buildFooter(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -64,62 +81,144 @@ class NotesListItem extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Row(
       children: [
+        // Vertical line icon at top left
+        Container(
+          width: 4,
+          height: 32,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.8),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 12),
         if (note.category != null) ...[
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(2.w),
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
             child: Text(
               note.category!,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w500,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
               ),
             ),
           ),
-          const Spacer(),
-        ] else
-          const Spacer(),
-        IconButton(
-          icon: Icon(
-            note.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-            size: 5.w,
-            color: note.isPinned
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        ],
+        const Spacer(),
+        if (note.isPinned) ...[
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.push_pin,
+              size: 16,
+              color: Colors.white,
+            ),
           ),
-          onPressed: onTogglePin,
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
-        ),
+          const SizedBox(width: 8),
+        ],
         PopupMenuButton<String>(
-          icon: Icon(
-            Icons.more_vert,
-            size: 5.w,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          icon: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.more_vert,
+              size: 18,
+              color: Colors.white,
+            ),
+          ),
+          color: Colors.white,
+          elevation: 8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          constraints: const BoxConstraints(
+            minWidth: 120,
+            maxWidth: 160,
           ),
           itemBuilder: (context) => [
             PopupMenuItem<String>(
               value: 'edit',
+              height: 40,
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.edit, size: 4.w),
-                  SizedBox(width: 2.w),
-                  const Text('Edit'),
+                  Icon(
+                    Icons.edit_outlined, 
+                    size: 18, 
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Edit', 
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface,
+                      fontSize: 14,
+                    ),
+                  ),
                 ],
               ),
             ),
             PopupMenuItem<String>(
-              value: 'delete',
+              value: 'pin',
+              height: 40,
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.delete, size: 4.w, color: Theme.of(context).colorScheme.error),
-                  SizedBox(width: 2.w),
-                  Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                  Icon(
+                    note.isPinned ? Icons.push_pin_outlined : Icons.push_pin,
+                    size: 18,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    note.isPinned ? 'Unpin' : 'Pin',
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const PopupMenuDivider(height: 8),
+            PopupMenuItem<String>(
+              value: 'delete',
+              height: 40,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.delete_outline, 
+                    size: 18, 
+                    color: theme.colorScheme.error,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Delete', 
+                    style: TextStyle(
+                      color: theme.colorScheme.error,
+                      fontSize: 14,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -128,6 +227,9 @@ class NotesListItem extends StatelessWidget {
             switch (value) {
               case 'edit':
                 onEdit();
+                break;
+              case 'pin':
+                onTogglePin();
                 break;
               case 'delete':
                 onDelete();
@@ -140,11 +242,14 @@ class NotesListItem extends StatelessWidget {
   }
 
   Widget _buildTitle(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Text(
       note.title.isEmpty ? 'Untitled Note' : note.title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.w600,
-        color: Theme.of(context).colorScheme.onSurface,
+      style: theme.textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+        fontSize: 16,
       ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
@@ -155,73 +260,321 @@ class NotesListItem extends StatelessWidget {
     final content = note.content.trim();
     if (content.isEmpty) return const SizedBox.shrink();
     
-    // Clean markdown for preview (remove markdown syntax for better card preview)
-    String cleanContent = content
-        .replaceAll(RegExp(r'#+\s'), '') // Remove headers
-        .replaceAll(RegExp(r'\*\*(.*?)\*\*'), r'$1') // Remove bold
-        .replaceAll(RegExp(r'\*(.*?)\*'), r'$1') // Remove italic
-        .replaceAll(RegExp(r'~~(.*?)~~'), r'$1') // Remove strikethrough
-        .replaceAll(RegExp(r'`(.*?)`'), r'$1') // Remove code
-        .replaceAll(RegExp(r'\[(.*?)\]\(.*?\)'), r'$1') // Remove links
-        .replaceAll(RegExp(r'^>\s', multiLine: true), '') // Remove quotes
-        .replaceAll(RegExp(r'^[-*+]\s', multiLine: true), '• ') // Format lists
-        .replaceAll(RegExp(r'^\d+\.\s', multiLine: true), '• ') // Format numbered lists
-        .replaceAll('\n', ' ')
-        .replaceAll(RegExp(r'\s+'), ' ') // Clean multiple spaces
-        .trim();
+    return _buildMarkdownPreview(context, content);
+  }
+
+  Widget _buildMarkdownPreview(BuildContext context, String content) {
+    final theme = Theme.of(context);
     
-    if (cleanContent.isEmpty) return const SizedBox.shrink();
+    // Parse markdown and convert to rich text spans
+    final spans = _parseMarkdownToSpans(content, theme);
     
-    return Text(
-      cleanContent,
-      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-        height: 1.3,
+    return RichText(
+      text: TextSpan(
+        children: spans,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: Colors.white.withValues(alpha: 0.9),
+          height: 1.4,
+          fontSize: 14,
+        ),
       ),
-      maxLines: 4,
+      maxLines: 3,
       overflow: TextOverflow.ellipsis,
     );
   }
 
+  List<TextSpan> _parseMarkdownToSpans(String content, ThemeData theme) {
+    final spans = <TextSpan>[];
+    final lines = content.split('\n');
+    
+    bool inCodeBlock = false;
+    String codeBlockContent = '';
+    
+    for (int i = 0; i < lines.length && i < 4; i++) { // Limit to 4 lines for preview
+      final line = lines[i].trim();
+      if (line.isEmpty) continue;
+      
+      // Handle code blocks
+      if (line.startsWith('```')) {
+        if (inCodeBlock) {
+          // End of code block - add the accumulated content
+          if (codeBlockContent.isNotEmpty) {
+            spans.add(TextSpan(
+              text: '[Code: ${codeBlockContent.length > 30 ? '${codeBlockContent.substring(0, 30)}...' : codeBlockContent}]',
+              style: TextStyle(
+                fontFamily: 'monospace',
+                backgroundColor: Colors.white.withValues(alpha: 0.2),
+                color: Colors.white.withValues(alpha: 0.8),
+                fontSize: 12,
+              ),
+            ));
+            spans.add(const TextSpan(text: ' '));
+          }
+          inCodeBlock = false;
+          codeBlockContent = '';
+        } else {
+          // Start of code block
+          inCodeBlock = true;
+          final language = line.substring(3).trim();
+          if (language.isNotEmpty) {
+            spans.add(TextSpan(
+              text: '[$language] ',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.white.withValues(alpha: 0.8),
+                fontSize: 12,
+              ),
+            ));
+          }
+        }
+        continue;
+      }
+      
+      if (inCodeBlock) {
+        if (codeBlockContent.isNotEmpty) codeBlockContent += '\n';
+        codeBlockContent += line;
+        continue;
+      }
+      
+      if (i > 0) {
+        spans.add(const TextSpan(text: ' '));
+      }
+      
+      // Headers
+      if (line.startsWith('# ')) {
+        spans.add(TextSpan(
+          text: line.substring(2),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.white,
+          ),
+        ));
+      } else if (line.startsWith('## ')) {
+        spans.add(TextSpan(
+          text: line.substring(3),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: Colors.white,
+          ),
+        ));
+      } else if (line.startsWith('### ')) {
+        spans.add(TextSpan(
+          text: line.substring(4),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ));
+      }
+      // Lists
+      else if (line.startsWith('- ')) {
+        spans.add(TextSpan(
+          text: '• ${line.substring(2)}',
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+        ));
+      }
+      else if (RegExp(r'^\d+\.\s').hasMatch(line)) {
+        final match = RegExp(r'^(\d+)\.\s(.*)').firstMatch(line);
+        if (match != null) {
+          spans.add(TextSpan(
+            text: '${match.group(1)}. ${match.group(2)}',
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+          ));
+        }
+      }
+      // Regular text with inline formatting
+      else {
+        spans.addAll(_parseInlineMarkdown(line, theme));
+      }
+    }
+    
+    // Handle unclosed code block
+    if (inCodeBlock && codeBlockContent.isNotEmpty) {
+      spans.add(TextSpan(
+        text: '[Code: ${codeBlockContent.length > 30 ? '${codeBlockContent.substring(0, 30)}...' : codeBlockContent}]',
+        style: TextStyle(
+          fontFamily: 'monospace',
+          backgroundColor: Colors.white.withValues(alpha: 0.2),
+          color: Colors.white.withValues(alpha: 0.8),
+          fontSize: 12,
+        ),
+      ));
+    }
+    
+    return spans.isEmpty 
+      ? [TextSpan(
+          text: content.length > 100 ? '${content.substring(0, 100)}...' : content,
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+        )]
+      : spans;
+  }
+
+  List<TextSpan> _parseInlineMarkdown(String text, ThemeData theme) {
+    final spans = <TextSpan>[];
+    final regex = RegExp(r'(\*\*.*?\*\*|\*(?!\*)(.*?)\*|~~(.*?)~~|`(.*?)`|\[(.*?)\]\((.*?)\))');
+    final matches = regex.allMatches(text);
+
+    int lastEnd = 0;
+
+    for (final match in matches) {
+      // Add text before the match
+      if (match.start > lastEnd) {
+        spans.add(TextSpan(
+          text: text.substring(lastEnd, match.start),
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+        ));
+      }
+
+      final matchText = match.group(0)!;
+      
+      // Bold
+      if (matchText.startsWith('**') && matchText.endsWith('**')) {
+        spans.add(TextSpan(
+          text: matchText.substring(2, matchText.length - 2),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ));
+      }
+      // Italic
+      else if (matchText.startsWith('*') && matchText.endsWith('*') && !matchText.startsWith('**')) {
+        spans.add(TextSpan(
+          text: matchText.substring(1, matchText.length - 1),
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            color: Colors.white.withValues(alpha: 0.9),
+          ),
+        ));
+      }
+      // Strikethrough
+      else if (matchText.startsWith('~~') && matchText.endsWith('~~')) {
+        spans.add(TextSpan(
+          text: matchText.substring(2, matchText.length - 2),
+          style: TextStyle(
+            decoration: TextDecoration.lineThrough,
+            color: Colors.white.withValues(alpha: 0.9),
+          ),
+        ));
+      }
+      // Inline code
+      else if (matchText.startsWith('`') && matchText.endsWith('`')) {
+        spans.add(TextSpan(
+          text: matchText.substring(1, matchText.length - 1),
+          style: TextStyle(
+            fontFamily: 'monospace',
+            backgroundColor: Colors.white.withValues(alpha: 0.2),
+            color: Colors.white.withValues(alpha: 0.8),
+          ),
+        ));
+      }
+      // Links
+      else if (matchText.startsWith('[') && matchText.contains('](')) {
+        final linkMatch = RegExp(r'\[(.*?)\]\((.*?)\)').firstMatch(matchText);
+        if (linkMatch != null) {
+          spans.add(TextSpan(
+            text: linkMatch.group(1)!,
+            style: TextStyle(
+              color: Colors.white,
+              decoration: TextDecoration.underline,
+            ),
+          ));
+        }
+      }
+      else {
+        spans.add(TextSpan(
+          text: matchText,
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+        ));
+      }
+
+      lastEnd = match.end;
+    }
+
+    // Add remaining text
+    if (lastEnd < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(lastEnd),
+        style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+      ));
+    }
+
+    return spans.isEmpty 
+      ? [TextSpan(
+          text: text,
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+        )]
+      : spans;
+  }
+
   Widget _buildFooter(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Row(
       children: [
-        Icon(
-          Icons.access_time,
-          size: 3.w,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-        ),
-        SizedBox(width: 1.w),
-        Text(
-          _formatDate(note.updatedAt),
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.access_time,
+                size: 12,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                _formatDate(note.updatedAt),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  Color? _getNoteColor(BuildContext context) {
-    if (note.color == null) return null;
-    
-    switch (note.color?.toLowerCase()) {
-      case 'blue':
-        return Colors.blue.withOpacity(0.05);
-      case 'green':
-        return Colors.green.withOpacity(0.05);
-      case 'orange':
-        return Colors.orange.withOpacity(0.05);
-      case 'purple':
-        return Colors.purple.withOpacity(0.05);
-      case 'red':
-        return Colors.red.withOpacity(0.05);
-      case 'yellow':
-        return Colors.yellow.withOpacity(0.05);
-      default:
-        return null;
-    }
+  /// Define color palette for notes
+  ({Color primary, Color secondary}) _getNoteColors(BuildContext context) {
+    // Create a deterministic color based on note ID or category
+    final colorIndex = (note.id.hashCode) % _colorPalettes.length;
+    return _colorPalettes[colorIndex];
   }
+
+  /// Beautiful gradient color palettes for notes
+  static const List<({Color primary, Color secondary})> _colorPalettes = [
+    // Sunset Orange
+    (primary: Color(0xFFFF6B6B), secondary: Color(0xFFFFE66D)),
+    // Ocean Blue
+    (primary: Color(0xFF4ECDC4), secondary: Color(0xFF44A08D)),
+    // Purple Dream
+    (primary: Color(0xFFA8EDEA), secondary: Color(0xFFFED6E3)),
+    // Forest Green
+    (primary: Color(0xFF56AB2F), secondary: Color(0xFFA8E6CF)),
+    // Royal Purple
+    (primary: Color(0xFF667EEA), secondary: Color(0xFF764BA2)),
+    // Pink Bliss
+    (primary: Color(0xFFFF8A80), secondary: Color(0xFFFFAB91)),
+    // Mint Fresh
+    (primary: Color(0xFF81C784), secondary: Color(0xFFAED581)),
+    // Cosmic Blue
+    (primary: Color(0xFF42A5F5), secondary: Color(0xFF29B6F6)),
+    // Lavender
+    (primary: Color(0xFFBA68C8), secondary: Color(0xFFE1BEE7)),
+    // Golden Hour
+    (primary: Color(0xFFFFB74D), secondary: Color(0xFFFFF176)),
+  ];
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();

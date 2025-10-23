@@ -1,8 +1,9 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// State for add note form
 abstract class AddNoteFormState extends Equatable {
+  /// Constructor for add note form state
   const AddNoteFormState();
   
   @override
@@ -10,19 +11,23 @@ abstract class AddNoteFormState extends Equatable {
 }
 
 /// Initial state
+/// 
 class AddNoteFormInitial extends AddNoteFormState {
+  ///  Constructor for initial state [initial state]
   const AddNoteFormInitial();
 }
 
 /// Loading state
 class AddNoteFormLoading extends AddNoteFormState {
+  /// Constructor for loading state [loading state]
   const AddNoteFormLoading();
 }
 
 /// Category selection state
 class AddNoteFormCategorySelected extends AddNoteFormState {
+  /// Constructor for category selected state
   const AddNoteFormCategorySelected({this.selectedCategory});
-  
+  /// Currently selected category
   final String? selectedCategory;
   
   @override
@@ -31,12 +36,14 @@ class AddNoteFormCategorySelected extends AddNoteFormState {
 
 /// Content updated state
 class AddNoteFormContentUpdated extends AddNoteFormState {
+  /// Constructor for content updated state
   const AddNoteFormContentUpdated({
     required this.content,
     this.selectedCategory,
   });
-  
+  /// Current content
   final String content;
+  /// Currently selected category
   final String? selectedCategory;
   
   @override
@@ -45,6 +52,7 @@ class AddNoteFormContentUpdated extends AddNoteFormState {
 
 /// Cubit for managing add note form state
 class AddNoteFormCubit extends Cubit<AddNoteFormState> {
+  /// Constructor for add note form cubit
   AddNoteFormCubit() : super(const AddNoteFormInitial());
   
   String? _selectedCategory;

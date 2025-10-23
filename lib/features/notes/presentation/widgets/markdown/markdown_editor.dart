@@ -163,15 +163,11 @@ class _MarkdownEditorContentState extends State<_MarkdownEditorContent> {
                 ),
                 BlocBuilder<MarkdownEditorCubit, MarkdownEditorState>(
                   builder: (context, state) {
-                    String content = '';
-                    if (state is MarkdownEditorContentUpdated) {
-                      content = state.content;
-                    } else {
-                      content = widget.contentController.text;
-                    }
+                    // Always use the current content from the controller for real-time updates
                     return MarkdownPreview(
-                      content: content,
+                      content: widget.contentController.text,
                       isSmallScreen: widget.isSmallScreen,
+                      comeFromDetail: false,
                     );
                   },
                 ),

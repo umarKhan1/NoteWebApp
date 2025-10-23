@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../../../../core/constants/app_strings.dart';
+import '../../../../../shared/extensions/widget_extensions.dart';
 import '../../cubit/add_note_form_cubit.dart';
 import '../../cubit/notes_cubit.dart';
 import '../markdown/markdown_editor.dart';
@@ -222,12 +222,12 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
                           // Title field
                           _buildTitleField(theme, isSmallMobile, isMobile, isTablet),
                           
-                          SizedBox(height: 1.h),
+                          1.vSpace,
                           
                           // Category selection
                           _buildCategorySection(theme, isSmallMobile, isMobile, isTablet),
                           
-                          SizedBox(height: 2.h),
+                          2.vSpace,
                           
                           // Markdown editor
                           Expanded(
@@ -304,58 +304,69 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
   }
 
   Widget _buildCategorySection(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
-  return Align(
-    alignment: Alignment.centerLeft,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppStrings.category,
-          style: theme.textTheme.titleSmall?.copyWith(
-            fontSize: isSmallMobile ? 13 : isMobile ? 14 : isTablet ? 16 : 18,
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppStrings.category,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontSize: isSmallMobile ? 13 : isMobile ? 14 : isTablet ? 16 : 18,
+            ),
+            textAlign: TextAlign.start,
           ),
-          textAlign: TextAlign.start,
-        ),
-        SizedBox(height: isSmallMobile ? 6 : isMobile ? 8 : 12),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Wrap(
-            alignment: WrapAlignment.start, // makes chips align left
-            spacing: isSmallMobile ? 4 : isMobile ? 6 : isTablet ? 8 : 10,
-            runSpacing: isSmallMobile ? 4 : isMobile ? 6 : isTablet ? 8 : 10,
-            children: _categories.map((category) {
-              final isSelected = _selectedCategory == category;
-              return FilterChip(
-                label: Text(
-                  category,
-                  style: TextStyle(
-                    fontSize: isSmallMobile ? 11 : isMobile ? 12 : isTablet ? 14 : 15,
-                  ),
-                ),
-                selected: isSelected,
-                onSelected: (selected) {
-                  final newCategory = selected ? category : null;
-                  _selectedCategory = newCategory;
-                  context.read<AddNoteFormCubit>().selectCategory(newCategory);
-                },
-                backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                selectedColor: theme.colorScheme.primaryContainer,
-                checkmarkColor: theme.colorScheme.primary,
-                padding: EdgeInsets.symmetric(
-                  horizontal: isSmallMobile ? 4 : isMobile ? 6 : isTablet ? 8 : 10,
-                  vertical: isSmallMobile ? 1 : isMobile ? 2 : isTablet ? 4 : 5,
-                ),
-                visualDensity: isSmallMobile || isMobile 
-                    ? VisualDensity.compact 
-                    : VisualDensity.standard,
-              );
-            }).toList(),
+          (isSmallMobile ? 6 : isMobile ? 8 : 12).verticalSpace,
+          Align(
+            alignment: Alignment.centerLeft,
+            child: BlocBuilder<AddNoteFormCubit, AddNoteFormState>(
+              builder: (context, state) {
+                String? selectedCategory;
+                if (state is AddNoteFormCategorySelected) {
+                  selectedCategory = state.selectedCategory;
+                } else if (state is AddNoteFormContentUpdated) {
+                  selectedCategory = state.selectedCategory;
+                }
+                
+                return Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: isSmallMobile ? 4 : isMobile ? 6 : isTablet ? 8 : 10,
+                  runSpacing: isSmallMobile ? 4 : isMobile ? 6 : isTablet ? 8 : 10,
+                  children: _categories.map((category) {
+                    final isSelected = selectedCategory == category;
+                    return FilterChip(
+                      label: Text(
+                        category,
+                        style: TextStyle(
+                          fontSize: isSmallMobile ? 11 : isMobile ? 12 : isTablet ? 14 : 15,
+                        ),
+                      ),
+                      selected: isSelected,
+                      showCheckmark: true,
+                      onSelected: (selected) {
+                        final newCategory = selected ? category : null;
+                        context.read<AddNoteFormCubit>().selectCategory(newCategory);
+                      },
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      selectedColor: theme.colorScheme.primaryContainer,
+                      checkmarkColor: theme.colorScheme.primary,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallMobile ? 4 : isMobile ? 6 : isTablet ? 8 : 10,
+                        vertical: isSmallMobile ? 1 : isMobile ? 2 : isTablet ? 4 : 5,
+                      ),
+                      visualDensity: isSmallMobile || isMobile 
+                          ? VisualDensity.compact 
+                          : VisualDensity.standard,
+                    );
+                  }).toList(),
+                );
+              },
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
 
   Widget _buildActionButtons(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {

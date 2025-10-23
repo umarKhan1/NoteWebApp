@@ -8,6 +8,7 @@ import '../cubit/notes_cubit.dart';
 import '../cubit/notes_state.dart';
 import '../cubit/notes_ui_cubit.dart';
 import '../cubit/notes_ui_state.dart';
+import '../widgets/note_detail/note_detail_modal.dart';
 import '../widgets/notes_list/notes_empty_state.dart';
 import '../widgets/notes_list/notes_list_item.dart';
 import '../widgets/notes_list/notes_loading_shimmer.dart';
@@ -296,8 +297,7 @@ class _NotesViewState extends State<_NotesView> {
             return NotesListItem(
               note: note,
               onTap: () {
-             
-                _showNoteDetailDialog(context, note.id);
+                NoteDetailModal.show(context, note);
               },
               onEdit: () {
               
@@ -321,22 +321,6 @@ class _NotesViewState extends State<_NotesView> {
       builder: (context) => AlertDialog(
         title: const Text('Add Note'),
         content: const Text('Add note functionality will be implemented soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showNoteDetailDialog(BuildContext context, String noteId) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Note Detail'),
-        content: const Text('Note detail view will be implemented soon!'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

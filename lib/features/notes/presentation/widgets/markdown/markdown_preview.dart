@@ -9,11 +9,14 @@ class MarkdownPreview extends StatelessWidget {
     super.key,
     required this.content,
     required this.isSmallScreen,
+    required this.comeFromDetail,
   });
   //// Markdown content to preview
   final String content;
   //// Responsive flag for small screens
   final bool isSmallScreen;
+  /// Flag to indicate if the widget comes from the note detail view
+  final bool comeFromDetail;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,9 @@ class MarkdownPreview extends StatelessWidget {
                 Text(
                   AppStrings.previewPlaceholder,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    color: comeFromDetail 
+                        ? Colors.white.withValues(alpha: 0.7)
+                        : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                     fontSize: isSmallScreen ? 16 : 18,
                   ),
                   textAlign: TextAlign.center,
@@ -44,7 +49,9 @@ class MarkdownPreview extends StatelessWidget {
                 Text(
                   AppStrings.previewEmptyDescription,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                    color: comeFromDetail 
+                        ? Colors.white.withValues(alpha: 0.5)
+                        : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                     fontSize: isSmallScreen ? 14 : 16,
                   ),
                   textAlign: TextAlign.center,
@@ -64,8 +71,34 @@ class MarkdownPreview extends StatelessWidget {
     final widgets = <Widget>[];
     final lines = text.split('\n');
     
+    bool inCodeBlock = false;
+    List<String> codeBlockLines = [];
+    String? codeLanguage;
+    
     for (int i = 0; i < lines.length; i++) {
       final line = lines[i];
+      
+      // Handle code blocks
+      if (line.startsWith('```')) {
+        if (inCodeBlock) {
+          // End of code block
+          widgets.add(_buildCodeBlock(codeBlockLines.join('\n'), theme, codeLanguage));
+          inCodeBlock = false;
+          codeBlockLines.clear();
+          codeLanguage = null;
+        } else {
+          // Start of code block
+          inCodeBlock = true;
+          codeLanguage = line.substring(3).trim();
+          if (codeLanguage.isEmpty) codeLanguage = null;
+        }
+        continue;
+      }
+      
+      if (inCodeBlock) {
+        codeBlockLines.add(line);
+        continue;
+      }
       
       if (line.trim().isEmpty) {
         widgets.add(SizedBox(height: isSmallScreen ? 8 : 12));
@@ -85,8 +118,8 @@ class MarkdownPreview extends StatelessWidget {
         widgets.add(_buildBulletListItem(line.trim().substring(2), theme));
       }
       // Numbered lists
-      else if (RegExp(r'^\d+\. ').hasMatch(line.trim())) {
-        final match = RegExp(r'^(\d+)\. (.*)').firstMatch(line.trim());
+      else if (RegExp(r'^\s*\d+\.\s+').hasMatch(line)) {
+        final match = RegExp(r'^\s*(\d+)\.\s+(.*)').firstMatch(line);
         if (match != null) {
           widgets.add(_buildNumberedListItem(match.group(2)!, theme, match.group(1)!));
         }
@@ -103,6 +136,11 @@ class MarkdownPreview extends StatelessWidget {
       widgets.add(SizedBox(height: isSmallScreen ? 6 : 8));
     }
     
+    // Handle unclosed code block
+    if (inCodeBlock && codeBlockLines.isNotEmpty) {
+      widgets.add(_buildCodeBlock(codeBlockLines.join('\n'), theme, codeLanguage));
+    }
+    
     return widgets;
   }
 
@@ -113,22 +151,27 @@ class MarkdownPreview extends StatelessWidget {
         style = theme.textTheme.headlineMedium?.copyWith(
           fontWeight: FontWeight.bold,
           fontSize: isSmallScreen ? 20 : 24,
+          color: comeFromDetail ? Colors.white : null,
         ) ?? const TextStyle();
         break;
       case 2:
         style = theme.textTheme.headlineSmall?.copyWith(
           fontWeight: FontWeight.bold,
           fontSize: isSmallScreen ? 18 : 22,
+          color: comeFromDetail ? Colors.white : null,
         ) ?? const TextStyle();
         break;
       case 3:
         style = theme.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.bold,
           fontSize: isSmallScreen ? 16 : 20,
+          color: comeFromDetail ? Colors.white : null,
         ) ?? const TextStyle();
         break;
       default:
-        style = theme.textTheme.bodyLarge ?? const TextStyle();
+        style = theme.textTheme.bodyLarge?.copyWith(
+          color: comeFromDetail ? Colors.white : null,
+        ) ?? const TextStyle();
     }
     
     return Padding(
@@ -159,7 +202,9 @@ class MarkdownPreview extends StatelessWidget {
             width: isSmallScreen ? 4 : 6,
             height: isSmallScreen ? 4 : 6,
             decoration: BoxDecoration(
-              color: theme.colorScheme.onSurfaceVariant,
+              color: comeFromDetail 
+                  ? Colors.white.withValues(alpha: 0.8)
+                  : theme.colorScheme.onSurfaceVariant,
               shape: BoxShape.circle,
             ),
           ),
@@ -232,7 +277,9 @@ class MarkdownPreview extends StatelessWidget {
           children: _buildFormattedTextSpans(text, theme, isQuote: true),
           style: theme.textTheme.bodyMedium?.copyWith(
             fontStyle: FontStyle.italic,
-            color: theme.colorScheme.onSurfaceVariant,
+            color: comeFromDetail 
+                ? Colors.white.withValues(alpha: 0.8)
+                : theme.colorScheme.onSurfaceVariant,
             fontSize: isSmallScreen ? 14 : 16,
           ),
         ),
@@ -248,6 +295,7 @@ class MarkdownPreview extends StatelessWidget {
           children: _buildFormattedTextSpans(text, theme),
           style: theme.textTheme.bodyMedium?.copyWith(
             fontSize: isSmallScreen ? 14 : 16,
+            color: comeFromDetail ? Colors.white : null,
           ),
         ),
       ),
@@ -270,9 +318,13 @@ class MarkdownPreview extends StatelessWidget {
           style: isQuote
               ? theme.textTheme.bodyMedium?.copyWith(
                   fontStyle: FontStyle.italic,
-                  color: theme.colorScheme.onSurfaceVariant,
+                  color: comeFromDetail 
+                      ? Colors.white.withValues(alpha: 0.8)
+                      : theme.colorScheme.onSurfaceVariant,
                 )
-              : theme.textTheme.bodyMedium,
+              : theme.textTheme.bodyMedium?.copyWith(
+                  color: comeFromDetail ? Colors.white : null,
+                ),
         ));
       }
 
@@ -287,9 +339,13 @@ class MarkdownPreview extends StatelessWidget {
         style: isQuote
             ? theme.textTheme.bodyMedium?.copyWith(
                 fontStyle: FontStyle.italic,
-                color: theme.colorScheme.onSurfaceVariant,
+                color: comeFromDetail 
+                    ? Colors.white.withValues(alpha: 0.8)
+                    : theme.colorScheme.onSurfaceVariant,
               )
-            : theme.textTheme.bodyMedium,
+            : theme.textTheme.bodyMedium?.copyWith(
+                color: comeFromDetail ? Colors.white : null,
+              ),
       ));
     }
 
@@ -300,9 +356,13 @@ class MarkdownPreview extends StatelessWidget {
               style: isQuote
                   ? theme.textTheme.bodyMedium?.copyWith(
                       fontStyle: FontStyle.italic,
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: comeFromDetail 
+                          ? Colors.white.withValues(alpha: 0.8)
+                          : theme.colorScheme.onSurfaceVariant,
                     )
-                  : theme.textTheme.bodyMedium,
+                  : theme.textTheme.bodyMedium?.copyWith(
+                      color: comeFromDetail ? Colors.white : null,
+                    ),
             )
           ]
         : spans;
@@ -312,9 +372,13 @@ class MarkdownPreview extends StatelessWidget {
     final baseStyle = isQuote
         ? theme.textTheme.bodyMedium?.copyWith(
             fontStyle: FontStyle.italic,
-            color: theme.colorScheme.onSurfaceVariant,
+            color: comeFromDetail 
+                ? Colors.white.withValues(alpha: 0.8)
+                : theme.colorScheme.onSurfaceVariant,
           )
-        : theme.textTheme.bodyMedium;
+        : theme.textTheme.bodyMedium?.copyWith(
+            color: comeFromDetail ? Colors.white : null,
+          );
 
     if (matchText.startsWith('**') && matchText.endsWith('**')) {
       return TextSpan(
@@ -332,12 +396,13 @@ class MarkdownPreview extends StatelessWidget {
         style: baseStyle?.copyWith(decoration: TextDecoration.lineThrough),
       );
     } else if (matchText.startsWith('`') && matchText.endsWith('`')) {
+      // Keep original styling for inline code - don't change color
       return TextSpan(
         text: matchText.substring(1, matchText.length - 1),
-        style: baseStyle?.copyWith(
+        style: theme.textTheme.bodyMedium?.copyWith(
           fontFamily: 'monospace',
           backgroundColor: theme.colorScheme.surfaceContainerHighest,
-          fontSize: (baseStyle.fontSize ?? 14) * 0.9,
+          fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) * 0.9,
         ),
       );
     } else if (matchText.startsWith('[') && matchText.contains('](')) {
@@ -354,5 +419,56 @@ class MarkdownPreview extends StatelessWidget {
     }
 
     return TextSpan(text: matchText, style: baseStyle);
+  }
+
+  Widget _buildCodeBlock(String code, ThemeData theme, String? language) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: isSmallScreen ? 8 : 12),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 12),
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (language != null && language.isNotEmpty) ...[
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: isSmallScreen ? 6 : 8,
+                vertical: isSmallScreen ? 2 : 4,
+              ),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                language,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontSize: isSmallScreen ? 10 : 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            SizedBox(height: isSmallScreen ? 8 : 12),
+          ],
+          SelectableText(
+            code,
+            style: TextStyle(
+              fontFamily: 'Courier',
+              fontSize: isSmallScreen ? 12 : 14,
+              color: theme.colorScheme.onSurface,
+              height: 1.4,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

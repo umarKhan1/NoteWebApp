@@ -5,6 +5,8 @@ import '../../../../core/base/base_stateless_widget.dart';
 import '../../../../shared/extensions/widget_extensions.dart';
 import '../cubit/notes_cubit.dart';
 import '../cubit/notes_state.dart';
+
+import '../widgets/notes_list/add_note_bottom_sheet.dart';
 import '../widgets/notes_list/notes_empty_state.dart';
 import '../widgets/notes_list/notes_list_item.dart';
 import '../widgets/notes_list/notes_loading_shimmer.dart';
@@ -14,6 +16,10 @@ class NotesContent extends BaseStatelessWidget {
   /// Creates a [NotesContent].
   const NotesContent({super.key});
 
+  void _showAddNoteDialog(BuildContext context) {
+    AddNoteBottomSheet.show(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final responsiveInfo = getResponsiveInfo(context);
@@ -22,11 +28,19 @@ class NotesContent extends BaseStatelessWidget {
     
     return BlocBuilder<NotesCubit, NotesState>(
       builder: (context, state) {
-        return SingleChildScrollView(
-          padding: EdgeInsets.all(isMobile ? 16 : 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        // Load notes on first build
+        if (state is NotesInitial) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.read<NotesCubit>().loadNotes();
+          });
+        }
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              padding: EdgeInsets.all(isMobile ? 16 : 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               // Page header info
               Text(
                 'Organize your thoughts and ideas',
@@ -78,8 +92,23 @@ class NotesContent extends BaseStatelessWidget {
                 _buildNotesGrid(context, state, isMobile)
               else
                 const NotesEmptyState(),
-            ],
-          ),
+                ],
+              ),
+            ),
+            
+            // Floating Action Button (only show when there are notes)
+            if (state is NotesLoaded && state.notes.isNotEmpty)
+              Positioned(
+                bottom: isMobile ? 16 : 24,
+                right: isMobile ? 16 : 24,
+                child: FloatingActionButton(
+                  onPressed: () => _showAddNoteDialog(context),
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  child: const Icon(Icons.add),
+                ),
+              ),
+          ],
         );
       },
     );

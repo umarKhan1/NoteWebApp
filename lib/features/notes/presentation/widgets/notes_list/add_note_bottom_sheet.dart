@@ -1,0 +1,461 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+
+import '../../cubit/notes_cubit.dart';
+import '../markdown/markdown_editor.dart';
+
+/// Beautiful sliding bottom sheet for adding notes
+class AddNoteBottomSheet extends StatefulWidget {
+  /// Constructor for add note bottom sheet [AddNoteBottomSheet]
+  const AddNoteBottomSheet({super.key});
+
+  /// Show the add note bottom sheet
+  static void show(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      useSafeArea: true,
+      constraints: BoxConstraints(
+        maxWidth: size.width >= 1024
+            ? 1100
+            : size.width >= 600
+                ? 900
+                : size.width,
+        maxHeight: size.height,
+      ),
+      builder: (context) => const AddNoteBottomSheet(),
+    );
+  }
+
+  @override
+  State<AddNoteBottomSheet> createState() => _AddNoteBottomSheetState();
+}
+
+class _AddNoteBottomSheetState extends State<AddNoteBottomSheet>
+    with TickerProviderStateMixin {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _contentController = TextEditingController();
+  
+  late TabController _tabController;
+  String? _selectedCategory;
+  bool _isLoading = false;
+  
+  final List<String> _categories = [
+    'Personal',
+    'Work',
+    'Study',
+    'Ideas',
+    'Shopping',
+    'Other',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _contentController.addListener(_onContentChanged);
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _onContentChanged() {
+    setState(() {}); // Refresh preview
+  }
+
+  void _handleSave() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() => _isLoading = true);
+      
+      try {
+        await context.read<NotesCubit>().createNote(
+          title: _titleController.text.trim(),
+          content: _contentController.text.trim(),
+          category: _selectedCategory,
+        );
+        
+        if (mounted) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('✅ Note created successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('❌ Failed to create note: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    }
+  }
+
+  void _handleCancel() {
+    Navigator.of(context).pop();
+  }
+
+  void _insertMarkdown(String before, String after) {
+    final text = _contentController.text;
+    final selection = _contentController.selection;
+    final start = selection.start.clamp(0, text.length);
+    final end = selection.end.clamp(0, text.length);
+    
+    final selectedText = text.substring(start, end);
+    final newText = text.replaceRange(
+      start,
+      end,
+      before + selectedText + after,
+    );
+    
+    _contentController.text = newText;
+    _contentController.selection = TextSelection.collapsed(
+      offset: start + before.length + selectedText.length + after.length,
+    );
+    
+    setState(() {}); // Refresh preview
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Responsive breakpoints
+    final isSmallMobile = screenWidth < 400;
+    final isMobile = screenWidth < 600;
+    final isTablet = screenWidth >= 600 && screenWidth < 1024;
+    final isDesktop = screenWidth >= 1024;
+
+    // Dynamic modal sizing - Better proportions with spacing
+    final maxWidth = isDesktop
+        ? 850  // Reduced from 1100 for better desktop proportions
+        : isTablet
+            ? screenWidth * 0.85  // Reduced from 900 for better tablet spacing
+            : screenWidth * 0.95;  // Add some margin on mobile
+    final maxHeight = isDesktop
+        ? screenHeight * 0.85  // Reduced from 0.92 for better spacing
+        : isTablet
+            ? screenHeight * 0.88  // Reduced from 0.94
+            : screenHeight * 0.93;  // Reduced from 0.98 for mobile spacing
+
+    return Align(
+      alignment: isDesktop ? Alignment.center : Alignment.bottomCenter,
+      child: Container(
+        margin: EdgeInsets.only(
+          top: isDesktop ? 40 : isTablet ? 20 : 20,
+          bottom: keyboardHeight + (isDesktop ? 40 : isTablet ? 30 : 20),
+          left: isDesktop ? 40 : isTablet ? 20 : 10,
+          right: isDesktop ? 40 : isTablet ? 20 : 10,
+        ),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: maxWidth.toDouble(),
+            maxHeight: maxHeight,
+          ),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(
+                isSmallMobile ? 12 : isMobile ? 16 : isTablet ? 20 : 24
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha:  isDesktop ? 0.18 : isTablet ? 0.15 : 0.1),
+                  blurRadius: isDesktop ? 40 : isTablet ? 30 : 20,
+                  offset: Offset(0, isDesktop ? -8 : isTablet ? -6 : -5),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                _buildHeader(theme, isSmallMobile, isMobile, isTablet),
+                
+                const Divider(height: 0.1),
+                
+                // Form content
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    child: Padding(
+                      padding: EdgeInsets.all(isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 10 : 10),
+                      child: Column(
+                        children: [
+                          // Title field
+                          _buildTitleField(theme, isSmallMobile, isMobile, isTablet),
+                          
+                          SizedBox(height: 1.h),
+                          
+                          // Category selection
+                          _buildCategorySection(theme, isSmallMobile, isMobile, isTablet),
+                          
+                          SizedBox(height: 2.h),
+                          
+                          // Markdown editor
+                          Expanded(
+                            child: MarkdownEditor(
+                              tabController: _tabController,
+                              contentController: _contentController,
+                              isSmallMobile: isSmallMobile,
+                              isMobile: isMobile,
+                              isTablet: isTablet,
+                              onInsertMarkdown: _insertMarkdown,
+                              onContentChanged: _onContentChanged,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                
+                // Action buttons
+                _buildActionButtons(theme, isSmallMobile, isMobile, isTablet),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: isSmallMobile ? 12 : isMobile ? 16 : isTablet ? 24 : 32, 
+        vertical: isSmallMobile ? 8 : isMobile ? 12 : 16
+      ),
+      child: Row(
+        children: [
+          Text(
+            'Create New Note',
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: isSmallMobile ? 13 : isMobile ? 12 : isTablet ? 15 : 20,
+            ),
+          ),
+         
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitleField(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
+    return TextFormField(
+      controller: _titleController,
+      decoration: InputDecoration(
+        labelText: 'Note Title',
+        hintText: 'Enter a catchy title...',
+        prefixIcon: Icon(Icons.title, size: isSmallMobile ? 18 : isMobile ? 20 : isTablet ? 15 : 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(isSmallMobile ? 6 : isMobile ? 8 : isTablet ? 12 : 14),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: isSmallMobile ? 10 : isMobile ? 12 : isTablet ? 10 : 10,
+          vertical: isSmallMobile ? 10 : isMobile ? 10 : isTablet ? 10 : 10,
+        ),
+      ),
+      style: TextStyle(fontSize: isSmallMobile ? 13 : isMobile ? 14 : isTablet ? 16 : 18),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Please enter a title';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildCategorySection(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Category',
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontSize: isSmallMobile ? 13 : isMobile ? 14 : isTablet ? 16 : 18,
+          ),
+          textAlign: TextAlign.start,
+        ),
+        SizedBox(height: isSmallMobile ? 6 : isMobile ? 8 : 12),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Wrap(
+            alignment: WrapAlignment.start, // makes chips align left
+            spacing: isSmallMobile ? 4 : isMobile ? 6 : isTablet ? 8 : 10,
+            runSpacing: isSmallMobile ? 4 : isMobile ? 6 : isTablet ? 8 : 10,
+            children: _categories.map((category) {
+              final isSelected = _selectedCategory == category;
+              return FilterChip(
+                label: Text(
+                  category,
+                  style: TextStyle(
+                    fontSize: isSmallMobile ? 11 : isMobile ? 12 : isTablet ? 14 : 15,
+                  ),
+                ),
+                selected: isSelected,
+                onSelected: (selected) {
+                  setState(() {
+                    _selectedCategory = selected ? category : null;
+                  });
+                },
+                backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                selectedColor: theme.colorScheme.primaryContainer,
+                checkmarkColor: theme.colorScheme.primary,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isSmallMobile ? 4 : isMobile ? 6 : isTablet ? 8 : 10,
+                  vertical: isSmallMobile ? 1 : isMobile ? 2 : isTablet ? 4 : 5,
+                ),
+                visualDensity: isSmallMobile || isMobile 
+                    ? VisualDensity.compact 
+                    : VisualDensity.standard,
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
+  Widget _buildActionButtons(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 24 : 28),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha:  0.3),
+        border: Border(
+          top: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha:  0.1),
+          ),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: isMobile
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Create button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _handleSave,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: isSmallMobile ? 12 : 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(isSmallMobile ? 6 : 8),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_circle, size: isSmallMobile ? 16 : 18),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Create Note',
+                                  style: TextStyle(fontSize: isSmallMobile ? 13 : 14),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                  SizedBox(height: isSmallMobile ? 6 : 8),
+                  // Cancel button
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: _isLoading ? null : _handleCancel,
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: isSmallMobile ? 12 : 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(isSmallMobile ? 6 : 8),
+                        ),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(fontSize: isSmallMobile ? 13 : 14),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _isLoading ? null : _handleCancel,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _handleSave,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_circle, size: 20),
+                                SizedBox(width: 8),
+                                Text('Create Note'),
+                              ],
+                            ),
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+}

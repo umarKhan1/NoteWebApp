@@ -152,13 +152,30 @@ class NotesListItem extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    final content = note.content.replaceAll('\n', ' ').trim();
+    final content = note.content.trim();
     if (content.isEmpty) return const SizedBox.shrink();
     
+    // Clean markdown for preview (remove markdown syntax for better card preview)
+    String cleanContent = content
+        .replaceAll(RegExp(r'#+\s'), '') // Remove headers
+        .replaceAll(RegExp(r'\*\*(.*?)\*\*'), r'$1') // Remove bold
+        .replaceAll(RegExp(r'\*(.*?)\*'), r'$1') // Remove italic
+        .replaceAll(RegExp(r'~~(.*?)~~'), r'$1') // Remove strikethrough
+        .replaceAll(RegExp(r'`(.*?)`'), r'$1') // Remove code
+        .replaceAll(RegExp(r'\[(.*?)\]\(.*?\)'), r'$1') // Remove links
+        .replaceAll(RegExp(r'^>\s', multiLine: true), '') // Remove quotes
+        .replaceAll(RegExp(r'^[-*+]\s', multiLine: true), '• ') // Format lists
+        .replaceAll(RegExp(r'^\d+\.\s', multiLine: true), '• ') // Format numbered lists
+        .replaceAll('\n', ' ')
+        .replaceAll(RegExp(r'\s+'), ' ') // Clean multiple spaces
+        .trim();
+    
+    if (cleanContent.isEmpty) return const SizedBox.shrink();
+    
     return Text(
-      content,
+      cleanContent,
       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
         height: 1.3,
       ),
       maxLines: 4,

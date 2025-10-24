@@ -5,11 +5,15 @@ import 'package:lottie/lottie.dart';
 import '../../../../core/base/base_stateless_widget.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/cubit/notes_cubit.dart';
 import '../../../notes/presentation/cubit/notes_state.dart';
+import '../../../notes/presentation/widgets/note_detail/note_detail_modal.dart';
+import 'all_notes_panel.dart';
 
 /// Recent notes preview widget
 class RecentNotesPreview extends BaseStatelessWidget {
+  /// Creates a [RecentNotesPreview].
   const RecentNotesPreview({super.key});
 
   @override
@@ -50,9 +54,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {
-                  // TODO: Navigate to all notes
-                },
+                onPressed: () => _showAllNotesPanel(context),
                 child: Text(
                   AppStrings.viewAll,
                   style: TextStyle(
@@ -68,7 +70,10 @@ class RecentNotesPreview extends BaseStatelessWidget {
           BlocBuilder<NotesCubit, NotesState>(
             builder: (context, state) {
               if (state is NotesLoading) {
-                return const Center(child: CircularProgressIndicator());
+                return const SizedBox(
+                  height: 220,
+                  child: Center(child: CircularProgressIndicator()),
+                );
               }
               
               if (state is NotesError) {
@@ -76,14 +81,37 @@ class RecentNotesPreview extends BaseStatelessWidget {
               }
               
               if (state is NotesLoaded && state.notes.isNotEmpty) {
-                final recentNotes = state.notes.take(3).toList();
-                return Column(
-                  children: recentNotes.map((note) => _buildNoteItem(
-                    context: context,
-                    title: note.title,
-                    content: note.content,
-                    updatedAt: note.updatedAt,
-                  )).toList(),
+                // Filter non-pinned notes and sort by date
+                final recentNotes = state.notes
+                  .where((note) => !note.isPinned)
+                  .toList()
+                  ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+                
+                if (recentNotes.isEmpty) {
+                  return _buildEmptyState();
+                }
+                
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(
+                      recentNotes.length,
+                      (index) => Padding(
+                        padding: EdgeInsets.only(
+                          right: 12,
+                          left: index == 0 ? 0 : 0,
+                        ),
+                        child: SizedBox(
+                          width: 250,
+                          height: 220,
+                          child: _buildNoteCard(
+                            context: context,
+                            note: recentNotes[index],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 );
               }
               
@@ -95,88 +123,164 @@ class RecentNotesPreview extends BaseStatelessWidget {
     );
   }
 
-  Widget _buildNoteItem({
-    required BuildContext context,
-    required String title,
-    required String content,
-    required DateTime updatedAt,
-  }) {
-    final theme = getTheme(context);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.description_outlined,
-              color: theme.colorScheme.primary,
-              size: 20,
-            ),
+  void _showAllNotesPanel(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black.withOpacity(0.3),
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (BuildContext buildContext, Animation animation,
+          Animation secondaryAnimation) {
+        return SizedBox.expand(
+          child: AllNotesPanel(
+            onClose: () => Navigator.of(buildContext).pop(),
           ),
-          const SizedBox(width: 12),
-          Expanded(
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1.0, 0.0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
+          child: child,
+        );
+      },
+    );
+  }
+
+  Widget _buildNoteCard({
+    required BuildContext context,
+    required Note note,
+  }) {
+    final noteColors = _getNoteColors(note.color);
+    
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            noteColors.primary,
+            noteColors.secondary,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: noteColors.primary.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => NoteDetailModal.show(context, note),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.all(14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
+                // Header with category badge
+                if (note.category != null) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.25),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.4),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      note.category!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                // Title
                 Text(
-                  title,
-                  style: TextStyle(
+                  note.title.isEmpty ? AppStrings.untitledNote : note.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                     fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  content,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                const SizedBox(height: 6),
+                // Content preview
+                if (note.content.isNotEmpty) ...[
+                  Expanded(
+                    child: Text(
+                      note.content.trim(),
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 12,
+                        height: 1.4,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
+                  const SizedBox(height: 8),
+                ] else
+                  const Spacer(),
+                // Footer with date
                 Text(
-                  _formatDate(updatedAt),
+                  _formatDate(note.updatedAt),
                   style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
                     fontSize: 10,
-                    color: theme.colorScheme.onSurface.withOpacity(0.4),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
           ),
-          IconButton(
-            onPressed: () {
-              // TODO: Navigate to note
-            },
-            icon: Icon(
-              Icons.arrow_forward_ios,
-              color: theme.colorScheme.onSurface.withOpacity(0.4),
-              size: 16,
-            ),
-          ),
-        ],
+        ),
       ),
     );
+  }
+
+  /// Get color palette for notes based on saved color or id
+  ({Color primary, Color secondary}) _getNoteColors(String? colorHex) {
+    // If color is saved, use it
+    if (colorHex != null && colorHex.isNotEmpty) {
+      try {
+        final color = Color(int.parse('FF${colorHex.replaceFirst('#', '')}', radix: 16));
+        return (
+          primary: color,
+          secondary: color.withOpacity(0.7),
+        );
+      } catch (e) {
+        // Fall back to default if parsing fails
+      }
+    }
+    
+    // Default color palettes if no saved color
+    const defaultPalettes = [
+      (primary: Color(0xFFFF6B6B), secondary: Color(0xFFFFE66D)),
+      (primary: Color(0xFF4ECDC4), secondary: Color(0xFF44A08D)),
+      (primary: Color(0xFFA8EDEA), secondary: Color(0xFFFED6E3)),
+    ];
+    
+    return defaultPalettes[0];
   }
 
   Widget _buildEmptyState() {

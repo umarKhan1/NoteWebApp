@@ -100,6 +100,7 @@ class NotesListItem extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
+        // Category badge
         if (note.category != null) ...[
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -120,129 +121,44 @@ class NotesListItem extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(width: 8),
         ],
-        const Spacer(),
+        // Pinned badge
         if (note.isPinned) ...[
           Container(
-            padding: const EdgeInsets.all(4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8),
+              color: Colors.white.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.4),
+                width: 1,
+              ),
             ),
-            child: Icon(
-              Icons.push_pin,
-              size: 16,
-              color: Colors.white,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.push_pin,
+                  size: 12,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Pinned',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 8),
         ],
-        PopupMenuButton<String>(
-          icon: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.more_vert,
-              size: 18,
-              color: Colors.white,
-            ),
-          ),
-          color: Colors.white,
-          elevation: 8,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          constraints: const BoxConstraints(
-            minWidth: 120,
-            maxWidth: 160,
-          ),
-          itemBuilder: (context) => [
-            PopupMenuItem<String>(
-              value: 'edit',
-              height: 40,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.edit_outlined, 
-                    size: 18, 
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Edit', 
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurface,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'pin',
-              height: 40,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    note.isPinned ? Icons.push_pin_outlined : Icons.push_pin,
-                    size: 18,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    note.isPinned ? 'Unpin' : 'Pin',
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurface,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const PopupMenuDivider(height: 8),
-            PopupMenuItem<String>(
-              value: 'delete',
-              height: 40,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.delete_outline, 
-                    size: 18, 
-                    color: theme.colorScheme.error,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Delete', 
-                    style: TextStyle(
-                      color: theme.colorScheme.error,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-          onSelected: (value) {
-            switch (value) {
-              case 'edit':
-                onEdit();
-                break;
-              case 'pin':
-                onTogglePin();
-                break;
-              case 'delete':
-                onDelete();
-                break;
-            }
-          },
-        ),
-      ],
+        const Spacer(),
+         ],
     );
   }
 

@@ -5,16 +5,28 @@ import '../../../../../core/constants/app_strings.dart';
 import '../../../../../shared/extensions/widget_extensions.dart';
 import '../../cubit/add_note_form_cubit.dart';
 import '../../cubit/notes_cubit.dart';
+import '../../../domain/entities/note.dart';
 import '../markdown/markdown_editor.dart';
 
 /// Beautiful sliding bottom sheet for adding notes
 class AddNoteBottomSheet extends StatelessWidget {
+  /// The existing note to edit (optional)
+  final Note? existingNote;
+  
+  /// Whether this is in edit mode
+  final bool isEdit;
+  
   /// Constructor for add note bottom sheet [AddNoteBottomSheet]
-  const AddNoteBottomSheet({super.key});
+  const AddNoteBottomSheet({
+    super.key,
+    this.existingNote,
+    this.isEdit = false,
+  });
 
   /// Show the add note bottom sheet
-  static void show(BuildContext context) {
+  static void show(BuildContext context, {Note? existingNote}) {
     final size = MediaQuery.of(context).size;
+    final isEdit = existingNote != null;
 
     showModalBottomSheet(
       context: context,
@@ -31,20 +43,35 @@ class AddNoteBottomSheet extends StatelessWidget {
       ),
       builder: (context) => BlocProvider(
         create: (context) => AddNoteFormCubit(),
-        child: const AddNoteBottomSheet(),
+        child: AddNoteBottomSheet(
+          existingNote: existingNote,
+          isEdit: isEdit,
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return const _AddNoteBottomSheetContent();
+    return _AddNoteBottomSheetContent(
+      existingNote: existingNote,
+      isEdit: isEdit,
+    );
   }
 }
 
 /// Internal content widget for the bottom sheet
 class _AddNoteBottomSheetContent extends StatefulWidget {
-  const _AddNoteBottomSheetContent();
+  /// The existing note to edit (optional)
+  final Note? existingNote;
+  
+  /// Whether this is in edit mode
+  final bool isEdit;
+  
+  const _AddNoteBottomSheetContent({
+    this.existingNote,
+    this.isEdit = false,
+  });
 
   @override
   State<_AddNoteBottomSheetContent> createState() => _AddNoteBottomSheetContentState();
@@ -72,6 +99,21 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _contentController.addListener(_onContentChanged);
+    
+    // Load existing note data if editing
+    if (widget.isEdit && widget.existingNote != null) {
+      final note = widget.existingNote!;
+      _titleController.text = note.title;
+      _contentController.text = note.content;
+      
+      // Set cubit state
+      context.read<AddNoteFormCubit>().setEditMode(
+        title: note.title,
+        content: note.content,
+        category: note.category,
+        isPinned: note.isPinned,
+      );
+    }
   }
 
   @override
@@ -89,11 +131,22 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
   void _handleSave() async {
     if (_formKey.currentState?.validate() ?? false) {
       // Trigger save through cubit - let cubit handle the business logic
-      context.read<AddNoteFormCubit>().saveNote(
-        title: _titleController.text.trim(),
-        content: _contentController.text.trim(),
-        notesCubit: context.read<NotesCubit>(),
-      );
+      if (widget.isEdit && widget.existingNote != null) {
+        // Update existing note
+        context.read<AddNoteFormCubit>().updateNote(
+          noteId: widget.existingNote!.id,
+          title: _titleController.text.trim(),
+          content: _contentController.text.trim(),
+          notesCubit: context.read<NotesCubit>(),
+        );
+      } else {
+        // Create new note
+        context.read<AddNoteFormCubit>().saveNote(
+          title: _titleController.text.trim(),
+          content: _contentController.text.trim(),
+          notesCubit: context.read<NotesCubit>(),
+        );
+      }
     }
   }
 
@@ -305,12 +358,79 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            AppStrings.category,
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontSize: isSmallMobile ? 13 : isMobile ? 14 : isTablet ? 16 : 18,
-            ),
-            textAlign: TextAlign.start,
+          // Category header with Pin checkbox
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppStrings.category,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontSize: isSmallMobile ? 13 : isMobile ? 14 : isTablet ? 16 : 18,
+                ),
+                textAlign: TextAlign.start,
+              ),
+              // Pin note checkbox at the end
+              BlocBuilder<AddNoteFormCubit, AddNoteFormState>(
+                builder: (context, state) {
+                  // Get isPinned from the state
+                  bool isPinned = false;
+                  if (state is AddNoteFormContentUpdated) {
+                    isPinned = state.isPinned;
+                  } else if (state is AddNoteFormSaveSuccess) {
+                    isPinned = state.isPinned;
+                  } else if (state is AddNoteFormSaveError) {
+                    isPinned = state.isPinned;
+                  }
+                  
+                  return GestureDetector(
+                    onTap: () {
+                      context.read<AddNoteFormCubit>().togglePin();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: isPinned ? theme.colorScheme.primary : theme.colorScheme.outline,
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.circular(6),
+                        color: isPinned
+                            ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+                            : Colors.transparent,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Checkbox(
+                            value: isPinned,
+                            visualDensity: VisualDensity.compact,
+                            onChanged: (value) {
+                              context.read<AddNoteFormCubit>().togglePin();
+                            },
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            'Pin note',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: isSmallMobile ? 11 : isMobile ? 12 : isTablet ? 13 : 14,
+                            ),
+                          ),
+                          if (isPinned) ...[
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.push_pin,
+                              size: isSmallMobile ? 12 : isMobile ? 13 : 14,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
           (isSmallMobile ? 6 : isMobile ? 8 : 12).verticalSpace,
           Align(
@@ -407,10 +527,13 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
                               : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.add_circle, size: isSmallMobile ? 16 : 18),
+                                    Icon(
+                                      widget.isEdit ? Icons.check_circle : Icons.add_circle,
+                                      size: isSmallMobile ? 16 : 18,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      AppStrings.createNote,
+                                      widget.isEdit ? 'Update Note' : AppStrings.createNote,
                                       style: TextStyle(fontSize: isSmallMobile ? 13 : 14),
                                     ),
                                   ],
@@ -468,12 +591,15 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
                                   height: 20,
                                   child: CircularProgressIndicator(strokeWidth: 2),
                                 )
-                              : const Row(
+                              : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                     Icon(Icons.add_circle, size: 20),
-                                     SizedBox(width: 8),
-                                    Text(AppStrings.createNote),
+                                    Icon(
+                                      widget.isEdit ? Icons.check_circle : Icons.add_circle,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(widget.isEdit ? 'Update Note' : AppStrings.createNote),
                                   ],
                                 ),
                         ),

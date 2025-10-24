@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/services/note_pdf_service.dart';
 import '../../../domain/entities/note.dart';
+import '../../cubit/notes_cubit.dart';
 import '../markdown/markdown_preview.dart';
+import '../notes_list/add_note_bottom_sheet.dart';
 
 /// Beautiful note detail modal that matches the card colors
 class NoteDetailModal extends StatelessWidget {
@@ -273,7 +276,8 @@ class NoteDetailModal extends StatelessWidget {
   }
 
   Widget _buildActionButtons(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
-    return Container(
+    return Builder(
+      builder: (context) => Container(
       padding: EdgeInsets.all(isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 24 : 28),
       child: SafeArea(
         top: false,
@@ -309,7 +313,8 @@ class NoteDetailModal extends StatelessWidget {
                 icon: Icons.edit_outlined,
                 label: 'Edit Note',
                 onPressed: () {
-                  // TODO: Implement edit functionality
+                  Navigator.of(context).pop();
+                  AddNoteBottomSheet.show(context, existingNote: note);
                 },
                 isSmallMobile: isSmallMobile,
                 isMobile: isMobile,
@@ -319,7 +324,7 @@ class NoteDetailModal extends StatelessWidget {
                 icon: Icons.delete_outline,
                 label: 'Delete Note',
                 onPressed: () {
-                  // TODO: Implement delete functionality
+                  _showDeleteConfirmation(context);
                 },
                 isSmallMobile: isSmallMobile,
                 isMobile: isMobile,
@@ -361,7 +366,8 @@ class NoteDetailModal extends StatelessWidget {
                       icon: Icons.edit_outlined,
                       label: 'Edit Note',
                       onPressed: () {
-                        // TODO: Implement edit functionality
+                        Navigator.of(context).pop();
+                        AddNoteBottomSheet.show(context, existingNote: note);
                       },
                       isSmallMobile: isSmallMobile,
                       isMobile: isMobile,
@@ -373,7 +379,7 @@ class NoteDetailModal extends StatelessWidget {
                       icon: Icons.delete_outline,
                       label: 'Delete Note',
                       onPressed: () {
-                        // TODO: Implement delete functionality
+                        _showDeleteConfirmation(context);
                       },
                       isSmallMobile: isSmallMobile,
                       isMobile: isMobile,
@@ -385,6 +391,7 @@ class NoteDetailModal extends StatelessWidget {
             ],
           ],
         ),
+      ),
       ),
     );
   }
@@ -474,5 +481,70 @@ class NoteDetailModal extends StatelessWidget {
     } else {
       return 'Just now';
     }
+  }
+  
+  /// Show delete confirmation dialog
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return ScaleTransition(
+          scale: Tween<double>(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+              parent: ModalRoute.of(dialogContext)!.animation!,
+              curve: Curves.easeOutBack,
+            ),
+          ),
+          child: FadeTransition(
+            opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+              ModalRoute.of(dialogContext)!.animation!,
+            ),
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: const Text(
+                'Delete Note',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: const Text(
+                'Are you sure you want to delete this note? This action cannot be undone.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(
+                    'No',
+                    style: TextStyle(
+                      color: Theme.of(dialogContext).colorScheme.primary,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(dialogContext).pop(); // Close dialog
+                    Navigator.of(context).pop(); // Close note detail modal
+                    
+                    // Delete the note through NotesCubit
+                    if (context.mounted) {
+                      try {
+                        context.read<NotesCubit>().deleteNote(note.id);
+                      } catch (e) {
+                        // Handle error silently
+                      }
+                    }
+                  },
+                  child: Text(
+                    'Yes',
+                    style: TextStyle(color: Colors.red.shade300),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

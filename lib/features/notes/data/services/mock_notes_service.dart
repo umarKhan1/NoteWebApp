@@ -133,7 +133,7 @@ class MockNotesService {
     
     final index = _mockNotes.indexWhere((note) => note.id == id);
     if (index == -1) {
-      throw Exception('Note not found');
+      throw Exception('Note not found with id: $id');
     }
     
     final updatedNote = _mockNotes[index].copyWith(

@@ -128,12 +128,19 @@ class NotesContent extends BaseStatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final crossAxisCount = _getCrossAxisCount(screenWidth);
 
+    // Sort notes: pinned notes first, then unpinned
+    final sortedNotes = [...state.notes]..sort((a, b) {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return 0;
+    });
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Wrap(
           spacing: 16,
           runSpacing: 16,
-          children: state.notes.map((note) {
+          children: sortedNotes.map((note) {
             final itemWidth = (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
             
             return SizedBox(

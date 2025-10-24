@@ -212,13 +212,9 @@ class NotesCubit extends Cubit<NotesState> {
           notes: currentState.notes,
           operation: 'Updating note...',
         ));
-      } else {
-        emit(const NotesOperationInProgress(operation: 'Updating note...'));
       }
 
       await _togglePinNoteUseCase(id);
-
-      // Reload all notes to get the updated list
       await loadNotes();
     } catch (e) {
       emit(NotesError(

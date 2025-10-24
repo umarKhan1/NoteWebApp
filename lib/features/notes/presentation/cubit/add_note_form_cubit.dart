@@ -40,14 +40,30 @@ class AddNoteFormContentUpdated extends AddNoteFormState {
   const AddNoteFormContentUpdated({
     required this.content,
     this.selectedCategory,
+    this.isPinned = false,
   });
   /// Current content
   final String content;
   /// Currently selected category
   final String? selectedCategory;
+  /// Pin status
+  final bool isPinned;
+  
+  /// Create a copy with modified fields
+  AddNoteFormContentUpdated copyWith({
+    String? content,
+    String? selectedCategory,
+    bool? isPinned,
+  }) {
+    return AddNoteFormContentUpdated(
+      content: content ?? this.content,
+      selectedCategory: selectedCategory ?? this.selectedCategory,
+      isPinned: isPinned ?? this.isPinned,
+    );
+  }
   
   @override
-  List<Object?> get props => [content, selectedCategory];
+  List<Object?> get props => [content, selectedCategory, isPinned];
 }
 
 /// Save success state
@@ -56,14 +72,17 @@ class AddNoteFormSaveSuccess extends AddNoteFormState {
   const AddNoteFormSaveSuccess({
     required this.content,
     this.selectedCategory,
+    this.isPinned = false,
   });
   /// Current content
   final String content;
   /// Currently selected category
   final String? selectedCategory;
+  /// Pin status
+  final bool isPinned;
   
   @override
-  List<Object?> get props => [content, selectedCategory];
+  List<Object?> get props => [content, selectedCategory, isPinned];
 }
 
 /// Save error state
@@ -73,6 +92,7 @@ class AddNoteFormSaveError extends AddNoteFormState {
     required this.error,
     required this.content,
     this.selectedCategory,
+    this.isPinned = false,
   });
   /// Error message
   final String error;
@@ -80,9 +100,11 @@ class AddNoteFormSaveError extends AddNoteFormState {
   final String content;
   /// Currently selected category
   final String? selectedCategory;
+  /// Pin status
+  final bool isPinned;
   
   @override
-  List<Object?> get props => [error, content, selectedCategory];
+  List<Object?> get props => [error, content, selectedCategory, isPinned];
 }
 
 /// Cubit for managing add note form state
@@ -92,12 +114,16 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
   
   String? _selectedCategory;
   String _content = '';
+  bool _isPinned = false;
   
   /// Get current selected category
   String? get selectedCategory => _selectedCategory;
   
   /// Get current content
   String get content => _content;
+  
+  /// Get pin status
+  bool get isPinned => _isPinned;
   
   /// Set loading state
   void setLoading(bool isLoading) {
@@ -108,6 +134,7 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
       emit(AddNoteFormContentUpdated(
         content: _content,
         selectedCategory: _selectedCategory,
+        isPinned: _isPinned,
       ));
     }
   }
@@ -115,19 +142,33 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
   /// Select category
   void selectCategory(String? category) {
     _selectedCategory = category;
-    // Always emit ContentUpdated to preserve both content and category
+    // Always emit ContentUpdated to preserve all state including isPinned
     emit(AddNoteFormContentUpdated(
       content: _content,
       selectedCategory: category,
+      isPinned: _isPinned,
     ));
   }
   
   /// Update content
   void updateContent(String content) {
     _content = content;
+    // Use copyWith to preserve isPinned when updating content
     emit(AddNoteFormContentUpdated(
       content: content,
       selectedCategory: _selectedCategory,
+      isPinned: _isPinned,
+    ));
+  }
+  
+  /// Toggle pin status
+  void togglePin() {
+    _isPinned = !_isPinned;
+    // Preserve all other state when toggling pin
+    emit(AddNoteFormContentUpdated(
+      content: _content,
+      selectedCategory: _selectedCategory,
+      isPinned: _isPinned,
     ));
   }
   
@@ -135,7 +176,25 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
   void reset() {
     _selectedCategory = null;
     _content = '';
+    _isPinned = false;
     emit(const AddNoteFormInitial());
+  }
+  
+  /// Set edit mode with existing note data
+  void setEditMode({
+    required String title,
+    required String content,
+    String? category,
+    bool isPinned = false,
+  }) {
+    _content = content;
+    _selectedCategory = category;
+    _isPinned = isPinned;
+    emit(AddNoteFormContentUpdated(
+      content: content,
+      selectedCategory: category,
+      isPinned: isPinned,
+    ));
   }
   
   /// Save note with current form data
@@ -151,19 +210,57 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
         title: title,
         content: content,
         category: _selectedCategory,
+        isPinned: _isPinned,
       );
       
-      // Emit success state
+      // Emit success state with all current data preserved
       emit(AddNoteFormSaveSuccess(
         content: _content,
         selectedCategory: _selectedCategory,
+        isPinned: _isPinned,
       ));
     } catch (e) {
-      // Emit error state
+      // Emit error state with all current data preserved
       emit(AddNoteFormSaveError(
         error: e.toString(),
         content: _content,
         selectedCategory: _selectedCategory,
+        isPinned: _isPinned,
+      ));
+    }
+  }
+  
+  /// Update existing note with current form data
+  Future<void> updateNote({
+    required String noteId,
+    required String title,
+    required String content,
+    required dynamic notesCubit, // Using dynamic to avoid circular dependency
+  }) async {
+    setLoading(true);
+    
+    try {
+      await notesCubit.updateNote(
+        id: noteId,
+        title: title,
+        content: content,
+        category: _selectedCategory,
+        isPinned: _isPinned,
+      );
+      
+      // Emit success state with all current data preserved
+      emit(AddNoteFormSaveSuccess(
+        content: _content,
+        selectedCategory: _selectedCategory,
+        isPinned: _isPinned,
+      ));
+    } catch (e) {
+      // Emit error state with all current data preserved
+      emit(AddNoteFormSaveError(
+        error: e.toString(),
+        content: _content,
+        selectedCategory: _selectedCategory,
+        isPinned: _isPinned,
       ));
     }
   }

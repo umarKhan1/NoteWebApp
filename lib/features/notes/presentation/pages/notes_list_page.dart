@@ -8,6 +8,7 @@ import '../cubit/notes_cubit.dart';
 import '../cubit/notes_state.dart';
 import '../cubit/notes_ui_cubit.dart';
 import '../cubit/notes_ui_state.dart';
+import '../widgets/add_edit_note_modal.dart';
 import '../widgets/note_detail/note_detail_modal.dart';
 import '../widgets/notes_list/notes_empty_state.dart';
 import '../widgets/notes_list/notes_list_item.dart';
@@ -278,6 +279,13 @@ class _NotesViewState extends State<_NotesView> {
     final isTablet = Device.screenType == ScreenType.tablet;
     final crossAxisCount = isTablet ? 3 : 2;
     
+    // Sort notes: pinned notes first, then unpinned
+    final sortedNotes = [...state.notes]..sort((a, b) {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return 0;
+    });
+    
     return RefreshIndicator(
       onRefresh: () async {
         await context.read<NotesCubit>().loadNotes();
@@ -291,22 +299,23 @@ class _NotesViewState extends State<_NotesView> {
             mainAxisSpacing: 2.w,
             childAspectRatio: isTablet ? 1.2 : 0.8,
           ),
-          itemCount: state.notes.length,
+          itemCount: sortedNotes.length,
           itemBuilder: (context, index) {
-            final note = state.notes[index];
+            final note = sortedNotes[index];
             return NotesListItem(
               note: note,
               onTap: () {
                 NoteDetailModal.show(context, note);
               },
               onEdit: () {
-              
+                AddEditNoteModal.show(context, noteToEdit: note);
               },
               onDelete: () {
                 _showDeleteConfirmation(context, note.id, note.title);
               },
-              onTogglePin: () {
-                context.read<NotesCubit>().togglePinNote(note.id);
+              onTogglePin: () async {
+                final cubit = context.read<NotesCubit>();
+                await cubit.togglePinNote(note.id);
               },
             );
           },

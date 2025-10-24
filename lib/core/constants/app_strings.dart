@@ -423,8 +423,14 @@ class AppStrings {
   /// Pin note action text.
   static const String pinNote = 'Pin Note';
   
+  /// Short pin action text.
+  static const String pin = 'Pin';
+  
   /// Unpin note action text.
   static const String unpinNote = 'Unpin Note';
+  
+  /// Short unpin action text.
+  static const String unpin = 'Unpin';
   
   /// More options text.
   static const String moreOptions = 'More Options';

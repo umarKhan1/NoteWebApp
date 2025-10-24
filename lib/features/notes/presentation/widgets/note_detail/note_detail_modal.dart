@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../data/services/note_pdf_service.dart';
 import '../../../domain/entities/note.dart';
 import '../markdown/markdown_preview.dart';
 
@@ -170,15 +171,18 @@ class NoteDetailModal extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.8),
                     ),
                     SizedBox(width: isSmallMobile ? 4 : 8),
-                    Text(
-                      _formatDate(note.updatedAt),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: isSmallMobile ? 12 : isMobile ? 14 : 16,
+                    Expanded(
+                      child: Text(
+                        _formatDate(note.updatedAt),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: isSmallMobile ? 12 : isMobile ? 14 : 16,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (note.isPinned) ...[
-                      SizedBox(width: isSmallMobile ? 12 : 16),
+                      SizedBox(width: isSmallMobile ? 8 : 12),
                       Container(
                         padding: EdgeInsets.all(isSmallMobile ? 4 : 6),
                         decoration: BoxDecoration(
@@ -281,9 +285,7 @@ class NoteDetailModal extends StatelessWidget {
               _buildActionButton(
                 icon: Icons.print_outlined,
                 label: 'Print',
-                onPressed: () {
-                  // TODO: Implement print functionality
-                },
+                onPressed: () => _handlePrint(),
                 isSmallMobile: isSmallMobile,
                 isMobile: isMobile,
               ),
@@ -291,8 +293,13 @@ class NoteDetailModal extends StatelessWidget {
               _buildActionButton(
                 icon: Icons.picture_as_pdf_outlined,
                 label: 'Download PDF',
-                onPressed: () {
-                  // TODO: Implement PDF download functionality
+                onPressed: () async {
+                  try {
+                    await NotePdfService.downloadNotePdf(note);
+                  } catch (e) {
+                    // Handle error silently - could show a toast/snackbar if needed
+                    // For now, we'll just prevent crashes
+                  }
                 },
                 isSmallMobile: isSmallMobile,
                 isMobile: isMobile,
@@ -326,9 +333,7 @@ class NoteDetailModal extends StatelessWidget {
                     child: _buildActionButton(
                       icon: Icons.print_outlined,
                       label: 'Print',
-                      onPressed: () {
-                        // TODO: Implement print functionality
-                      },
+                      onPressed: () => _handlePrint(),
                       isSmallMobile: isSmallMobile,
                       isMobile: isMobile,
                     ),
@@ -338,8 +343,13 @@ class NoteDetailModal extends StatelessWidget {
                     child: _buildActionButton(
                       icon: Icons.picture_as_pdf_outlined,
                       label: 'Download PDF',
-                      onPressed: () {
-                        // TODO: Implement PDF download functionality
+                      onPressed: () async {
+                        try {
+                          await NotePdfService.downloadNotePdf(note);
+                        } catch (e) {
+                          // Handle error silently - could show a toast/snackbar if needed
+                          // For now, we'll just prevent crashes
+                        }
                       },
                       isSmallMobile: isSmallMobile,
                       isMobile: isMobile,
@@ -425,6 +435,16 @@ class NoteDetailModal extends StatelessWidget {
   ({Color primary, Color secondary}) _getNoteColors() {
     final colorIndex = (note.id.hashCode) % _colorPalettes.length;
     return _colorPalettes[colorIndex];
+  }
+
+  /// Handle print button press
+  void _handlePrint() {
+    try {
+      NotePdfService.printNotePdf(note);
+    } catch (e) {
+      // Handle error silently - could show a toast/snackbar if needed
+      // For now, we'll just prevent crashes
+    }
   }
 
   /// Color palettes matching the note cards

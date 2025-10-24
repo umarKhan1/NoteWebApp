@@ -58,6 +58,12 @@ dependencies:
   
   # Markdown
   markdown_widget: ^2.3.2+6
+  markdown: ^7.2.2
+  
+  # Web utilities
+  web: ^1.0.0
+  pdf: ^3.11.3
+  printing: ^5.14.2
 
 dev_dependencies:
   flutter_test:

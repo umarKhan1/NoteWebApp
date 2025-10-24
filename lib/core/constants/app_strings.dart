@@ -373,10 +373,20 @@ class AppStrings {
   static const String previewEmptyDescription = 'Start writing to see a live preview\nof your markdown formatting';
   
   /// Markdown hints for small screens.
-  static const String markdownHintsSmall = '📝 Start writing your note...\n\n✨ Markdown tips:\n• **bold** or *italic*\n• # Header\n• - List item\n• `code`';
+  static const String markdownHintsSmall = 'Start writing...\n\n# Header\n- List item\n**bold** *italic*\n\nTip: Keep it simple for PDF export';
   
   /// Markdown hints for large screens.
-  static const String markdownHintsLarge = '📝 Start writing your note...\n\n✨ Markdown tips:\n• **bold** or *italic*\n• # Header\n• - List item\n• `code` or ~~strikethrough~~\n• [link](url) or > quote';
+  static const String markdownHintsLarge = 'Start writing your note...\n\n# Header\n## Smaller header\n- List item\n1. Numbered list\n**bold** *italic*\n\nKeep it simple for best PDF results';
+  
+  // PDF Export Guidance
+  /// PDF friendly markdown features.
+  static const String pdfFriendlyFeatures = 'Works in PDF:\n# Headers\n- Lists\nPlain text\n**Bold text**';
+  
+  /// PDF limitations warning.
+  static const String pdfLimitations = 'PDF converts:\nEmojis to text\nTables to text\nLinks to text';
+  
+  /// PDF hint title.
+  static const String pdfExportHint = 'PDF Tips';
   
   // Note Categories
   /// Personal category.

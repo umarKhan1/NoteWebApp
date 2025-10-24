@@ -13,6 +13,8 @@ class NotesLoadingShimmer extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(2.w),
       child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
           crossAxisSpacing: 2.w,
@@ -81,12 +83,14 @@ class _ShimmerNoteCardState extends State<_ShimmerNoteCard>
                 // Header with category and pin
                 Row(
                   children: [
-                    _buildShimmerBox(
-                      width: 15.w,
-                      height: 2.5.h,
-                      opacity: _animation.value,
+                    Expanded(
+                      child: _buildShimmerBox(
+                        width: double.infinity,
+                        height: 2.5.h,
+                        opacity: _animation.value,
+                      ),
                     ),
-                    const Spacer(),
+                    SizedBox(width: 2.w),
                     _buildShimmerBox(
                       width: 6.w,
                       height: 6.w,
@@ -105,7 +109,7 @@ class _ShimmerNoteCardState extends State<_ShimmerNoteCard>
                 ),
                 SizedBox(height: 0.5.h),
                 _buildShimmerBox(
-                  width: 60.w,
+                  width: double.infinity,
                   height: 2.h,
                   opacity: _animation.value,
                 ),
@@ -125,7 +129,7 @@ class _ShimmerNoteCardState extends State<_ShimmerNoteCard>
                 ),
                 SizedBox(height: 0.3.h),
                 _buildShimmerBox(
-                  width: 40.w,
+                  width: double.infinity,
                   height: 1.5.h,
                   opacity: _animation.value * 0.7,
                 ),
@@ -134,7 +138,7 @@ class _ShimmerNoteCardState extends State<_ShimmerNoteCard>
                 
                 // Footer with time
                 _buildShimmerBox(
-                  width: 20.w,
+                  width: double.infinity,
                   height: 1.5.h,
                   opacity: _animation.value * 0.5,
                 ),
@@ -153,13 +157,16 @@ class _ShimmerNoteCardState extends State<_ShimmerNoteCard>
     required double opacity,
   }) {
     return Container(
-      width: width,
+      width: width == double.infinity ? null : width,
       height: height,
+      constraints: width == double.infinity 
+          ? const BoxConstraints(minWidth: 0, maxWidth: double.infinity)
+          : null,
       decoration: BoxDecoration(
         color: Theme.of(context)
             .colorScheme
             .onSurface
-            .withOpacity(0.1 + (opacity * 0.1)),
+            .withValues(alpha: 0.1 + (opacity * 0.1)),
         borderRadius: BorderRadius.circular(borderRadius ?? 1.w),
       ),
     );

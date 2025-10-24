@@ -88,45 +88,17 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
 
   void _handleSave() async {
     if (_formKey.currentState?.validate() ?? false) {
-      context.read<AddNoteFormCubit>().setLoading(true);
-      
-      try {
-        // Get the selected category from the cubit
-        final selectedCategory = context.read<AddNoteFormCubit>().selectedCategory;
-        
-        await context.read<NotesCubit>().createNote(
-          title: _titleController.text.trim(),
-          content: _contentController.text.trim(),
-          category: selectedCategory,
-        );
-        
-        if (mounted) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(AppStrings.noteCreatedSuccess),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${AppStrings.noteCreationFailed}: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } finally {
-        if (mounted) {
-          context.read<AddNoteFormCubit>().setLoading(false);
-        }
-      }
+      // Trigger save through cubit - let cubit handle the business logic
+      context.read<AddNoteFormCubit>().saveNote(
+        title: _titleController.text.trim(),
+        content: _contentController.text.trim(),
+        notesCubit: context.read<NotesCubit>(),
+      );
     }
   }
 
   void _handleCancel() {
+    context.read<AddNoteFormCubit>().reset();
     Navigator.of(context).pop();
   }
 
@@ -247,10 +219,32 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
                       ),
                     ),
                   ),
-                ),
-                
-                // Action buttons
-                _buildActionButtons(theme, isSmallMobile, isMobile, isTablet),
+                ),                  // Action buttons with BlocListener for save operations
+                  BlocListener<AddNoteFormCubit, AddNoteFormState>(
+                    listener: (context, state) {
+                      if (state is AddNoteFormSaveSuccess) {
+                        if (mounted) {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(AppStrings.noteCreatedSuccess),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      } else if (state is AddNoteFormSaveError) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('${AppStrings.noteCreationFailed}: ${state.error}'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: _buildActionButtons(theme, isSmallMobile, isMobile, isTablet),
+                  ),
               ],
             ),
           ),
@@ -474,11 +468,11 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
                                   height: 20,
                                   child: CircularProgressIndicator(strokeWidth: 2),
                                 )
-                              : Row(
+                              : const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.add_circle, size: 20),
-                                    const SizedBox(width: 8),
+                                     Icon(Icons.add_circle, size: 20),
+                                     SizedBox(width: 8),
                                     Text(AppStrings.createNote),
                                   ],
                                 ),

@@ -1,18 +1,50 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../data/services/mock_notes_service.dart';
 import '../../domain/entities/note.dart';
+import '../../domain/usecases/get_notes_usecase.dart';
+import '../../domain/usecases/add_note_usecase.dart';
+import '../../domain/usecases/update_note_usecase.dart';
+import '../../domain/usecases/delete_note_usecase.dart';
+import '../../domain/usecases/search_notes_usecase.dart';
+import '../../domain/usecases/get_note_by_id_usecase.dart';
+import '../../domain/usecases/get_notes_by_category_usecase.dart';
+import '../../domain/usecases/toggle_pin_note_usecase.dart';
+import '../../domain/usecases/get_categories_usecase.dart';
+import '../../data/repositories/notes_repository_impl.dart';
 import 'notes_state.dart';
 
 /// Cubit for managing notes state and operations
 class NotesCubit extends Cubit<NotesState> {
-  NotesCubit() : super(const NotesInitial());
+  // Use cases
+  late final GetNotesUseCase _getNotesUseCase;
+  late final CreateNoteUseCase _createNoteUseCase;
+  late final UpdateNoteUseCase _updateNoteUseCase;
+  late final DeleteNoteUseCase _deleteNoteUseCase;
+  late final SearchNotesUseCase _searchNotesUseCase;
+  late final GetNoteByIdUseCase _getNoteByIdUseCase;
+  late final GetNotesByCategoryUseCase _getNotesByCategoryUseCase;
+  late final TogglePinNoteUseCase _togglePinNoteUseCase;
+  late final GetCategoriesUseCase _getCategoriesUseCase;
+
+  NotesCubit() : super(const NotesInitial()) {
+    // Initialize use cases with repository
+    final repository = NotesRepositoryImpl();
+    _getNotesUseCase = GetNotesUseCase(repository);
+    _createNoteUseCase = CreateNoteUseCase(repository);
+    _updateNoteUseCase = UpdateNoteUseCase(repository);
+    _deleteNoteUseCase = DeleteNoteUseCase(repository);
+    _searchNotesUseCase = SearchNotesUseCase(repository);
+    _getNoteByIdUseCase = GetNoteByIdUseCase(repository);
+    _getNotesByCategoryUseCase = GetNotesByCategoryUseCase(repository);
+    _togglePinNoteUseCase = TogglePinNoteUseCase(repository);
+    _getCategoriesUseCase = GetCategoriesUseCase(repository);
+  }
 
   /// Load all notes
   Future<void> loadNotes() async {
     try {
       emit(const NotesLoading());
-      final notes = await MockNotesService.getAllNotes();
+      final notes = await _getNotesUseCase();
       emit(NotesLoaded(notes: notes));
     } catch (e) {
       emit(NotesError(
@@ -44,13 +76,13 @@ class NotesCubit extends Cubit<NotesState> {
         emit(const NotesOperationInProgress(operation: 'Creating note...'));
       }
 
-      await MockNotesService.createNote(
+      await _createNoteUseCase(CreateNoteParams(
         title: title,
         content: content,
         category: category,
         isPinned: isPinned,
         color: color,
-      );
+      ));
 
       // Reload all notes to get the updated list
       await loadNotes();
@@ -82,14 +114,14 @@ class NotesCubit extends Cubit<NotesState> {
         emit(const NotesOperationInProgress(operation: 'Updating note...'));
       }
 
-      await MockNotesService.updateNote(
+      await _updateNoteUseCase(UpdateNoteParams(
         id: id,
         title: title,
         content: content,
         category: category,
         isPinned: isPinned,
         color: color,
-      );
+      ));
 
       // Reload all notes to get the updated list
       await loadNotes();
@@ -114,7 +146,7 @@ class NotesCubit extends Cubit<NotesState> {
         emit(const NotesOperationInProgress(operation: 'Deleting note...'));
       }
 
-      final success = await MockNotesService.deleteNote(id);
+      final success = await _deleteNoteUseCase(id);
       if (!success) {
         throw Exception('Note not found');
       }
@@ -133,7 +165,7 @@ class NotesCubit extends Cubit<NotesState> {
   Future<void> searchNotes(String query) async {
     try {
       emit(const NotesLoading());
-      final notes = await MockNotesService.searchNotes(query);
+      final notes = await _searchNotesUseCase(query);
       emit(NotesLoaded(
         notes: notes,
         searchQuery: query.isEmpty ? null : query,
@@ -150,7 +182,7 @@ class NotesCubit extends Cubit<NotesState> {
   Future<void> filterByCategory(String category) async {
     try {
       emit(const NotesLoading());
-      final notes = await MockNotesService.getNotesByCategory(category);
+      final notes = await _getNotesByCategoryUseCase(category);
       emit(NotesLoaded(
         notes: notes,
         categoryFilter: category,
@@ -176,7 +208,7 @@ class NotesCubit extends Cubit<NotesState> {
         emit(const NotesOperationInProgress(operation: 'Updating note...'));
       }
 
-      await MockNotesService.togglePinNote(id);
+      await _togglePinNoteUseCase(id);
 
       // Reload all notes to get the updated list
       await loadNotes();
@@ -196,7 +228,7 @@ class NotesCubit extends Cubit<NotesState> {
   /// Get a specific note by ID (for editing)
   Future<Note?> getNoteById(String id) async {
     try {
-      return await MockNotesService.getNoteById(id);
+      return await _getNoteByIdUseCase(id);
     } catch (e) {
       return null;
     }
@@ -205,7 +237,7 @@ class NotesCubit extends Cubit<NotesState> {
   /// Get all available categories
   Future<List<String>> getCategories() async {
     try {
-      return await MockNotesService.getCategories();
+      return await _getCategoriesUseCase();
     } catch (e) {
       return [];
     }

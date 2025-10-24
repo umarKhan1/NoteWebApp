@@ -50,6 +50,41 @@ class AddNoteFormContentUpdated extends AddNoteFormState {
   List<Object?> get props => [content, selectedCategory];
 }
 
+/// Save success state
+class AddNoteFormSaveSuccess extends AddNoteFormState {
+  /// Constructor for save success state
+  const AddNoteFormSaveSuccess({
+    required this.content,
+    this.selectedCategory,
+  });
+  /// Current content
+  final String content;
+  /// Currently selected category
+  final String? selectedCategory;
+  
+  @override
+  List<Object?> get props => [content, selectedCategory];
+}
+
+/// Save error state
+class AddNoteFormSaveError extends AddNoteFormState {
+  /// Constructor for save error state
+  const AddNoteFormSaveError({
+    required this.error,
+    required this.content,
+    this.selectedCategory,
+  });
+  /// Error message
+  final String error;
+  /// Current content
+  final String content;
+  /// Currently selected category
+  final String? selectedCategory;
+  
+  @override
+  List<Object?> get props => [error, content, selectedCategory];
+}
+
 /// Cubit for managing add note form state
 class AddNoteFormCubit extends Cubit<AddNoteFormState> {
   /// Constructor for add note form cubit
@@ -101,5 +136,35 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
     _selectedCategory = null;
     _content = '';
     emit(const AddNoteFormInitial());
+  }
+  
+  /// Save note with current form data
+  Future<void> saveNote({
+    required String title,
+    required String content,
+    required dynamic notesCubit, // Using dynamic to avoid circular dependency
+  }) async {
+    setLoading(true);
+    
+    try {
+      await notesCubit.createNote(
+        title: title,
+        content: content,
+        category: _selectedCategory,
+      );
+      
+      // Emit success state
+      emit(AddNoteFormSaveSuccess(
+        content: _content,
+        selectedCategory: _selectedCategory,
+      ));
+    } catch (e) {
+      // Emit error state
+      emit(AddNoteFormSaveError(
+        error: e.toString(),
+        content: _content,
+        selectedCategory: _selectedCategory,
+      ));
+    }
   }
 }

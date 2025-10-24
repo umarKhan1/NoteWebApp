@@ -57,7 +57,6 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
   final _contentController = TextEditingController();
   
   late TabController _tabController;
-  String? _selectedCategory;
   
   final List<String> _categories = [
     AppStrings.personalCategory,
@@ -92,10 +91,13 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
       context.read<AddNoteFormCubit>().setLoading(true);
       
       try {
+        // Get the selected category from the cubit
+        final selectedCategory = context.read<AddNoteFormCubit>().selectedCategory;
+        
         await context.read<NotesCubit>().createNote(
           title: _titleController.text.trim(),
           content: _contentController.text.trim(),
-          category: _selectedCategory,
+          category: selectedCategory,
         );
         
         if (mounted) {

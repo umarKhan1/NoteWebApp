@@ -1,77 +1,102 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/base/base_stateless_widget.dart';
 import 'responsive_sidebar.dart';
 
-/// Main shell that contains the persistent sidebar and dynamic content
-class MainShell extends BaseStatelessWidget {
-  /// Creates a [MainShell].
+class MainShell extends StatefulWidget {
   const MainShell({
     super.key,
     required this.child,
   });
 
-  /// The child widget (main content area)
   final Widget child;
 
   @override
+  State<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends State<MainShell> {
+  bool _isTabletSidebarExpanded = false;
+
+  @override
   Widget build(BuildContext context) {
-    final theme = getTheme(context);
-    final responsiveInfo = getResponsiveInfo(context);
-    final isMobile = responsiveInfo.isMobile;
+    final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
+    final screenWidth = size.width;
+
+    final isMobile = screenWidth < 768;
+    final isTablet = screenWidth >= 768 && screenWidth < 1200;
     final showSidebar = !isMobile;
 
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    const double desktopSidebarWidth = 280;
+    const double tabletCollapsedWidth = 88;
+    const double tabletExpandedWidth = 260;
+    final double sidebarWidth = isTablet
+        ? (_isTabletSidebarExpanded ? tabletExpandedWidth : tabletCollapsedWidth)
+        : desktopSidebarWidth;
+
     final currentPath = GoRouterState.of(context).uri.path;
 
     return Scaffold(
-      key: scaffoldKey,
       backgroundColor: theme.colorScheme.surface,
-      drawer: isMobile 
-        ? Drawer(
-            child: ResponsiveSidebar(
-              isExpanded: true,
-              currentPath: currentPath,
-              onToggle: () => Navigator.of(context).pop(),
-            ),
-          )
-        : null,
-      body: Row(
-        children: [
-          // Desktop/Tablet Sidebar (persistent)
-          if (showSidebar)
-            ResponsiveSidebar(
-              isExpanded: true, // Keep sidebar always expanded for now
-              currentPath: currentPath,
-              onToggle: () {
-                // Optional: Toggle sidebar functionality
-              },
-            ),
-          
-          // Main Content Area (this changes with navigation)
-          Expanded(
-            child: Column(
-              children: [
-                // Header
-                _buildHeader(context, isMobile, scaffoldKey, currentPath),
-                
-                // Dynamic Content
-                Expanded(
-                  child: child,
+      restorationId: 'main_scaffold',
+      drawerEnableOpenDragGesture: isMobile,
+      drawerEdgeDragWidth: isMobile ? 24 : 0,
+      drawer: isMobile
+          ? SizedBox(
+              width: size.width * 0.86,
+              child: Drawer(
+                backgroundColor: theme.colorScheme.surface,
+                child: SafeArea(
+                  child: ResponsiveSidebar(
+                    isExpanded: true,
+                    currentPath: currentPath,
+                    onToggle: () {
+                      Scaffold.maybeOf(context)?.closeDrawer();
+                    },
+                  ),
                 ),
-              ],
+              ),
+            )
+          : null,
+      body: SafeArea(
+        child: Row(
+          children: [
+            if (showSidebar)
+              SizedBox(
+                width: sidebarWidth,
+                // keep it simple and bounded to avoid layout asserts
+                child: ResponsiveSidebar(
+                  isExpanded: isTablet ? _isTabletSidebarExpanded : true,
+                  currentPath: currentPath,
+                  onToggle: isTablet
+                      ? () {
+                          setState(() {
+                            _isTabletSidebarExpanded = !_isTabletSidebarExpanded;
+                          });
+                        }
+                      : null,
+                ),
+              ),
+            Expanded(
+              child: Column(
+                children: [
+                  _buildHeader(context, isMobile, currentPath),
+                  Expanded(child: widget.child),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context, bool isMobile, GlobalKey<ScaffoldState> scaffoldKey, String currentPath) {
-    final theme = getTheme(context);
-    
-    // Determine page title based on current path
+  Widget _buildHeader(BuildContext context, bool isMobile, String currentPath) {
+    final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth >= 768 && screenWidth < 1200;
+
     String pageTitle = 'Dashboard';
     if (currentPath.contains('/notes')) {
       pageTitle = 'All Notes';
@@ -84,11 +109,11 @@ class MainShell extends BaseStatelessWidget {
     } else if (currentPath.contains('/settings')) {
       pageTitle = 'Settings';
     }
-    
+
     return Container(
       height: 70,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 16 : 24, 
+        horizontal: isMobile ? 16 : (isTablet ? 16 : 24),
         vertical: 8,
       ),
       decoration: BoxDecoration(
@@ -102,47 +127,54 @@ class MainShell extends BaseStatelessWidget {
       ),
       child: Row(
         children: [
-          // Menu button for mobile
           if (isMobile) ...[
-            IconButton(
-              onPressed: () => scaffoldKey.currentState?.openDrawer(),
-              icon: Icon(
-                Icons.menu,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+            Builder(
+              builder: (buttonContext) => IconButton(
+                onPressed: () {
+                  FocusScope.of(buttonContext).unfocus();
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Scaffold.maybeOf(buttonContext)?.openDrawer();
+                  });
+                },
+                icon: Icon(
+                  Icons.menu,
+                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                ),
+                tooltip: 'Open navigation menu',
               ),
             ),
             const SizedBox(width: 8),
           ],
-          
-          // Title
-          Text(
-            pageTitle,
-            style: TextStyle(
-              fontSize: isMobile ? 16 : 18,
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface,
+          Flexible(
+            child: Text(
+              pageTitle,
+              style: TextStyle(
+                fontSize: isMobile ? 16 : (isTablet ? 16 : 18),
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onSurface,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          
           const Spacer(),
-          
-          // Actions (page-specific actions can be added here)
-          _buildPageActions(context, currentPath, isMobile),
+          _buildPageActions(context, currentPath, isMobile, isTablet),
         ],
       ),
     );
   }
 
-  Widget _buildPageActions(BuildContext context, String currentPath, bool isMobile) {
-    final theme = getTheme(context);
-    
+  Widget _buildPageActions(
+    BuildContext context,
+    String currentPath,
+    bool isMobile,
+    bool isTablet,
+  ) {
+    final theme = Theme.of(context);
+
     return Row(
       children: [
-        // Common actions
         IconButton(
-          onPressed: () {
-            // TODO: Implement notifications
-          },
+          onPressed: () {},
           icon: Icon(
             Icons.notifications_outlined,
             color: theme.colorScheme.onSurface.withOpacity(0.6),
@@ -150,22 +182,16 @@ class MainShell extends BaseStatelessWidget {
         ),
         const SizedBox(width: 8),
         IconButton(
-          onPressed: () {
-            // TODO: Implement search
-          },
+          onPressed: () {},
           icon: Icon(
             Icons.search,
             color: theme.colorScheme.onSurface.withOpacity(0.6),
           ),
         ),
-        
-        // Page-specific actions
         if (currentPath.contains('/notes')) ...[
           const SizedBox(width: 8),
           IconButton(
-            onPressed: () {
-              // TODO: Implement add note
-            },
+            onPressed: () {},
             icon: Icon(
               Icons.add,
               color: theme.colorScheme.onSurface.withOpacity(0.6),

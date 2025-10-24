@@ -59,8 +59,8 @@ class _ResponsiveSidebarView extends BaseStatelessWidget {
     // Responsive widths
     double sidebarWidth;
     if (screenWidth < 768) {
-      // Mobile: collapsed only
-      sidebarWidth = 60;
+      // Mobile: Use full drawer width when in drawer, otherwise minimal
+      sidebarWidth = isExpanded ? 260 : 60;
     } else if (screenWidth < 1200) {
       // Tablet: collapsed by default
       sidebarWidth = isExpanded ? 240 : 60;
@@ -69,7 +69,7 @@ class _ResponsiveSidebarView extends BaseStatelessWidget {
       sidebarWidth = isExpanded ? 260 : 72;
     }
 
-    final showText = isExpanded && screenWidth >= 768;
+    final showText = isExpanded;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),

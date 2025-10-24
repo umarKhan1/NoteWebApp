@@ -69,14 +69,22 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
     if (isLoading) {
       emit(const AddNoteFormLoading());
     } else {
-      emit(AddNoteFormCategorySelected(selectedCategory: _selectedCategory));
+      // Return to previous state with current data
+      emit(AddNoteFormContentUpdated(
+        content: _content,
+        selectedCategory: _selectedCategory,
+      ));
     }
   }
   
   /// Select category
   void selectCategory(String? category) {
     _selectedCategory = category;
-    emit(AddNoteFormCategorySelected(selectedCategory: category));
+    // Always emit ContentUpdated to preserve both content and category
+    emit(AddNoteFormContentUpdated(
+      content: _content,
+      selectedCategory: category,
+    ));
   }
   
   /// Update content

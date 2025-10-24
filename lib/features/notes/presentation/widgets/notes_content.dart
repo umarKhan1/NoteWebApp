@@ -120,8 +120,13 @@ class NotesContent extends BaseStatelessWidget {
       return const NotesEmptyState();
     }
 
+    // Use the same layout system for all screen sizes
+    return _buildStandardGridLayout(context, state);
+  }
+
+  Widget _buildStandardGridLayout(BuildContext context, NotesLoaded state) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final crossAxisCount = isMobile ? 1 : (screenWidth > 1200 ? 3 : 2);
+    final crossAxisCount = _getCrossAxisCount(screenWidth);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -129,9 +134,7 @@ class NotesContent extends BaseStatelessWidget {
           spacing: 16,
           runSpacing: 16,
           children: state.notes.map((note) {
-            final itemWidth = isMobile 
-              ? constraints.maxWidth 
-              : (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
+            final itemWidth = (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
             
             return SizedBox(
               width: itemWidth,
@@ -155,5 +158,17 @@ class NotesContent extends BaseStatelessWidget {
         );
       },
     );
+  }
+
+  int _getCrossAxisCount(double screenWidth) {
+    if (screenWidth < 600) {
+      return 1; // Mobile: single column
+    } else if (screenWidth < 900) {
+      return 2; // Tablet: two columns
+    } else if (screenWidth < 1200) {
+      return 3; // Small desktop: three columns
+    } else {
+      return 4; // Large desktop: four columns
+    }
   }
 }

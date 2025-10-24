@@ -35,7 +35,7 @@ class SidebarHeader extends BaseStatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          _buildLogo(theme),
+       
           if (showText) ...[
             const SizedBox(width: 12),
             _buildTitle(theme),
@@ -49,33 +49,7 @@ class SidebarHeader extends BaseStatelessWidget {
     );
   }
   
-  /// Builds the app logo
-  Widget _buildLogo(ThemeData theme) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: theme.primaryColor.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: const Icon(
-        Icons.auto_awesome_outlined,
-        color: Colors.white,
-        size: 18,
-      ),
-    );
-  }
+  
   
   /// Builds the app title
   Widget _buildTitle(ThemeData theme) {
@@ -83,10 +57,10 @@ class SidebarHeader extends BaseStatelessWidget {
       child: Text(
         AppStrings.sidebarAppName,
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 12,
           fontWeight: FontWeight.w700,
           color: theme.colorScheme.onSurface,
-          letterSpacing: -0.3,
+          letterSpacing: -0.1,
         ),
         overflow: TextOverflow.ellipsis,
       ),

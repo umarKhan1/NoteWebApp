@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/constants/app_strings.dart';
 import '../../../domain/entities/note.dart';
 
 /// Individual note item widget for the notes list/grid.
@@ -145,7 +146,7 @@ class NotesListItem extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'Pinned',
+                  AppStrings.pinnedNotes,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -166,7 +167,7 @@ class NotesListItem extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Text(
-      note.title.isEmpty ? 'Untitled Note' : note.title,
+      note.title.isEmpty ? AppStrings.untitledNote : note.title,
       style: theme.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.bold,
         color: Colors.white,

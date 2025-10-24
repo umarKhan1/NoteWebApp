@@ -8,8 +8,8 @@ import '../cubit/notes_cubit.dart';
 import '../cubit/notes_state.dart';
 import '../cubit/notes_ui_cubit.dart';
 import '../cubit/notes_ui_state.dart';
-import '../widgets/add_edit_note_modal.dart';
 import '../widgets/note_detail/note_detail_modal.dart';
+import '../widgets/notes_list/add_note_bottom_sheet.dart';
 import '../widgets/notes_list/notes_empty_state.dart';
 import '../widgets/notes_list/notes_list_item.dart';
 import '../widgets/notes_list/notes_loading_shimmer.dart';
@@ -308,7 +308,7 @@ class _NotesViewState extends State<_NotesView> {
                 NoteDetailModal.show(context, note);
               },
               onEdit: () {
-                AddEditNoteModal.show(context, noteToEdit: note);
+                AddNoteBottomSheet.show(context, existingNote: note);
               },
               onDelete: () {
                 _showDeleteConfirmation(context, note.id, note.title);

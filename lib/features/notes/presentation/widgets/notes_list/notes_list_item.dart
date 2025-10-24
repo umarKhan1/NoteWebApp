@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/entities/note.dart';
 
-/// Individual note item widget for the notes list/grid
+/// Individual note item widget for the notes list/grid.
+/// 
+/// This widget represents a single note card in the notes list or grid view.
+/// It displays note information and provides interactive controls for
+/// viewing, editing, deleting, and pinning notes.
 class NotesListItem extends StatelessWidget {
-  /// The note to display
+  /// The note data to display
   final Note note;
   
-  /// Callback when the note is tapped
+  /// Callback when the note card is tapped for viewing
   final VoidCallback onTap;
   
   /// Callback when the edit button is pressed
@@ -19,6 +23,7 @@ class NotesListItem extends StatelessWidget {
   /// Callback when the pin toggle is pressed
   final VoidCallback onTogglePin;
 
+  /// Creates a new notes list item widget
   const NotesListItem({
     super.key,
     required this.note,

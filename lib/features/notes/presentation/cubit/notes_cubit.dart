@@ -1,21 +1,25 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/repositories/notes_repository_impl.dart';
 import '../../domain/entities/note.dart';
-import '../../domain/usecases/get_notes_usecase.dart';
 import '../../domain/usecases/add_note_usecase.dart';
-import '../../domain/usecases/update_note_usecase.dart';
 import '../../domain/usecases/delete_note_usecase.dart';
-import '../../domain/usecases/search_notes_usecase.dart';
+import '../../domain/usecases/get_categories_usecase.dart';
 import '../../domain/usecases/get_note_by_id_usecase.dart';
 import '../../domain/usecases/get_notes_by_category_usecase.dart';
+import '../../domain/usecases/get_notes_usecase.dart';
+import '../../domain/usecases/search_notes_usecase.dart';
 import '../../domain/usecases/toggle_pin_note_usecase.dart';
-import '../../domain/usecases/get_categories_usecase.dart';
-import '../../data/repositories/notes_repository_impl.dart';
+import '../../domain/usecases/update_note_usecase.dart';
 import 'notes_state.dart';
 
-/// Cubit for managing notes state and operations
+/// Cubit for managing notes state and operations.
+/// 
+/// This cubit handles all notes-related business logic including
+/// CRUD operations, searching, filtering, and state management
+/// using the clean architecture pattern with use cases.
 class NotesCubit extends Cubit<NotesState> {
-  // Use cases
+  // Use cases for notes operations
   late final GetNotesUseCase _getNotesUseCase;
   late final CreateNoteUseCase _createNoteUseCase;
   late final UpdateNoteUseCase _updateNoteUseCase;
@@ -26,6 +30,10 @@ class NotesCubit extends Cubit<NotesState> {
   late final TogglePinNoteUseCase _togglePinNoteUseCase;
   late final GetCategoriesUseCase _getCategoriesUseCase;
 
+  /// Creates a new instance of [NotesCubit]
+  /// 
+  /// Initializes with [NotesInitial] state and sets up all use cases
+  /// with the repository implementation.
   NotesCubit() : super(const NotesInitial()) {
     // Initialize use cases with repository
     final repository = NotesRepositoryImpl();

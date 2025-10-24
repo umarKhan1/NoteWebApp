@@ -1,23 +1,38 @@
 import '../../domain/entities/note.dart';
 
-/// Abstract base class for all notes states
+/// Abstract base class for all notes states.
+/// 
+/// This class serves as the foundation for all possible states
+/// in the notes feature, following the BLoC pattern.
 abstract class NotesState {
+  /// Creates a new notes state
   const NotesState();
 }
 
-/// Initial state when the notes feature is first loaded
+/// Initial state when the notes feature is first loaded.
+/// 
+/// This represents the state before any notes data has been loaded
+/// or any operations have been performed.
 class NotesInitial extends NotesState {
+  /// Creates a new initial notes state
   const NotesInitial();
 }
 
-/// State when notes are being loaded
+/// State when notes are being loaded.
+/// 
+/// This state indicates that a notes operation is in progress,
+/// such as fetching notes from the repository.
 class NotesLoading extends NotesState {
+  /// Creates a new loading notes state
   const NotesLoading();
 }
 
-/// State when notes are successfully loaded
+/// State when notes are successfully loaded.
+/// 
+/// This state contains the loaded notes data and any applied filters
+/// such as search queries or category filters.
 class NotesLoaded extends NotesState {
-  /// List of notes
+  /// List of loaded notes
   final List<Note> notes;
   
   /// Optional search query if filtering is applied
@@ -26,6 +41,7 @@ class NotesLoaded extends NotesState {
   /// Optional category filter
   final String? categoryFilter;
 
+  /// Creates a new loaded notes state
   const NotesLoaded({
     required this.notes,
     this.searchQuery,
@@ -33,6 +49,9 @@ class NotesLoaded extends NotesState {
   });
 
   /// Create a copy of this state with updated values
+  /// 
+  /// This method allows for immutable state updates by creating
+  /// a new instance with modified properties.
   NotesLoaded copyWith({
     List<Note>? notes,
     String? searchQuery,
@@ -61,14 +80,18 @@ class NotesLoaded extends NotesState {
   int get hashCode => notes.hashCode ^ searchQuery.hashCode ^ categoryFilter.hashCode;
 }
 
-/// State when there's an error loading or managing notes
+/// State when there's an error loading or managing notes.
+/// 
+/// This state represents any error condition that occurs during
+/// notes operations, including loading, creating, updating, or deleting notes.
 class NotesError extends NotesState {
-  /// Error message
+  /// Error message for display to the user
   final String message;
   
-  /// Optional error details for debugging
+  /// Optional error details for debugging purposes
   final String? details;
 
+  /// Creates a new error notes state
   const NotesError({
     required this.message,
     this.details,
@@ -87,7 +110,10 @@ class NotesError extends NotesState {
   int get hashCode => message.hashCode ^ details.hashCode;
 }
 
-/// State when a note operation (create, update, delete) is in progress
+/// State when a note operation (create, update, delete) is in progress.
+/// 
+/// This state maintains the current notes list while indicating that
+/// an operation is being performed in the background.
 class NotesOperationInProgress extends NotesState {
   /// Current notes list (if available)
   final List<Note>? notes;
@@ -95,6 +121,7 @@ class NotesOperationInProgress extends NotesState {
   /// Type of operation being performed
   final String operation;
 
+  /// Creates a new operation in progress state
   const NotesOperationInProgress({
     this.notes,
     required this.operation,

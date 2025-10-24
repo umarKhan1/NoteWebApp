@@ -4,11 +4,12 @@ import '../../../../core/base/base_stateless_widget.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/app_animations.dart';
 import '../../../../shared/widgets/animations/animation_widgets.dart';
+import '../../domain/entities/activity.dart';
 
 /// Recent activity card widget
 class RecentActivityCard extends BaseStatelessWidget {
   /// List of recent activities
-  final List<String> activities;
+  final List<Activity> activities;
 
   const RecentActivityCard({
     super.key,
@@ -93,7 +94,7 @@ class RecentActivityCard extends BaseStatelessWidget {
     ));
   }
 
-  Widget _buildActivityItem(String activity, ResponsiveInfo responsiveInfo, ThemeData theme) {
+  Widget _buildActivityItem(Activity activity, ResponsiveInfo responsiveInfo, ThemeData theme) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: AnimatedContainer(
@@ -108,50 +109,53 @@ class RecentActivityCard extends BaseStatelessWidget {
             width: 0.5,
           ),
         ),
-      child: Row(
-        children: [
-          Container(
-            width: responsiveInfo.isMobile ? 28 : 32,
-            height: responsiveInfo.isMobile ? 28 : 32,
-            decoration: BoxDecoration(
-              color: theme.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              Icons.history,
-              color: theme.primaryColor,
-              size: responsiveInfo.isMobile ? 14 : 16,
-            ),
-          ),
-          SizedBox(width: responsiveInfo.isMobile ? 8 : 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  activity,
+        child: Row(
+          children: [
+            Container(
+              width: responsiveInfo.isMobile ? 28 : 32,
+              height: responsiveInfo.isMobile ? 28 : 32,
+              decoration: BoxDecoration(
+                color: theme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Text(
+                  activity.getIcon(),
                   style: TextStyle(
-                    fontSize: responsiveInfo.isMobile ? 12 : (responsiveInfo.isTablet ? 12 : 13),
-                    fontWeight: FontWeight.w500,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  AppStrings.justNow,
-                  style: TextStyle(
-                    fontSize: responsiveInfo.isMobile ? 10 : 11,
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    fontSize: responsiveInfo.isMobile ? 14 : 16,
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
-      ),
+            SizedBox(width: responsiveInfo.isMobile ? 8 : 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    activity.description,
+                    style: TextStyle(
+                      fontSize: responsiveInfo.isMobile ? 12 : (responsiveInfo.isTablet ? 12 : 13),
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    activity.getTimeAgo(),
+                    style: TextStyle(
+                      fontSize: responsiveInfo.isMobile ? 10 : 11,
+                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

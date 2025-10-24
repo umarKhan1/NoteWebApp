@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../shared/extensions/widget_extensions.dart';
 import '../../cubit/dashboard_cubit.dart';
 import '../../cubit/dashboard_state.dart';
+import '../../../domain/entities/activity.dart';
 import '../recent_activity_card.dart';
 import '../recent_notes_preview.dart';
 import '../upcoming_deadlines_card.dart';
@@ -26,7 +27,7 @@ class DashboardContentGrid extends StatelessWidget {
           AppSpacing.md.verticalSpace,
           BlocBuilder<DashboardCubit, DashboardState>(
             builder: (context, state) {
-              List<String> activity = [];
+              List<Activity> activity = [];
               if (state is DashboardLoaded) {
                 activity = state.recentActivity;
               }
@@ -60,7 +61,7 @@ class DashboardContentGrid extends StatelessWidget {
           flex: isTablet ? 2 : 1,
           child: BlocBuilder<DashboardCubit, DashboardState>(
             builder: (context, state) {
-              List<String> activity = [];
+              List<Activity> activity = [];
               if (state is DashboardLoaded) {
                 activity = state.recentActivity;
               }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/utils/user_utils.dart';
 import '../../../../shared/widgets/responsive_sidebar.dart';
+import '../../../notes/presentation/cubit/notes_cubit.dart';
 import '../cubit/dashboard_cubit.dart';
 import '../cubit/dashboard_state.dart';
 import '../cubit/dashboard_ui_cubit.dart';
@@ -31,17 +33,42 @@ class _DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<_DashboardView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late DashboardCubit _dashboardCubit;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<DashboardCubit>().loadDashboard();
+    _dashboardCubit = context.read<DashboardCubit>();
+    
+    // Set up callback BEFORE loading dashboard to ensure it's ready
+    NotesCubit.onNoteOperationCompleted = () async {
+      if (mounted) {
+        await _dashboardCubit.refreshActivities();
+      }
+    };
+    
+    Future.delayed(Duration.zero, () async {
+      if (!mounted) return;
       
-      // Initialize sidebar state based on screen size
-      final screenWidth = MediaQuery.of(context).size.width;
-      context.read<DashboardUiCubit>().initializeSidebar(screenWidth);
+      // Get current user ID for activity tracking
+      final userId = await UserUtils.getCurrentUserId() ?? 
+                     UserUtils.getDefaultUserId();
+      
+      if (mounted) {
+        _dashboardCubit.loadDashboard(userId: userId);
+        
+        // Initialize sidebar state based on screen size
+        final screenWidth = MediaQuery.of(context).size.width;
+        context.read<DashboardUiCubit>().initializeSidebar(screenWidth);
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    // Clear callback on dispose
+    NotesCubit.onNoteOperationCompleted = null;
+    super.dispose();
   }
 
   @override

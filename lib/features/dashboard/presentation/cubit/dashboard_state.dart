@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../domain/entities/activity.dart';
 import '../../domain/entities/dashboard_stats.dart';
 
 /// Dashboard state management
@@ -24,11 +25,12 @@ class DashboardLoaded extends DashboardState {
     required this.stats,
     required this.recentActivity,
   });
+  
   /// Dashboard statistics
   final DashboardStats stats;
   
   /// Recent activity list
-  final List<String> recentActivity;
+  final List<Activity> recentActivity;
 
   @override
   List<Object?> get props => [stats, recentActivity];

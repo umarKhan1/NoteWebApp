@@ -1,5 +1,6 @@
 import '../../../../core/base/base_cubit.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/utils/user_utils.dart';
 import 'login_state.dart';
 
 /// Cubit for managing login form state and validation.
@@ -55,6 +56,10 @@ class LoginCubit extends BaseCubit<LoginState> {
       
       // For demo purposes, check for demo credentials
       if (state.email == 'demo@example.com' && state.password == 'password123') {
+        // Store user ID for activity tracking
+        final userId = state.email.replaceAll('@', '_').replaceAll('.', '_');
+        await UserUtils.setCurrentUserId(userId);
+        
         // Success - this would typically navigate to home page
         emit(state.copyWith(isLoading: false, isSuccess: true));
        

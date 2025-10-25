@@ -10,18 +10,6 @@ class RouteNames {
   /// Login page route name.
   static const String loginName = 'login';
   
-  /// Signup page route path.
-  static const String signup = '/signup';
-  
-  /// Signup page route name.
-  static const String signupName = 'signup';
-  
-  /// Forgot password page route path.
-  static const String forgotPassword = '/forgot-password';
-  
-  /// Forgot password page route name.
-  static const String forgotPasswordName = 'forgot-password';
-  
   // Future Routes (to be implemented)
   /// Dashboard page route path.
   static const String dashboard = '/dashboard';

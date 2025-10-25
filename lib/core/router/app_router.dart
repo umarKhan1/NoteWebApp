@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
-import '../../features/auth/presentation/pages/signup_page.dart';
 import '../../features/dashboard/presentation/widgets/dashboard_content.dart';
 import '../../features/notes/presentation/widgets/notes_content.dart';
+import '../../features/splash/presentation/pages/splash_screen.dart';
 import '../../shared/widgets/main_shell.dart';
 import 'route_names.dart';
 
@@ -15,24 +14,21 @@ class AppRouter {
 
   /// GoRouter instance for the application.
   static final GoRouter router = GoRouter(
-    initialLocation: RouteNames.login,
+    initialLocation: '/splash',
     debugLogDiagnostics: true,
     routes: [
+      // Splash Route
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
+      
       // Authentication Routes (standalone pages)
       GoRoute(
         path: RouteNames.login,
         name: RouteNames.loginName,
         builder: (context, state) => const LoginView(),
-      ),
-      GoRoute(
-        path: RouteNames.signup,
-        name: RouteNames.signupName,
-        builder: (context, state) => const SignupView(),
-      ),
-      GoRoute(
-        path: RouteNames.forgotPassword,
-        name: RouteNames.forgotPasswordName,
-        builder: (context, state) => const ForgotPasswordView(),
       ),
       
       // Shell Route - Contains persistent sidebar

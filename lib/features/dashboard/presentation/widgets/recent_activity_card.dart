@@ -61,27 +61,7 @@ class RecentActivityCard extends BaseStatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(width: 8),
-              TextButton(
-                onPressed: () {
-                 
-                },
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: responsiveInfo.isMobile ? 8 : 12,
-                    vertical: 4,
-                  ),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  AppStrings.viewAll,
-                  style: TextStyle(
-                    fontSize: responsiveInfo.isMobile ? 11 : 12,
-                    color: theme.primaryColor,
-                  ),
-                ),
-              ),
+           
             ],
           ),
           const SizedBox(height: 16),

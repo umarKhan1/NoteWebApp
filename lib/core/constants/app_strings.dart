@@ -72,42 +72,6 @@ class AppStrings {
   /// Reset password text.
   static const String resetPassword = 'Reset Password';
   
-  /// Reset password title.
-  static const String resetPasswordTitle = 'Reset Password';
-  
-  /// Reset password subtitle.
-  static const String resetPasswordSubtitle = 'Enter your email address and we\'ll send you a link to reset your password.';
-  
-  /// Back to login text.
-  static const String backToLogin = 'Back to Login';
-  
-  /// Reset link sent message.
-  static const String resetLinkSent = 'Reset link sent to your email';
-  
-  /// Don't have account text.
-  static const String dontHaveAccount = "Don't have an account? ";
-  
-  /// Create account text.
-  static const String createAccount = 'Create Account';
-  
-  /// Full name label text.
-  static const String fullName = 'Full Name';
-  
-  /// Full name hint text.
-  static const String fullNameHint = 'Enter your full name';
-  
-  /// Join us text for signup.
-  static const String joinUs = 'Join us and start organizing your thoughts';
-  
-  /// Signup hero message.
-  static const String signupHeroMessage = 'Join thousands of users\nwho trust us with\ntheir notes';
-  
-  /// Already have account text.
-  static const String alreadyHaveAccount = 'Already have an account? ';
-  
-  /// Account created successfully message.
-  static const String accountCreatedSuccessfully = 'Account created successfully!';
-  
   /// Or continue with text.
   static const String orContinueWith = 'Or continue with';
   
@@ -269,7 +233,7 @@ class AppStrings {
   
   // Dashboard
   /// Welcome message for dashboard.
-  static const String welcomeMessage = 'Welcome back, Faris! 👋';
+  static const String welcomeMessage = 'Welcome back, Muhammad Omar! 👋';
   
   /// Dashboard subtitle message.
   static const String dashboardSubtitle = 'Here\'s what\'s happening with your notes today.';
@@ -330,7 +294,7 @@ class AppStrings {
   static const String analytics = 'Analytics';
   
   /// User name.
-  static const String userName = 'Faris';
+  static const String userName = 'Muhamamd Omar';
   
   /// User plan.
   static const String userPlan = 'Premium';
@@ -376,7 +340,7 @@ class AppStrings {
   static const String markdownHintsSmall = 'Start writing...\n\n# Header\n- List item\n**bold** *italic*\n\nTip: Keep it simple for PDF export';
   
   /// Markdown hints for large screens.
-  static const String markdownHintsLarge = 'Start writing your note...\n\n# Header\n## Smaller header\n- List item\n1. Numbered list\n**bold** *italic*\n\nKeep it simple for best PDF results';
+  static const String markdownHintsLarge = 'Start writing your note...\n# Header\n## Smaller header\n- List item\n1. Numbered list\n**bold** *italic*\nKeep it simple for best PDF results';
   
   // PDF Export Guidance
   /// PDF friendly markdown features.

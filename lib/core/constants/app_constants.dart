@@ -82,4 +82,10 @@ class AppConstants {
   // Search UI Labels
   /// Search placeholder text
   static const String searchHint = 'Search notes...';
+  
+  // Splash Screen Labels
+  /// Splash screen tagline
+  static const String splashTagline = 'Your Notes, Your Way';
+  /// Splash screen duration in seconds
+  static const int splashDurationSeconds = 3;
 }

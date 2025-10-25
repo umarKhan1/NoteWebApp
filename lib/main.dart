@@ -9,6 +9,7 @@ import 'features/notes/data/services/local_notes_service.dart';
 import 'features/notes/data/services/mock_notes_service.dart';
 import 'shared/cubit/theme_cubit.dart';
 import 'shared/cubit/theme_state.dart';
+import 'shared/services/theme_storage_service.dart';
 
 /// Entry point of the application.
 Future<void> main() async {
@@ -17,6 +18,7 @@ Future<void> main() async {
   // Initialize local storage services
   await LocalNotesService.initialize();
   await MockNotesService.initialize();
+  await ThemeStorageService.initialize();
   
   runApp(const MyApp());
 }

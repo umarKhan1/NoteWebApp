@@ -42,7 +42,7 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
         Expanded(
           child: Container(
             width: double.infinity,
-            padding: EdgeInsets.all(widget.isSmallScreen ? 16 : 20),
+            padding: EdgeInsets.all(widget.isSmallScreen ? 16 :10),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.only(
@@ -51,9 +51,10 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
               ),
             ),
             child: TextFormField(
+              cursorHeight: 18,
               controller: widget.contentController,
               maxLines: null,
-              expands: true,
+              expands: false,
               textAlignVertical: TextAlignVertical.top,
               decoration: InputDecoration(
                 hintText: widget.isSmallScreen 
@@ -61,18 +62,18 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
                     : AppStrings.markdownHintsLarge,
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                  fontSize: widget.isSmallScreen ? 14 : 15,
-                  height: 1.5,
+                  fontSize: widget.isSmallScreen ? 12 : 12,
+            
                 ),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
               ),
               style: TextStyle(
                 fontSize: widget.isSmallScreen ? 15 : 16,
-                height: widget.isSmallScreen ? 1.4 : 1.5,
+                height: widget.isSmallScreen ? 1.4 : 3,
                 color: theme.colorScheme.onSurface,
               ),
-              scrollPadding: EdgeInsets.all(widget.isSmallScreen ? 8 : 12),
+              scrollPadding: EdgeInsets.all(widget.isSmallScreen ? 8 : 10),
             ),
           ),
         ),
@@ -165,7 +166,7 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
                           children: [
                             Icon(
                               Icons.check_circle_outline,
-                              size: 16,
+                              size: 12,
                               color: theme.colorScheme.primary,
                             ),
                             const SizedBox(width: 6),
@@ -178,12 +179,12 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 3),
                         Text(
                           AppStrings.pdfFriendlyFeatures,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface,
-                            height: 1.4,
+                         
                           ),
                         ),
                       ],
@@ -191,7 +192,7 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
                   ),
                 ),
                 
-                const SizedBox(width: 12),
+                const SizedBox(width: 9),
                 
                 // PDF Limitations
                 Expanded(
@@ -208,7 +209,7 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
                           children: [
                             Icon(
                               Icons.info_outline,
-                              size: 16,
+                              size: 12,
                               color: theme.colorScheme.error,
                             ),
                             const SizedBox(width: 6),
@@ -221,12 +222,12 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 3),
                         Text(
                           AppStrings.pdfLimitations,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface,
-                            height: 1.4,
+                          
                           ),
                         ),
                       ],

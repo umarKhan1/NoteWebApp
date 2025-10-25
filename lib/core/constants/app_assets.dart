@@ -16,9 +16,18 @@ class AppAssets {
   /// Lottie animation for empty states.
   static const String emptyStateAnimation = 'assets/animations/empty.json';
   
+  /// Lottie animation for splash screen.
+  static const String learningAnimation = 'assets/animations/learning.json';
+  
   // Image Assets
   /// Woman image for authentication pages.
   static const String womanImage = 'assets/images/woman1.png';
+  
+  /// Logo image for light theme.
+  static const String logoLightImage = 'assets/images/ll.png';
+  
+  /// Logo image for dark theme.
+  static const String logoDarkImage = 'assets/images/ld.png';
   
   // Icon Assets
   /// Base path for icon assets.

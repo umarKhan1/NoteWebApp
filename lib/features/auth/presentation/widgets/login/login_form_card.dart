@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/app_strings.dart';
-import '../../../../../core/router/route_names.dart';
 import '../../../../../shared/extensions/widget_extensions.dart';
-import '../../cubit/forgot_password_cubit.dart';
 import '../../cubit/login_cubit.dart';
 import '../../cubit/login_state.dart';
-import '../../cubit/signup_cubit.dart';
 import '../custom_text_field.dart';
 
 
@@ -57,7 +54,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          8.vSpace,
+          2.vSpace,
           
           // Subtitle
           Text(
@@ -66,7 +63,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
               fontSize: isMobile ? 17.sp : 18.sp,
             ),
           ),
-          isMobile ? 2.vSpace : 3.vSpace,
+          isMobile ? 3.vSpace : 3.vSpace,
           
           // Login Form
           BlocConsumer<LoginCubit, LoginState>(
@@ -78,11 +75,6 @@ class _LoginFormCardState extends State<LoginFormCard> {
                     backgroundColor: Theme.of(context).colorScheme.error,
                   ),
                 );
-              }
-              
-              // Navigate to notes page on successful login
-              if (state.isSuccess) {
-                context.go(RouteNames.dashboard);
               }
             },
             builder: (context, state) {
@@ -123,30 +115,6 @@ class _LoginFormCardState extends State<LoginFormCard> {
                   ),
                   isMobile ? 2.vSpace : 3.vSpace,
                   
-                  // Forgot Password
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        overlayColor: Colors.transparent,
-                      ),
-                      onPressed: () {
-                        // Reset forgot password form before navigation
-                        context.read<ForgotPasswordCubit>().resetForm();
-                        context.go(RouteNames.forgotPassword);
-                      },
-                      child: Text(
-                        AppStrings.forgotPassword,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: isMobile ? 15.sp : 18.sp,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  isMobile ? 2.vSpace : 3.vSpace,
-                  
                   // Sign In Button
                   SizedBox(
                     width: double.infinity,
@@ -172,38 +140,6 @@ class _LoginFormCardState extends State<LoginFormCard> {
                               ),
                             ),
                     ),
-                  ),
-                  isMobile ? 2.vSpace : 3.vSpace,  
-                  // Sign Up Link
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        AppStrings.dontHaveAccount,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: isMobile ? 15.sp : 18.sp,
-                        ),
-                      ),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          overlayColor: Colors.transparent,
-                        ),
-                        onPressed: () {
-                          // Reset signup form before navigation
-                          context.read<SignupCubit>().resetForm();
-                          context.go(RouteNames.signup);
-                        },
-                        child: Text(
-                          AppStrings.signUp,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontSize: isMobile ? 15.sp : 18.sp,
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               );

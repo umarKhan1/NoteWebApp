@@ -118,6 +118,9 @@ class _SortPopoverState extends State<SortPopover> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(36),
+                    ),
                     onPressed: () {
                       cubit.sortNotes(_selectedSort);
                       widget.onApply();

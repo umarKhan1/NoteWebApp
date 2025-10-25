@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../features/auth/presentation/cubit/forgot_password_cubit.dart';
 import '../../features/auth/presentation/cubit/login_cubit.dart';
-import '../../features/auth/presentation/cubit/signup_cubit.dart';
 import '../../features/dashboard/data/datasources/activity_local_datasource.dart';
 import '../../features/dashboard/data/repositories/activity_repository_impl.dart';
 import '../../features/dashboard/data/repositories/dashboard_repository_impl.dart';
@@ -38,12 +36,6 @@ class ApplicationProviders {
     ),
     BlocProvider<LoginCubit>(
       create: (context) => LoginCubit(),
-    ),
-    BlocProvider<SignupCubit>(
-      create: (context) => SignupCubit(),
-    ),
-    BlocProvider<ForgotPasswordCubit>(
-      create: (context) => ForgotPasswordCubit(),
     ),
     BlocProvider<DashboardCubit>(
       create: (context) => _createDashboardCubit(),

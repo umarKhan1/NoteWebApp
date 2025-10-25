@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../cubit/login_cubit.dart';
+import '../cubit/login_state.dart';
 import '../widgets/login/login_desktop_layout.dart';
 import '../widgets/login/login_mobile_layout.dart';
 
@@ -40,7 +43,13 @@ class _LoginViewState extends State<LoginView> {
       splitScreenMode: true,
       builder: (context, child) {
         return Scaffold(
-          body: Container(
+          body: BlocListener<LoginCubit, LoginState>(
+            listener: (context, state) {
+              if (state.isSuccess) {
+                context.go(RouteNames.dashboard);
+              }
+            },
+            child: Container(
             width: double.infinity,
             height: double.infinity,
             decoration: BoxDecoration(
@@ -55,6 +64,7 @@ class _LoginViewState extends State<LoginView> {
             child: isMobile 
               ? LoginMobileLayout(isDark: isDark)
               : LoginDesktopLayout(isDark: isDark),
+            ),
           ),
         );
       },

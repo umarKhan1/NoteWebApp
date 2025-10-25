@@ -138,6 +138,9 @@ class _CategoryFilterPopoverState extends State<CategoryFilterPopover> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(36),
+                    ),
                     onPressed: () {
                       if (_selectedCategory == null) {
                         cubit.filterByCategory(null);

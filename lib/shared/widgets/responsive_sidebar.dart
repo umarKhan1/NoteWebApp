@@ -103,23 +103,13 @@ class _ResponsiveSidebarView extends BaseStatelessWidget {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                      child: IntrinsicHeight(
-                        child: Column(
-                          children: [
-                            SidebarNavigationMenu(
-                              showText: showText,
-                              currentPath: currentPath,
-                            ),
-                            const Spacer(),
-                            SidebarUserProfile(showText: showText),
-                          ],
-                        ),
-                      ),
+                    child: SidebarNavigationMenu(
+                      showText: showText,
+                      currentPath: currentPath,
                     ),
                   ),
                 ),
+                SidebarUserProfile(showText: showText),
               ],
             );
           },

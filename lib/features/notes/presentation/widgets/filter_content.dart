@@ -135,10 +135,15 @@ class _FilterContentState extends State<FilterContent> {
       ),
       actions: [
         TextButton(
+          
           onPressed: widget.onCancel,
           child: const Text('Cancel'),
         ),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: theme.colorScheme.primary,
+            minimumSize: const Size(64, 20),
+          ),
           onPressed: _applyFilter,
           child: const Text(AppConstants.filterApply),
         ),

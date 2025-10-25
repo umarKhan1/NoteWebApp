@@ -12,10 +12,10 @@ void main() {
       // Initialize SharedPreferences for testing
       SharedPreferences.setMockInitialValues({});
       await LocalNotesService.initialize();
-      
+
       // Clear any existing notes
       await LocalNotesService.clearNotes();
-      
+
       // Reinitialize MockNotesService
       await MockNotesService.initialize();
     });
@@ -35,18 +35,9 @@ void main() {
 
     test('getDashboardStats counts total notes correctly', () async {
       // Create test notes
-      await MockNotesService.createNote(
-        title: 'Note 1',
-        content: 'Content 1',
-      );
-      await MockNotesService.createNote(
-        title: 'Note 2',
-        content: 'Content 2',
-      );
-      await MockNotesService.createNote(
-        title: 'Note 3',
-        content: 'Content 3',
-      );
+      await MockNotesService.createNote(title: 'Note 1', content: 'Content 1');
+      await MockNotesService.createNote(title: 'Note 2', content: 'Content 2');
+      await MockNotesService.createNote(title: 'Note 3', content: 'Content 3');
 
       final stats = await dashboardService.getDashboardStats();
 
@@ -163,10 +154,7 @@ void main() {
       var stats = await dashboardService.getDashboardStats();
       expect(stats.totalNotes, 0);
 
-      await MockNotesService.createNote(
-        title: 'New Note',
-        content: 'Content',
-      );
+      await MockNotesService.createNote(title: 'New Note', content: 'Content');
 
       stats = await dashboardService.getDashboardStats();
       expect(stats.totalNotes, 1);

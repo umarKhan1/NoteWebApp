@@ -3,10 +3,9 @@ import '../repositories/notes_repository.dart';
 
 /// Use case for getting a specific note by ID
 class GetNoteByIdUseCase {
-  final NotesRepository _repository;
-
   /// Creates a new instance of [GetNoteByIdUseCase]
   const GetNoteByIdUseCase(this._repository);
+  final NotesRepository _repository;
 
   /// Execute the use case to get a note by ID
   Future<Note?> call(String noteId) async {

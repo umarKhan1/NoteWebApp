@@ -24,13 +24,17 @@ class NotesEmptyState extends StatelessWidget {
             Icon(
               Icons.note_add_outlined,
               size: 20.w,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             SizedBox(height: 3.h),
             Text(
               AppStrings.noNotesAvailable,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
@@ -39,7 +43,9 @@ class NotesEmptyState extends StatelessWidget {
             Text(
               AppStrings.emptyNotesMessage,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.5),
                 height: 1.4,
               ),
               textAlign: TextAlign.center,

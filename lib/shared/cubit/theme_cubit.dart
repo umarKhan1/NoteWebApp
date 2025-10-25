@@ -45,13 +45,13 @@ class ThemeCubit extends Cubit<ThemeState> {
   void toggleTheme() {
     final isCurrentlyDark = state.isDarkMode;
     final newThemeMode = isCurrentlyDark ? ThemeMode.light : ThemeMode.dark;
-    
+
     // Save to local storage
     ThemeStorageService.saveThemeMode(newThemeMode);
-    
+
     // Update favicon on web
     _updateWebFavicon(newThemeMode);
-    
+
     emit(state.copyWith(themeMode: newThemeMode));
   }
 

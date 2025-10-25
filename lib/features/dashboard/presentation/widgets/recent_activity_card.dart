@@ -6,15 +6,11 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../shared/widgets/animations/animation_widgets.dart';
 import '../../domain/entities/activity.dart';
 
-
 /// Recent activity card widget
 class RecentActivityCard extends BaseStatelessWidget {
-
   // ignore: public_member_api_docs
-  const RecentActivityCard({
-    super.key,
-    required this.activities,
-  });
+  const RecentActivityCard({super.key, required this.activities});
+
   /// List of recent activities
   final List<Activity> activities;
 
@@ -23,7 +19,7 @@ class RecentActivityCard extends BaseStatelessWidget {
     final theme = getTheme(context);
     final responsiveInfo = getResponsiveInfo(context);
     final padding = responsiveInfo.isMobile ? 16.0 : 20.0;
-    
+
     return FadeSlideInAnimation(
       delay: AppAnimations.shortStagger,
       offsetFrom: AppAnimations.slideFromRight,
@@ -36,47 +32,61 @@ class RecentActivityCard extends BaseStatelessWidget {
             color: theme.colorScheme.outline.withValues(alpha: 0.2),
             width: 1,
           ),
-        boxShadow: [
-          BoxShadow(
-            color: theme.shadowColor.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  AppStrings.recentActivity,
-                  style: TextStyle(
-                    fontSize: responsiveInfo.isMobile ? 14 : (responsiveInfo.isTablet ? 15 : 16),
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadowColor.withValues(alpha: 0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    AppStrings.recentActivity,
+                    style: TextStyle(
+                      fontSize: responsiveInfo.isMobile
+                          ? 14
+                          : (responsiveInfo.isTablet ? 15 : 16),
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-           
-            ],
-          ),
-          const SizedBox(height: 16),
-          
-          if (activities.isEmpty)
-            _buildEmptyState(responsiveInfo, theme)
-          else
-            ...activities.take(responsiveInfo.isMobile ? 3 : (responsiveInfo.isTablet ? 4 : 5)).map((activity) => 
-              _buildActivityItem(activity, responsiveInfo, theme)),
-        ],
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            if (activities.isEmpty)
+              _buildEmptyState(responsiveInfo, theme)
+            else
+              ...activities
+                  .take(
+                    responsiveInfo.isMobile
+                        ? 3
+                        : (responsiveInfo.isTablet ? 4 : 5),
+                  )
+                  .map(
+                    (activity) =>
+                        _buildActivityItem(activity, responsiveInfo, theme),
+                  ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
-  Widget _buildActivityItem(Activity activity, ResponsiveInfo responsiveInfo, ThemeData theme) {
+  Widget _buildActivityItem(
+    Activity activity,
+    ResponsiveInfo responsiveInfo,
+    ThemeData theme,
+  ) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: AnimatedContainer(
@@ -103,9 +113,7 @@ class RecentActivityCard extends BaseStatelessWidget {
               child: Center(
                 child: Text(
                   activity.getIcon(),
-                  style: TextStyle(
-                    fontSize: responsiveInfo.isMobile ? 14 : 16,
-                  ),
+                  style: TextStyle(fontSize: responsiveInfo.isMobile ? 14 : 16),
                 ),
               ),
             ),
@@ -118,7 +126,9 @@ class RecentActivityCard extends BaseStatelessWidget {
                   Text(
                     activity.description,
                     style: TextStyle(
-                      fontSize: responsiveInfo.isMobile ? 12 : (responsiveInfo.isTablet ? 12 : 13),
+                      fontSize: responsiveInfo.isMobile
+                          ? 12
+                          : (responsiveInfo.isTablet ? 12 : 13),
                       fontWeight: FontWeight.w500,
                       color: theme.colorScheme.onSurface,
                     ),

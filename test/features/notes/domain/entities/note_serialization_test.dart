@@ -103,19 +103,21 @@ void main() {
       expect(note.isPinned, false);
     });
 
-    test('Note.fromJson() handles missing isPinned field (defaults to false)',
-        () {
-      final json = {
-        'id': '1',
-        'title': 'Test Note',
-        'content': 'Test content',
-        'createdAt': '2024-01-01T00:00:00.000Z',
-        'updatedAt': '2024-01-02T00:00:00.000Z',
-      };
+    test(
+      'Note.fromJson() handles missing isPinned field (defaults to false)',
+      () {
+        final json = {
+          'id': '1',
+          'title': 'Test Note',
+          'content': 'Test content',
+          'createdAt': '2024-01-01T00:00:00.000Z',
+          'updatedAt': '2024-01-02T00:00:00.000Z',
+        };
 
-      final note = Note.fromJson(json);
+        final note = Note.fromJson(json);
 
-      expect(note.isPinned, false);
-    });
+        expect(note.isPinned, false);
+      },
+    );
   });
 }

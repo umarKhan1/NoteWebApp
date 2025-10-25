@@ -5,26 +5,26 @@ import 'package:flutter/material.dart';
 
 /// Widget for displaying and managing note image in the editor
 class NoteImageSection extends StatelessWidget {
-  /// The Base64 encoded image data
-  final String? imageBase64;
-  
-  /// The original image filename
-  final String? imageName;
-  
-  /// Callback when user wants to pick/change image
-  final VoidCallback onPickImage;
-  
-  /// Callback when user wants to remove image
-  final VoidCallback onRemoveImage;
-
   /// Creates a [NoteImageSection]
   const NoteImageSection({
-    Key? key,
+    super.key,
     this.imageBase64,
     this.imageName,
     required this.onPickImage,
     required this.onRemoveImage,
-  }) : super(key: key);
+  });
+
+  /// The Base64 encoded image data
+  final String? imageBase64;
+
+  /// The original image filename
+  final String? imageName;
+
+  /// Callback when user wants to pick/change image
+  final VoidCallback onPickImage;
+
+  /// Callback when user wants to remove image
+  final VoidCallback onRemoveImage;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class NoteImageSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          
+
           if (hasImage)
             // Image preview card
             _buildImagePreviewCard(context, theme)
@@ -71,14 +71,12 @@ class NoteImageSection extends StatelessWidget {
               width: 1,
             ),
             image: DecorationImage(
-              image: MemoryImage(
-                _decodeBase64(imageBase64!),
-              ),
+              image: MemoryImage(_decodeBase64(imageBase64!)),
               fit: BoxFit.cover,
             ),
           ),
         ),
-        
+
         // Action buttons overlay
         Positioned(
           top: 8,
@@ -101,7 +99,7 @@ class NoteImageSection extends StatelessWidget {
             ],
           ),
         ),
-        
+
         // Image info at bottom
         Positioned(
           bottom: 0,
@@ -125,9 +123,7 @@ class NoteImageSection extends StatelessWidget {
             ),
             child: Text(
               imageName ?? 'Image',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Colors.white,
-              ),
+              style: theme.textTheme.bodySmall?.copyWith(color: Colors.white),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -188,7 +184,7 @@ class NoteImageSection extends StatelessWidget {
     if (base64String.contains(',')) {
       cleanBase64 = base64String.split(',').last;
     }
-    
+
     try {
       return Uint8List.fromList(base64Decode(cleanBase64));
     } catch (e) {
@@ -196,4 +192,3 @@ class NoteImageSection extends StatelessWidget {
     }
   }
 }
-

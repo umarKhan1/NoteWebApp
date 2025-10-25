@@ -28,71 +28,63 @@ import '../../shared/cubit/theme_cubit.dart';
 class ApplicationProviders {
   /// Private constructor to prevent instantiation.
   ApplicationProviders._();
-  
+
   /// Returns a list of Bloc providers used in the application.
   static List<BlocProvider> get providers => [
-    BlocProvider<ThemeCubit>(
-      create: (context) => ThemeCubit(),
-    ),
-    BlocProvider<LoginCubit>(
-      create: (context) => LoginCubit(),
-    ),
-    BlocProvider<DashboardCubit>(
-      create: (context) => _createDashboardCubit(),
-    ),
-    BlocProvider<DashboardUiCubit>(
-      create: (context) => DashboardUiCubit(),
-    ),
+    BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()),
+    BlocProvider<LoginCubit>(create: (context) => LoginCubit()),
+    BlocProvider<DashboardCubit>(create: (context) => _createDashboardCubit()),
+    BlocProvider<DashboardUiCubit>(create: (context) => DashboardUiCubit()),
     BlocProvider<ResponsiveSidebarCubit>(
       create: (context) => ResponsiveSidebarCubit(),
     ),
-    BlocProvider<NotesCubit>(
-      create: (context) => _createNotesCubit(context),
-    ),
-    BlocProvider<NotesUiCubit>(
-      create: (context) => NotesUiCubit(),
-    ),
+    BlocProvider<NotesCubit>(create: (context) => _createNotesCubit(context)),
+    BlocProvider<NotesUiCubit>(create: (context) => NotesUiCubit()),
   ];
-  
+
   /// Creates dashboard cubit with proper dependency injection
   static DashboardCubit _createDashboardCubit() {
     // Service layer
     final dashboardService = MockDashboardService();
-    
-    // Repository layer  
-    final DashboardRepository repository = DashboardRepositoryImpl(dashboardService);
+
+    // Repository layer
+    final DashboardRepository repository = DashboardRepositoryImpl(
+      dashboardService,
+    );
     final ActivityRepository activityRepository = ActivityRepositoryImpl(
       ActivityLocalDatasource(),
     );
-    
+
     // Use case layer
     final loadDashboardUseCase = LoadDashboardUseCase(repository);
-    final getRecentActivitiesUseCase = GetRecentActivitiesUseCase(activityRepository);
-    
+    final getRecentActivitiesUseCase = GetRecentActivitiesUseCase(
+      activityRepository,
+    );
+
     // Presentation layer
     return DashboardCubit(loadDashboardUseCase, getRecentActivitiesUseCase);
   }
-  
+
   /// Creates notes cubit with proper dependency injection
   static NotesCubit _createNotesCubit(BuildContext context) {
     // Notes repository
     final NotesRepository notesRepository = NotesRepositoryImpl();
-    
+
     // Notes use cases
     final getNotesUseCase = GetNotesUseCase(notesRepository);
     final createNoteUseCase = CreateNoteUseCase(notesRepository);
     final updateNoteUseCase = UpdateNoteUseCase(notesRepository);
     final deleteNoteUseCase = DeleteNoteUseCase(notesRepository);
-    
+
     // Activity service for logging
     final ActivityRepository activityRepository = ActivityRepositoryImpl(
       ActivityLocalDatasource(),
     );
     final activityService = ActivityService(activityRepository);
-    
+
     // Get dashboard cubit for activity refresh callbacks
     final dashboardCubit = context.read<DashboardCubit>();
-    
+
     // Return notes cubit with all dependencies
     return NotesCubit(
       getNotesUseCase: getNotesUseCase,

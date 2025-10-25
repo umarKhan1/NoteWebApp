@@ -16,13 +16,13 @@ class ResponsiveSidebar extends BaseStatelessWidget {
     this.onToggle,
     required this.currentPath,
   });
-  
+
   /// Whether sidebar is expanded on desktop
   final bool isExpanded;
-  
+
   /// Callback when expand/collapse is toggled
   final VoidCallback? onToggle;
-  
+
   /// Current route path
   final String currentPath;
 
@@ -55,7 +55,7 @@ class _ResponsiveSidebarView extends BaseStatelessWidget {
     final theme = getTheme(context);
     final screenSize = getScreenSize(context);
     final screenWidth = screenSize.width;
-    
+
     // Responsive widths
     double sidebarWidth;
     if (screenWidth < 768) {

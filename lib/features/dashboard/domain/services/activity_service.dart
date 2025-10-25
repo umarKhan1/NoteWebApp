@@ -2,7 +2,7 @@ import '../entities/activity.dart';
 import '../repositories/activity_repository.dart';
 
 /// Service for logging activities throughout the app
-/// 
+///
 /// This is a convenience layer that makes it easy to log activities
 /// from any part of the app without directly depending on the repository
 class ActivityService {
@@ -51,10 +51,7 @@ class ActivityService {
   }
 
   /// Log a note deletion activity
-  Future<void> logNoteDeleted(
-    String userId,
-    String noteTitle,
-  ) async {
+  Future<void> logNoteDeleted(String userId, String noteTitle) async {
     await _repository.logActivity(
       userId,
       Activity(
@@ -106,10 +103,7 @@ class ActivityService {
   }
 
   /// Log a custom activity
-  Future<void> logCustomActivity(
-    String userId,
-    Activity activity,
-  ) async {
+  Future<void> logCustomActivity(String userId, Activity activity) async {
     await _repository.logActivity(userId, activity);
   }
 }

@@ -5,7 +5,7 @@ import '../../domain/entities/dashboard_stats.dart';
 
 /// Dashboard state management
 abstract class DashboardState extends Equatable {
- /// Creates a [DashboardState] instance.
+  /// Creates a [DashboardState] instance.
   const DashboardState();
 
   @override
@@ -21,14 +21,11 @@ class DashboardLoading extends DashboardState {}
 /// Dashboard loaded state
 class DashboardLoaded extends DashboardState {
   /// Creates a [DashboardLoaded] instance.
-  const DashboardLoaded({
-    required this.stats,
-    required this.recentActivity,
-  });
-  
+  const DashboardLoaded({required this.stats, required this.recentActivity});
+
   /// Dashboard statistics
   final DashboardStats stats;
-  
+
   /// Recent activity list
   final List<Activity> recentActivity;
 
@@ -38,8 +35,9 @@ class DashboardLoaded extends DashboardState {
 
 /// Dashboard error state
 class DashboardError extends DashboardState {
-/// Creates a [DashboardError] instance.
+  /// Creates a [DashboardError] instance.
   const DashboardError(this.message);
+
   /// Error message
   final String message;
 

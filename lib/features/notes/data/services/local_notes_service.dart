@@ -33,8 +33,7 @@ class LocalNotesService {
   /// Save notes to local storage
   static Future<bool> saveNotes(List<Note> notes) async {
     try {
-      final jsonList =
-          notes.map((note) => note.toJson()).toList();
+      final jsonList = notes.map((note) => note.toJson()).toList();
       final jsonString = json.encode(jsonList);
       return await _prefs.setString(_notesStorageKey, jsonString);
     } catch (e) {

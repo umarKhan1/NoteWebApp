@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:notewebapp/features/notes/data/services/mock_notes_service.dart';
 import 'package:notewebapp/features/notes/data/services/local_notes_service.dart';
+import 'package:notewebapp/features/notes/data/services/mock_notes_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group('MockNotesService Persistence Tests', () {
@@ -98,7 +98,8 @@ void main() {
       await LocalNotesService.initialize();
       await MockNotesService.initialize();
 
-      const imageBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+      const imageBase64 =
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 
       final created = await MockNotesService.createNote(
         title: 'Note with Image',
@@ -185,32 +186,34 @@ void main() {
       expect(results[0].title, equals('Flutter Tutorial'));
     });
 
-    test('GetCategories returns correct categories from persisted notes',
-        () async {
-      await LocalNotesService.initialize();
-      await MockNotesService.initialize();
+    test(
+      'GetCategories returns correct categories from persisted notes',
+      () async {
+        await LocalNotesService.initialize();
+        await MockNotesService.initialize();
 
-      await MockNotesService.createNote(
-        title: 'Work Meeting',
-        content: 'Meeting notes',
-        category: 'Work',
-      );
+        await MockNotesService.createNote(
+          title: 'Work Meeting',
+          content: 'Meeting notes',
+          category: 'Work',
+        );
 
-      await MockNotesService.createNote(
-        title: 'Personal Todo',
-        content: 'Todo list',
-        category: 'Personal',
-      );
+        await MockNotesService.createNote(
+          title: 'Personal Todo',
+          content: 'Todo list',
+          category: 'Personal',
+        );
 
-      await MockNotesService.createNote(
-        title: 'Another Work Note',
-        content: 'More work',
-        category: 'Work',
-      );
+        await MockNotesService.createNote(
+          title: 'Another Work Note',
+          content: 'More work',
+          category: 'Work',
+        );
 
-      final categories = await MockNotesService.getCategories();
-      expect(categories, hasLength(2));
-      expect(categories, containsAll(['Work', 'Personal']));
-    });
+        final categories = await MockNotesService.getCategories();
+        expect(categories, hasLength(2));
+        expect(categories, containsAll(['Work', 'Personal']));
+      },
+    );
   });
 }

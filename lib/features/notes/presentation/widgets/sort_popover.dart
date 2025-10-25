@@ -5,7 +5,6 @@ import '../cubit/notes_cubit.dart';
 
 /// Sort popover widget with anchored positioning
 class SortPopover extends StatefulWidget {
-
   /// Creates a [SortPopover]
   const SortPopover({
     super.key,
@@ -13,6 +12,7 @@ class SortPopover extends StatefulWidget {
     required this.onCancel,
     this.initialSort,
   });
+
   /// Callback when Apply is tapped
   final VoidCallback onApply;
 
@@ -82,23 +82,21 @@ class _SortPopoverState extends State<SortPopover> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: sortOptions
-                      .map((option) {
-                        final sortBy = option.$1;
-                        final label = option.$2;
-                        final isSelected = _selectedSort == sortBy;
+                  children: sortOptions.map((option) {
+                    final sortBy = option.$1;
+                    final label = option.$2;
+                    final isSelected = _selectedSort == sortBy;
 
-                        return _SortTile(
-                          label: label,
-                          isSelected: isSelected,
-                          onTap: () {
-                            setState(() {
-                              _selectedSort = sortBy;
-                            });
-                          },
-                        );
-                      })
-                      .toList(),
+                    return _SortTile(
+                      label: label,
+                      isSelected: isSelected,
+                      onTap: () {
+                        setState(() {
+                          _selectedSort = sortBy;
+                        });
+                      },
+                    );
+                  }).toList(),
                 ),
               ),
             ),
@@ -139,7 +137,6 @@ class _SortPopoverState extends State<SortPopover> {
 
 /// Single sort option tile
 class _SortTile extends StatelessWidget {
-
   const _SortTile({
     required this.label,
     required this.isSelected,

@@ -75,6 +75,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
               // Auto-load notes if in initial state
               if (state is NotesInitial) {
                 Future.microtask(() {
+                  // ignore: use_build_context_synchronously
                   context.read<NotesCubit>().loadNotes();
                 });
                 return const SizedBox(

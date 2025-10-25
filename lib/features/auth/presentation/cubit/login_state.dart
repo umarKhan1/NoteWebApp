@@ -35,7 +35,7 @@ class LoginState extends Equatable {
 
   /// Whether the form is valid for submission.
   final bool isFormValid;
-  
+
   /// Whether login was successful.
   final bool isSuccess;
 
@@ -69,14 +69,14 @@ class LoginState extends Equatable {
 
   @override
   List<Object?> get props => [
-        email,
-        password,
-        isEmailValid,
-        isPasswordValid,
-        isPasswordVisible,
-        isLoading,
-        isFormValid,
-        isSuccess,
-        errorMessage,
-      ];
+    email,
+    password,
+    isEmailValid,
+    isPasswordValid,
+    isPasswordVisible,
+    isLoading,
+    isFormValid,
+    isSuccess,
+    errorMessage,
+  ];
 }

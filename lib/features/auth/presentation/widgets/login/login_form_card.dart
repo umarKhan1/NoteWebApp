@@ -9,7 +9,6 @@ import '../../cubit/login_cubit.dart';
 import '../../cubit/login_state.dart';
 import '../custom_text_field.dart';
 
-
 /// Login form card widget containing the login form.
 class LoginFormCard extends StatefulWidget {
   /// Creates a new [LoginFormCard].
@@ -34,13 +33,13 @@ class _LoginFormCardState extends State<LoginFormCard> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < AppConstants.mobileMaxWidth;
-    
+
     return Container(
-      constraints: BoxConstraints(
-        maxWidth: isMobile ? double.infinity : 400.w,
-      ),
+      constraints: BoxConstraints(maxWidth: isMobile ? double.infinity : 400.w),
       padding: EdgeInsets.all(
-        isMobile ? AppConstants.defaultPadding.w : AppConstants.extraLargePadding.w,
+        isMobile
+            ? AppConstants.defaultPadding.w
+            : AppConstants.extraLargePadding.w,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +54,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
             ),
           ),
           2.vSpace,
-          
+
           // Subtitle
           Text(
             AppStrings.loginSubtitle,
@@ -64,7 +63,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
             ),
           ),
           isMobile ? 3.vSpace : 3.vSpace,
-          
+
           // Login Form
           BlocConsumer<LoginCubit, LoginState>(
             listener: (context, state) {
@@ -92,7 +91,7 @@ class _LoginFormCardState extends State<LoginFormCard> {
                         : null,
                   ),
                   isMobile ? 2.vSpace : 3.vSpace,
-                  
+
                   // Password Field
                   CustomTextField(
                     labelText: AppStrings.password,
@@ -107,18 +106,23 @@ class _LoginFormCardState extends State<LoginFormCard> {
                             : Icons.visibility,
                         size: 20.sp,
                       ),
-                      onPressed: context.read<LoginCubit>().togglePasswordVisibility,
+                      onPressed: context
+                          .read<LoginCubit>()
+                          .togglePasswordVisibility,
                     ),
-                    errorText: !state.isPasswordValid && state.password.isNotEmpty
+                    errorText:
+                        !state.isPasswordValid && state.password.isNotEmpty
                         ? AppStrings.passwordTooShort
                         : null,
                   ),
                   isMobile ? 2.vSpace : 3.vSpace,
-                  
+
                   // Sign In Button
                   SizedBox(
                     width: double.infinity,
-                    height: isMobile ? AppConstants.mobileButtonHeight.h : AppConstants.buttonHeight.h,
+                    height: isMobile
+                        ? AppConstants.mobileButtonHeight.h
+                        : AppConstants.buttonHeight.h,
                     child: ElevatedButton(
                       onPressed: state.isFormValid && !state.isLoading
                           ? context.read<LoginCubit>().loginSubmitted
@@ -129,7 +133,9 @@ class _LoginFormCardState extends State<LoginFormCard> {
                               height: 24.h,
                               child: const CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : Text(

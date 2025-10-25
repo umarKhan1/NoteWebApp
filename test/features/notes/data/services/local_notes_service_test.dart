@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:notewebapp/features/notes/domain/entities/note.dart';
 import 'package:notewebapp/features/notes/data/services/local_notes_service.dart';
+import 'package:notewebapp/features/notes/domain/entities/note.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group('LocalNotesService Tests', () {
@@ -121,7 +121,9 @@ void main() {
     test('Notes with images are preserved through persistence', () async {
       await LocalNotesService.initialize();
 
-      final largeBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==' * 50;
+      final largeBase64 =
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==' *
+          50;
 
       final notesWithImages = [
         Note(

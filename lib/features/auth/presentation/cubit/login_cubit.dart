@@ -12,26 +12,30 @@ class LoginCubit extends BaseCubit<LoginState> {
   void emailChanged(String email) {
     final isEmailValid = _isValidEmail(email);
     final isFormValid = isEmailValid && _isValidPassword(state.password);
-    
-    emit(state.copyWith(
-      email: email,
-      isEmailValid: isEmailValid,
-      isFormValid: isFormValid,
-      errorMessage: null,
-    ));
+
+    emit(
+      state.copyWith(
+        email: email,
+        isEmailValid: isEmailValid,
+        isFormValid: isFormValid,
+        errorMessage: null,
+      ),
+    );
   }
 
   /// Updates the password field and validates it.
   void passwordChanged(String password) {
     final isPasswordValid = _isValidPassword(password);
     final isFormValid = _isValidEmail(state.email) && isPasswordValid;
-    
-    emit(state.copyWith(
-      password: password,
-      isPasswordValid: isPasswordValid,
-      isFormValid: isFormValid,
-      errorMessage: null,
-    ));
+
+    emit(
+      state.copyWith(
+        password: password,
+        isPasswordValid: isPasswordValid,
+        isFormValid: isFormValid,
+        errorMessage: null,
+      ),
+    );
   }
 
   /// Toggles password visibility.
@@ -42,9 +46,7 @@ class LoginCubit extends BaseCubit<LoginState> {
   /// Submits the login form.
   Future<void> loginSubmitted() async {
     if (!state.isFormValid) {
-      emit(state.copyWith(
-        errorMessage: AppStrings.checkEmailPassword,
-      ));
+      emit(state.copyWith(errorMessage: AppStrings.checkEmailPassword));
       return;
     }
 
@@ -53,27 +55,28 @@ class LoginCubit extends BaseCubit<LoginState> {
     try {
       // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // For demo purposes, check for demo credentials
-      if (state.email == 'demo@example.com' && state.password == 'password123') {
+      if (state.email == 'demo@example.com' &&
+          state.password == 'password123') {
         // Store user ID for activity tracking
         final userId = state.email.replaceAll('@', '_').replaceAll('.', '_');
         await UserUtils.setCurrentUserId(userId);
-        
+
         // Success - this would typically navigate to home page
         emit(state.copyWith(isLoading: false, isSuccess: true));
-       
       } else {
-        emit(state.copyWith(
-          isLoading: false,
-          errorMessage: AppStrings.invalidCredentials,
-        ));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: AppStrings.invalidCredentials,
+          ),
+        );
       }
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: AppStrings.loginError,
-      ));
+      emit(
+        state.copyWith(isLoading: false, errorMessage: AppStrings.loginError),
+      );
     }
   }
 
@@ -90,7 +93,7 @@ class LoginCubit extends BaseCubit<LoginState> {
   /// Validates email format.
   bool _isValidEmail(String email) {
     if (email.isEmpty) return false;
-    
+
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );

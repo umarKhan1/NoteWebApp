@@ -11,10 +11,7 @@ import '../../../notes/presentation/widgets/note_detail/note_detail_modal.dart';
 /// All notes panel widget shown as an overlay
 class AllNotesPanel extends BaseStatelessWidget {
   /// Creates an [AllNotesPanel].
-  const AllNotesPanel({
-    super.key,
-    required this.onClose,
-  });
+  const AllNotesPanel({super.key, required this.onClose});
 
   /// Callback when panel is closed
   final VoidCallback onClose;
@@ -24,18 +21,18 @@ class AllNotesPanel extends BaseStatelessWidget {
     final responsiveInfo = getResponsiveInfo(context);
     final theme = getTheme(context);
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     // Panel width - adjust based on screen size
-    final panelWidth = responsiveInfo.isMobile 
-        ? screenWidth 
-        : screenWidth < 1200 
-            ? screenWidth * 0.4 
-            : screenWidth * 0.35;
+    final panelWidth = responsiveInfo.isMobile
+        ? screenWidth
+        : screenWidth < 1200
+        ? screenWidth * 0.4
+        : screenWidth * 0.35;
 
     return GestureDetector(
       onTap: onClose,
       child: Container(
-        color: Colors.black.withValues(alpha:  0.3),
+        color: Colors.black.withValues(alpha: 0.3),
         child: Align(
           alignment: Alignment.centerRight,
           child: GestureDetector(
@@ -63,7 +60,9 @@ class AllNotesPanel extends BaseStatelessWidget {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: theme.colorScheme.outline.withValues(alpha:  0.1),
+                          color: theme.colorScheme.outline.withValues(
+                            alpha: 0.1,
+                          ),
                           width: 1,
                         ),
                       ),
@@ -90,7 +89,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   // Notes List
                   Expanded(
                     child: BlocBuilder<NotesCubit, NotesState>(
@@ -100,7 +99,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                             child: CircularProgressIndicator(),
                           );
                         }
-                        
+
                         if (state is NotesError) {
                           return Center(
                             child: Column(
@@ -123,7 +122,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                             ),
                           );
                         }
-                        
+
                         if (state is NotesLoaded && state.notes.isNotEmpty) {
                           // Sort notes: pinned first, then by date
                           final sortedNotes = List<Note>.from(state.notes)
@@ -133,7 +132,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                               }
                               return b.updatedAt.compareTo(a.updatedAt);
                             });
-                          
+
                           return ListView.builder(
                             itemCount: sortedNotes.length,
                             itemBuilder: (context, index) {
@@ -146,7 +145,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                             },
                           );
                         }
-                        
+
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -154,16 +153,18 @@ class AllNotesPanel extends BaseStatelessWidget {
                               Icon(
                                 Icons.notes,
                                 size: 48,
-                                color: theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.3),
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.3,
+                                ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 AppStrings.noNotesYet,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.5),
+                                  color: theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
                                 ),
                               ),
                             ],
@@ -194,10 +195,7 @@ class AllNotesPanel extends BaseStatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            noteColors.primary,
-            noteColors.secondary,
-          ],
+          colors: [noteColors.primary, noteColors.secondary],
         ),
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
@@ -224,8 +222,8 @@ class AllNotesPanel extends BaseStatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        note.title.isEmpty 
-                            ? AppStrings.untitledNote 
+                        note.title.isEmpty
+                            ? AppStrings.untitledNote
                             : note.title,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
@@ -250,11 +248,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.push_pin,
-                              size: 8,
-                              color: Colors.white,
-                            ),
+                            Icon(Icons.push_pin, size: 8, color: Colors.white),
                             SizedBox(width: 3),
                             Text(
                               'Pinned',
@@ -308,10 +302,7 @@ class AllNotesPanel extends BaseStatelessWidget {
         final color = Color(
           int.parse('FF${colorHex.replaceFirst('#', '')}', radix: 16),
         );
-        return (
-          primary: color,
-          secondary: color.withValues( alpha:  0.7),
-        );
+        return (primary: color, secondary: color.withValues(alpha: 0.7));
       } catch (e) {
         // Fall back to default if parsing fails
       }

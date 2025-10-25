@@ -41,21 +41,21 @@ class _DashboardViewState extends State<_DashboardView> {
   void initState() {
     super.initState();
     _dashboardCubit = context.read<DashboardCubit>();
-    
+
     Future.delayed(Duration.zero, () async {
       if (!mounted) return;
-      
+
       // Get current user ID for activity tracking
-      final userId = await UserUtils.getCurrentUserId() ?? 
-                     UserUtils.getDefaultUserId();
-      
+      final userId =
+          await UserUtils.getCurrentUserId() ?? UserUtils.getDefaultUserId();
+
       if (mounted) {
         // Load dashboard stats
         _dashboardCubit.loadDashboard(userId: userId);
-        
+
         // Load notes for Recent Notes and Pinned Notes sections
         context.read<NotesCubit>().loadNotes();
-        
+
         // Initialize sidebar state based on screen size
         final screenWidth = MediaQuery.of(context).size.width;
         context.read<DashboardUiCubit>().initializeSidebar(screenWidth);
@@ -80,15 +80,15 @@ class _DashboardViewState extends State<_DashboardView> {
         return Scaffold(
           key: _scaffoldKey,
           backgroundColor: theme.colorScheme.surface,
-          drawer: isMobile 
-            ? Drawer(
-                child: ResponsiveSidebar(
-                  isExpanded: true,
-                  currentPath: '/dashboard',
-                  onToggle: () => Navigator.of(context).pop(),
-                ),
-              )
-            : null,
+          drawer: isMobile
+              ? Drawer(
+                  child: ResponsiveSidebar(
+                    isExpanded: true,
+                    currentPath: '/dashboard',
+                    onToggle: () => Navigator.of(context).pop(),
+                  ),
+                )
+              : null,
           body: Row(
             children: [
               // Desktop/Tablet Sidebar
@@ -96,20 +96,21 @@ class _DashboardViewState extends State<_DashboardView> {
                 ResponsiveSidebar(
                   isExpanded: uiState.sidebarExpanded,
                   currentPath: '/dashboard',
-                  onToggle: () => context.read<DashboardUiCubit>().toggleSidebar(),
+                  onToggle: () =>
+                      context.read<DashboardUiCubit>().toggleSidebar(),
                 ),
-              
+
               // Main Content
               Expanded(
                 child: Column(
                   children: [
                     // Header
                     DashboardHeader(
-                      onMenuPressed: isMobile 
-                        ? () => _scaffoldKey.currentState?.openDrawer()
-                        : null,
+                      onMenuPressed: isMobile
+                          ? () => _scaffoldKey.currentState?.openDrawer()
+                          : null,
                     ),
-                    
+
                     // Content
                     Expanded(
                       child: SingleChildScrollView(
@@ -120,7 +121,7 @@ class _DashboardViewState extends State<_DashboardView> {
                             // Welcome Section
                             const DashboardWelcomeSection(),
                             const SizedBox(height: 24),
-                            
+
                             // Stats Grid
                             BlocBuilder<DashboardCubit, DashboardState>(
                               builder: (context, state) {
@@ -131,10 +132,10 @@ class _DashboardViewState extends State<_DashboardView> {
                               },
                             ),
                             const SizedBox(height: 24),
-                            
+
                             // Content Grid
                             const DashboardContentGrid(),
-                            
+
                             const SizedBox(height: 16),
                           ],
                         ),
@@ -146,9 +147,7 @@ class _DashboardViewState extends State<_DashboardView> {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {
-             
-            },
+            onPressed: () {},
             backgroundColor: theme.primaryColor,
             child: const Icon(Icons.add, color: Colors.white),
           ),

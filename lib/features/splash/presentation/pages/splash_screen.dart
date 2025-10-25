@@ -43,22 +43,25 @@ class _SplashScreenState extends State<SplashScreen>
 
     _titleSlide = Tween<Offset>(begin: const Offset(0, 0.5), end: Offset.zero)
         .animate(
-      CurvedAnimation(
-        parent: _titleAnimationController,
-        curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
-      ),
-    );
+          CurvedAnimation(
+            parent: _titleAnimationController,
+            curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _titleAnimationController.forward();
   }
 
   /// Navigate to home after splash duration
   void _navigateToHome() {
-    Future.delayed(const Duration(seconds: AppConstants.splashDurationSeconds), () {
-      if (mounted) {
-        context.go('/');
-      }
-    });
+    Future.delayed(
+      const Duration(seconds: AppConstants.splashDurationSeconds),
+      () {
+        if (mounted) {
+          context.go('/');
+        }
+      },
+    );
   }
 
   @override
@@ -110,8 +113,9 @@ class _SplashScreenState extends State<SplashScreen>
                       Text(
                         AppConstants.splashTagline,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.6,
+                          ),
                           fontStyle: FontStyle.italic,
                         ),
                         textAlign: TextAlign.center,

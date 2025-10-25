@@ -40,7 +40,7 @@ void main() {
     test('Note title and content are preserved', () {
       const title = 'Important Meeting Notes';
       const content = 'Discussed project timeline and deliverables';
-      
+
       final note = Note(
         id: 'note3',
         title: title,
@@ -93,7 +93,7 @@ void main() {
       );
 
       expect(note.category, 'Work');
-      
+
       // Create new note with updated category
       final updatedNote = Note(
         id: note.id,
@@ -111,7 +111,7 @@ void main() {
     test('Note timestamps are tracked', () {
       final created = DateTime(2025, 10, 24, 10, 0, 0);
       final updated = DateTime(2025, 10, 24, 11, 30, 0);
-      
+
       final note = Note(
         id: 'note5',
         title: 'Timestamped Note',

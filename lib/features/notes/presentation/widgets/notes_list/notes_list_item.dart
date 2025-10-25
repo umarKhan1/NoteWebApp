@@ -7,12 +7,11 @@ import '../../../../../core/constants/app_strings.dart';
 import '../../../domain/entities/note.dart';
 
 /// Individual note item widget for the notes list/grid.
-/// 
+///
 /// This widget represents a single note card in the notes list or grid view.
 /// It displays note information and provides interactive controls for
 /// viewing, editing, deleting, and pinning notes.
 class NotesListItem extends StatelessWidget {
-
   /// Creates a new notes list item widget
   const NotesListItem({
     super.key,
@@ -22,34 +21,32 @@ class NotesListItem extends StatelessWidget {
     required this.onDelete,
     required this.onTogglePin,
   });
+
   /// The note data to display
   final Note note;
-  
+
   /// Callback when the note card is tapped for viewing
   final VoidCallback onTap;
-  
+
   /// Callback when the edit button is pressed
   final VoidCallback onEdit;
-  
+
   /// Callback when the delete button is pressed
   final VoidCallback onDelete;
-  
+
   /// Callback when the pin toggle is pressed
   final VoidCallback onTogglePin;
 
   @override
   Widget build(BuildContext context) {
     final noteColors = _getNoteColors(context);
-    
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            noteColors.primary,
-            noteColors.secondary,
-          ],
+          colors: [noteColors.primary, noteColors.secondary],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -67,9 +64,7 @@ class NotesListItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: Container(
             padding: const EdgeInsets.all(16),
-            constraints: const BoxConstraints(
-              minHeight: 120,
-            ),
+            constraints: const BoxConstraints(minHeight: 120),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -79,7 +74,8 @@ class NotesListItem extends StatelessWidget {
                 _buildTitle(context),
                 const SizedBox(height: 8),
                 _buildContent(context),
-                if (note.imageBase64 != null && note.imageBase64!.isNotEmpty) ...[
+                if (note.imageBase64 != null &&
+                    note.imageBase64!.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   _buildImageThumbnail(context),
                 ],
@@ -95,7 +91,7 @@ class NotesListItem extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Row(
       children: [
         // Vertical line icon at top left
@@ -146,11 +142,7 @@ class NotesListItem extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.push_pin,
-                  size: 12,
-                  color: Colors.white,
-                ),
+                const Icon(Icons.push_pin, size: 12, color: Colors.white),
                 const SizedBox(width: 4),
                 Text(
                   AppStrings.pinnedNotes,
@@ -166,13 +158,13 @@ class NotesListItem extends StatelessWidget {
           const SizedBox(width: 8),
         ],
         const Spacer(),
-         ],
+      ],
     );
   }
 
   Widget _buildTitle(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Text(
       note.title.isEmpty ? AppStrings.untitledNote : note.title,
       style: theme.textTheme.titleMedium?.copyWith(
@@ -188,16 +180,16 @@ class NotesListItem extends StatelessWidget {
   Widget _buildContent(BuildContext context) {
     final content = note.content.trim();
     if (content.isEmpty) return const SizedBox.shrink();
-    
+
     return _buildMarkdownPreview(context, content);
   }
 
   Widget _buildMarkdownPreview(BuildContext context, String content) {
     final theme = Theme.of(context);
-    
+
     // Parse markdown and convert to rich text spans
     final spans = _parseMarkdownToSpans(content, theme);
-    
+
     return RichText(
       text: TextSpan(
         children: spans,
@@ -215,28 +207,32 @@ class NotesListItem extends StatelessWidget {
   List<TextSpan> _parseMarkdownToSpans(String content, ThemeData theme) {
     final spans = <TextSpan>[];
     final lines = content.split('\n');
-    
+
     bool inCodeBlock = false;
     String codeBlockContent = '';
-    
-    for (int i = 0; i < lines.length && i < 4; i++) { // Limit to 4 lines for preview
+
+    for (int i = 0; i < lines.length && i < 4; i++) {
+      // Limit to 4 lines for preview
       final line = lines[i].trim();
       if (line.isEmpty) continue;
-      
+
       // Handle code blocks
       if (line.startsWith('```')) {
         if (inCodeBlock) {
           // End of code block - add the accumulated content
           if (codeBlockContent.isNotEmpty) {
-            spans.add(TextSpan(
-              text: '[Code: ${codeBlockContent.length > 30 ? '${codeBlockContent.substring(0, 30)}...' : codeBlockContent}]',
-              style: TextStyle(
-                fontFamily: 'monospace',
-                backgroundColor: Colors.white.withValues(alpha: 0.2),
-                color: Colors.white.withValues(alpha: 0.8),
-                fontSize: 12,
+            spans.add(
+              TextSpan(
+                text:
+                    '[Code: ${codeBlockContent.length > 30 ? '${codeBlockContent.substring(0, 30)}...' : codeBlockContent}]',
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 12,
+                ),
               ),
-            ));
+            );
             spans.add(const TextSpan(text: ' '));
           }
           inCodeBlock = false;
@@ -246,72 +242,83 @@ class NotesListItem extends StatelessWidget {
           inCodeBlock = true;
           final language = line.substring(3).trim();
           if (language.isNotEmpty) {
-            spans.add(TextSpan(
-              text: '[$language] ',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white.withValues(alpha: 0.8),
-                fontSize: 12,
+            spans.add(
+              TextSpan(
+                text: '[$language] ',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 12,
+                ),
               ),
-            ));
+            );
           }
         }
         continue;
       }
-      
+
       if (inCodeBlock) {
         if (codeBlockContent.isNotEmpty) codeBlockContent += '\n';
         codeBlockContent += line;
         continue;
       }
-      
+
       if (i > 0) {
         spans.add(const TextSpan(text: ' '));
       }
-      
+
       // Headers
       if (line.startsWith('# ')) {
-        spans.add(TextSpan(
-          text: line.substring(2),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.white,
+        spans.add(
+          TextSpan(
+            text: line.substring(2),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: Colors.white,
+            ),
           ),
-        ));
+        );
       } else if (line.startsWith('## ')) {
-        spans.add(TextSpan(
-          text: line.substring(3),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-            color: Colors.white,
+        spans.add(
+          TextSpan(
+            text: line.substring(3),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: Colors.white,
+            ),
           ),
-        ));
+        );
       } else if (line.startsWith('### ')) {
-        spans.add(TextSpan(
-          text: line.substring(4),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-            color: Colors.white,
+        spans.add(
+          TextSpan(
+            text: line.substring(4),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: Colors.white,
+            ),
           ),
-        ));
+        );
       }
       // Lists
       else if (line.startsWith('- ')) {
-        spans.add(TextSpan(
-          text: '• ${line.substring(2)}',
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-        ));
-      }
-      else if (RegExp(r'^\d+\.\s').hasMatch(line)) {
+        spans.add(
+          TextSpan(
+            text: '• ${line.substring(2)}',
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+          ),
+        );
+      } else if (RegExp(r'^\d+\.\s').hasMatch(line)) {
         final match = RegExp(r'^(\d+)\.\s(.*)').firstMatch(line);
         if (match != null) {
-          spans.add(TextSpan(
-            text: '${match.group(1)}. ${match.group(2)}',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-          ));
+          spans.add(
+            TextSpan(
+              text: '${match.group(1)}. ${match.group(2)}',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+            ),
+          );
         }
       }
       // Regular text with inline formatting
@@ -319,31 +326,40 @@ class NotesListItem extends StatelessWidget {
         spans.addAll(_parseInlineMarkdown(line, theme));
       }
     }
-    
+
     // Handle unclosed code block
     if (inCodeBlock && codeBlockContent.isNotEmpty) {
-      spans.add(TextSpan(
-        text: '[Code: ${codeBlockContent.length > 30 ? '${codeBlockContent.substring(0, 30)}...' : codeBlockContent}]',
-        style: TextStyle(
-          fontFamily: 'monospace',
-          backgroundColor: Colors.white.withValues(alpha: 0.2),
-          color: Colors.white.withValues(alpha: 0.8),
-          fontSize: 12,
+      spans.add(
+        TextSpan(
+          text:
+              '[Code: ${codeBlockContent.length > 30 ? '${codeBlockContent.substring(0, 30)}...' : codeBlockContent}]',
+          style: TextStyle(
+            fontFamily: 'monospace',
+            backgroundColor: Colors.white.withValues(alpha: 0.2),
+            color: Colors.white.withValues(alpha: 0.8),
+            fontSize: 12,
+          ),
         ),
-      ));
+      );
     }
-    
-    return spans.isEmpty 
-      ? [TextSpan(
-          text: content.length > 100 ? '${content.substring(0, 100)}...' : content,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-        )]
-      : spans;
+
+    return spans.isEmpty
+        ? [
+            TextSpan(
+              text: content.length > 100
+                  ? '${content.substring(0, 100)}...'
+                  : content,
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+            ),
+          ]
+        : spans;
   }
 
   List<TextSpan> _parseInlineMarkdown(String text, ThemeData theme) {
     final spans = <TextSpan>[];
-    final regex = RegExp(r'(\*\*.*?\*\*|\*(?!\*)(.*?)\*|~~(.*?)~~|`(.*?)`|\[(.*?)\]\((.*?)\))');
+    final regex = RegExp(
+      r'(\*\*.*?\*\*|\*(?!\*)(.*?)\*|~~(.*?)~~|`(.*?)`|\[(.*?)\]\((.*?)\))',
+    );
     final matches = regex.allMatches(text);
 
     int lastEnd = 0;
@@ -351,73 +367,88 @@ class NotesListItem extends StatelessWidget {
     for (final match in matches) {
       // Add text before the match
       if (match.start > lastEnd) {
-        spans.add(TextSpan(
-          text: text.substring(lastEnd, match.start),
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-        ));
+        spans.add(
+          TextSpan(
+            text: text.substring(lastEnd, match.start),
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+          ),
+        );
       }
 
       final matchText = match.group(0)!;
-      
+
       // Bold
       if (matchText.startsWith('**') && matchText.endsWith('**')) {
-        spans.add(TextSpan(
-          text: matchText.substring(2, matchText.length - 2),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+        spans.add(
+          TextSpan(
+            text: matchText.substring(2, matchText.length - 2),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-        ));
+        );
       }
       // Italic
-      else if (matchText.startsWith('*') && matchText.endsWith('*') && !matchText.startsWith('**')) {
-        spans.add(TextSpan(
-          text: matchText.substring(1, matchText.length - 1),
-          style: TextStyle(
-            fontStyle: FontStyle.italic,
-            color: Colors.white.withValues(alpha: 0.9),
+      else if (matchText.startsWith('*') &&
+          matchText.endsWith('*') &&
+          !matchText.startsWith('**')) {
+        spans.add(
+          TextSpan(
+            text: matchText.substring(1, matchText.length - 1),
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
           ),
-        ));
+        );
       }
       // Strikethrough
       else if (matchText.startsWith('~~') && matchText.endsWith('~~')) {
-        spans.add(TextSpan(
-          text: matchText.substring(2, matchText.length - 2),
-          style: TextStyle(
-            decoration: TextDecoration.lineThrough,
-            color: Colors.white.withValues(alpha: 0.9),
+        spans.add(
+          TextSpan(
+            text: matchText.substring(2, matchText.length - 2),
+            style: TextStyle(
+              decoration: TextDecoration.lineThrough,
+              color: Colors.white.withValues(alpha: 0.9),
+            ),
           ),
-        ));
+        );
       }
       // Inline code
       else if (matchText.startsWith('`') && matchText.endsWith('`')) {
-        spans.add(TextSpan(
-          text: matchText.substring(1, matchText.length - 1),
-          style: TextStyle(
-            fontFamily: 'monospace',
-            backgroundColor: Colors.white.withValues(alpha: 0.2),
-            color: Colors.white.withValues(alpha: 0.8),
+        spans.add(
+          TextSpan(
+            text: matchText.substring(1, matchText.length - 1),
+            style: TextStyle(
+              fontFamily: 'monospace',
+              backgroundColor: Colors.white.withValues(alpha: 0.2),
+              color: Colors.white.withValues(alpha: 0.8),
+            ),
           ),
-        ));
+        );
       }
       // Links
       else if (matchText.startsWith('[') && matchText.contains('](')) {
         final linkMatch = RegExp(r'\[(.*?)\]\((.*?)\)').firstMatch(matchText);
         if (linkMatch != null) {
-          spans.add(TextSpan(
-            text: linkMatch.group(1)!,
-            style: const TextStyle(
-              color: Colors.white,
-              decoration: TextDecoration.underline,
+          spans.add(
+            TextSpan(
+              text: linkMatch.group(1)!,
+              style: const TextStyle(
+                color: Colors.white,
+                decoration: TextDecoration.underline,
+              ),
             ),
-          ));
+          );
         }
-      }
-      else {
-        spans.add(TextSpan(
-          text: matchText,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-        ));
+      } else {
+        spans.add(
+          TextSpan(
+            text: matchText,
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+          ),
+        );
       }
 
       lastEnd = match.end;
@@ -425,23 +456,27 @@ class NotesListItem extends StatelessWidget {
 
     // Add remaining text
     if (lastEnd < text.length) {
-      spans.add(TextSpan(
-        text: text.substring(lastEnd),
-        style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-      ));
+      spans.add(
+        TextSpan(
+          text: text.substring(lastEnd),
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+        ),
+      );
     }
 
-    return spans.isEmpty 
-      ? [TextSpan(
-          text: text,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
-        )]
-      : spans;
+    return spans.isEmpty
+        ? [
+            TextSpan(
+              text: text,
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.9)),
+            ),
+          ]
+        : spans;
   }
 
   Widget _buildFooter(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Row(
       children: [
         Container(
@@ -453,11 +488,7 @@ class NotesListItem extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.access_time,
-                size: 12,
-                color: Colors.white,
-              ),
+              const Icon(Icons.access_time, size: 12, color: Colors.white),
               const SizedBox(width: 4),
               Text(
                 _formatDate(note.updatedAt),
@@ -476,15 +507,15 @@ class NotesListItem extends StatelessWidget {
 
   Widget _buildImageThumbnail(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     try {
       String cleanBase64 = note.imageBase64!;
       if (cleanBase64.contains(',')) {
         cleanBase64 = cleanBase64.split(',').last;
       }
-      
+
       final imageData = Uint8List.fromList(base64Decode(cleanBase64));
-      
+
       return GestureDetector(
         onTap: () => _showImagePreviewModal(context, imageData),
         child: Stack(
@@ -545,11 +576,7 @@ class NotesListItem extends StatelessWidget {
                   ],
                 ),
                 padding: const EdgeInsets.all(6),
-                child: const Icon(
-                  Icons.zoom_in,
-                  size: 18,
-                  color: Colors.white,
-                ),
+                child: const Icon(Icons.zoom_in, size: 18, color: Colors.white),
               ),
             ),
             // Image info at bottom
@@ -558,14 +585,13 @@ class NotesListItem extends StatelessWidget {
               left: 0,
               right: 0,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.image,
-                      size: 16,
-                      color: Colors.white,
-                    ),
+                    const Icon(Icons.image, size: 16, color: Colors.white),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -593,9 +619,7 @@ class NotesListItem extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: Colors.red.withValues(alpha: 0.2),
-          border: Border.all(
-            color: Colors.red.withValues(alpha: 0.4),
-          ),
+          border: Border.all(color: Colors.red.withValues(alpha: 0.4)),
         ),
         child: Center(
           child: Icon(
@@ -619,9 +643,7 @@ class NotesListItem extends StatelessWidget {
             Positioned.fill(
               child: GestureDetector(
                 onTap: () => Navigator.pop(context),
-                child: Container(
-                  color: Colors.black.withValues(alpha: 0.5),
-                ),
+                child: Container(color: Colors.black.withValues(alpha: 0.5)),
               ),
             ),
             // Image container
@@ -631,7 +653,10 @@ class NotesListItem extends StatelessWidget {
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: const BoxDecoration(
                       color: Colors.black87,
                       borderRadius: BorderRadius.only(
@@ -684,10 +709,7 @@ class NotesListItem extends StatelessWidget {
                         bottomRight: Radius.circular(12),
                       ),
                     ),
-                    child: Image.memory(
-                      imageData,
-                      fit: BoxFit.contain,
-                    ),
+                    child: Image.memory(imageData, fit: BoxFit.contain),
                   ),
                 ],
               ),
@@ -732,7 +754,7 @@ class NotesListItem extends StatelessWidget {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays > 0) {
       return '${difference.inDays}d ago';
     } else if (difference.inHours > 0) {

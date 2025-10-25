@@ -51,7 +51,7 @@ class CustomTextField extends BaseStatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < AppConstants.mobileMaxWidth;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -69,14 +69,12 @@ class CustomTextField extends BaseStatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           validator: validator,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontSize: isMobile ? 15.sp : 20.sp,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(fontSize: isMobile ? 15.sp : 20.sp),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: TextStyle(
-              fontSize: isMobile ? 15.sp : 20.sp,
-            ),
+            hintStyle: TextStyle(fontSize: isMobile ? 15.sp : 20.sp),
             suffixIcon: suffixIcon,
             errorText: errorText,
             contentPadding: EdgeInsets.symmetric(

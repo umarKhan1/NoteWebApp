@@ -2,7 +2,6 @@ import '../repositories/notes_repository.dart';
 
 /// Use case for deleting a note
 class DeleteNoteUseCase {
-
   /// Creates a new instance of [DeleteNoteUseCase]
   const DeleteNoteUseCase(this._repository);
   final NotesRepository _repository;

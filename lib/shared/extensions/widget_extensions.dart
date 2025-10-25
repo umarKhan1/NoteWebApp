@@ -49,10 +49,7 @@ extension WidgetExtensions on Widget {
 
   /// Adds all-around padding to this widget.
   Widget paddingAll(double padding) {
-    return Padding(
-      padding: EdgeInsets.all(padding),
-      child: this,
-    );
+    return Padding(padding: EdgeInsets.all(padding), child: this);
   }
 
   /// Adds symmetric padding to this widget.
@@ -89,10 +86,10 @@ extension WidgetExtensions on Widget {
 extension SpacingExtensions on num {
   /// Vertical spacing
   Widget get verticalSpace => SizedBox(height: toDouble());
-  
+
   /// Horizontal spacing
   Widget get horizontalSpace => SizedBox(width: toDouble());
-  
+
   /// Creates a vertical SizedBox with this height.
   Widget get heightBox => SizedBox(height: toDouble());
 
@@ -100,20 +97,14 @@ extension SpacingExtensions on num {
   Widget get widthBox => SizedBox(width: toDouble());
 
   /// Creates a square SizedBox with this dimension.
-  Widget get box => SizedBox(
-        width: toDouble(),
-        height: toDouble(),
-      );
-  
+  Widget get box => SizedBox(width: toDouble(), height: toDouble());
+
   /// Square spacing (both width and height)
-  Widget get squareSpace => SizedBox(
-        width: toDouble(),
-        height: toDouble(),
-      );
-  
+  Widget get squareSpace => SizedBox(width: toDouble(), height: toDouble());
+
   /// Creates responsive vertical space using responsive_sizer.
   Widget get vSpace => SizedBox(height: toDouble().h);
-  
+
   /// Creates responsive horizontal space using responsive_sizer.
   Widget get hSpace => SizedBox(width: toDouble().w);
 }
@@ -122,22 +113,22 @@ extension SpacingExtensions on num {
 class AppSpacing {
   /// Extra small spacing - 4
   static const double xs = 4.0;
-  
+
   /// Small spacing - 8
   static const double sm = 8.0;
-  
+
   /// Medium spacing - 16
   static const double md = 16.0;
-  
+
   /// Large spacing - 24
   static const double lg = 24.0;
-  
+
   /// Extra large spacing - 32
   static const double xl = 32.0;
-  
+
   /// Extra extra large spacing - 48
   static const double xxl = 48.0;
-  
+
   /// Massive spacing - 64
   static const double massive = 64.0;
 }

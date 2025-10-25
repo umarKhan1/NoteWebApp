@@ -19,7 +19,7 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
     final responsiveInfo = getResponsiveInfo(context);
     final theme = getTheme(context);
     final padding = responsiveInfo.isMobile ? 16.0 : 20.0;
-    
+
     return Container(
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
@@ -64,12 +64,13 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           BlocBuilder<NotesCubit, NotesState>(
             builder: (context, state) {
               // Auto-load notes if in initial state
               if (state is NotesInitial) {
                 Future.microtask(() {
+                  // ignore: use_build_context_synchronously
                   context.read<NotesCubit>().loadNotes();
                 });
                 return const Center(child: CircularProgressIndicator());
@@ -78,30 +79,31 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
               if (state is NotesLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
-              
+
               if (state is NotesError) {
                 return _buildErrorState();
               }
-              
+
               if (state is NotesLoaded && state.notes.isNotEmpty) {
                 // Filter pinned notes and sort by date
-                final pinnedNotes = state.notes
-                  .where((note) => note.isPinned)
-                  .toList()
-                  ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-                
+                final pinnedNotes =
+                    state.notes.where((note) => note.isPinned).toList()
+                      ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
                 if (pinnedNotes.isEmpty) {
                   return _buildEmptyState();
                 }
-                
+
                 return Column(
-                  children: pinnedNotes.map((note) => _buildPinnedNoteItem(
-                    context: context,
-                    note: note,
-                  )).toList(),
+                  children: pinnedNotes
+                      .map(
+                        (note) =>
+                            _buildPinnedNoteItem(context: context, note: note),
+                      )
+                      .toList(),
                 );
               }
-              
+
               return _buildEmptyState();
             },
           ),
@@ -110,7 +112,6 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
     );
   }
 
-
   void _showPinnedNotesPanel(BuildContext context) {
     showGeneralDialog(
       context: context,
@@ -118,14 +119,18 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: Colors.black.withValues(alpha: 0.3),
       transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (BuildContext buildContext, Animation animation,
-          Animation secondaryAnimation) {
-        return SizedBox.expand(
-          child: PinnedNotesPanel(
-            onClose: () => Navigator.of(buildContext).pop(),
-          ),
-        );
-      },
+      pageBuilder:
+          (
+            BuildContext buildContext,
+            Animation animation,
+            Animation secondaryAnimation,
+          ) {
+            return SizedBox.expand(
+              child: PinnedNotesPanel(
+                onClose: () => Navigator.of(buildContext).pop(),
+              ),
+            );
+          },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
           position: Tween<Offset>(
@@ -144,21 +149,21 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
   }) {
     final theme = getTheme(context);
     final isDarkMode = theme.brightness == Brightness.dark;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDarkMode 
+        color: isDarkMode
             ? theme.colorScheme.primary.withValues(alpha: 0.15)
             : Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isDarkMode 
+          color: isDarkMode
               ? theme.colorScheme.primary.withValues(alpha: 0.3)
               : theme.colorScheme.outline.withValues(alpha: 0.1),
           width: isDarkMode ? 1.5 : 1,
         ),
-        boxShadow: isDarkMode 
+        boxShadow: isDarkMode
             ? [
                 BoxShadow(
                   color: theme.colorScheme.primary.withValues(alpha: 0.1),
@@ -179,21 +184,20 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
               children: [
                 // Red pinned badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFEF4444), // Red background
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        Icons.push_pin,
-                        size: 12,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(width: 4),
-                      const Text(
+                      Icon(Icons.push_pin, size: 12, color: Colors.white),
+                      SizedBox(width: 4),
+                      Text(
                         'Pinned',
                         style: TextStyle(
                           color: Colors.white,
@@ -210,7 +214,9 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        note.title.isEmpty ? AppStrings.untitledNote : note.title,
+                        note.title.isEmpty
+                            ? AppStrings.untitledNote
+                            : note.title,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -237,7 +243,9 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.5,
+                          ),
                         ),
                       ),
                     ],
@@ -306,10 +314,7 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Failed to load pinned notes',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: theme.colorScheme.error,
-                ),
+                style: TextStyle(fontSize: 14, color: theme.colorScheme.error),
               ),
             ],
           ),
@@ -321,7 +326,7 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays > 0) {
       return '${difference.inDays}d ago';
     } else if (difference.inHours > 0) {

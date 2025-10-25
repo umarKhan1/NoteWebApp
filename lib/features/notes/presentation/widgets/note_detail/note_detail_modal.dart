@@ -12,14 +12,11 @@ import '../notes_list/add_note_bottom_sheet.dart';
 
 /// Beautiful note detail modal that matches the card colors
 class NoteDetailModal extends StatelessWidget {
+  /// Constructor
+  const NoteDetailModal({super.key, required this.note});
+
   /// The note to display
   final Note note;
-  
-  /// Constructor
-  const NoteDetailModal({
-    super.key,
-    required this.note,
-  });
 
   /// Show the note detail modal
   static void show(BuildContext context, Note note) {
@@ -34,8 +31,8 @@ class NoteDetailModal extends StatelessWidget {
         maxWidth: size.width >= 1024
             ? 1000
             : size.width >= 600
-                ? 800
-                : size.width,
+            ? 800
+            : size.width,
         maxHeight: size.height * 0.9,
       ),
       builder: (context) => NoteDetailModal(note: note),
@@ -60,38 +57,79 @@ class NoteDetailModal extends StatelessWidget {
       alignment: isDesktop ? Alignment.center : Alignment.bottomCenter,
       child: Container(
         margin: EdgeInsets.only(
-          top: isDesktop ? 40 : isTablet ? 30 : 20,
-          bottom: keyboardHeight + (isDesktop ? 40 : isTablet ? 30 : 20),
-          left: isDesktop ? 40 : isTablet ? 20 : 10,
-          right: isDesktop ? 40 : isTablet ? 20 : 10,
+          top: isDesktop
+              ? 40
+              : isTablet
+              ? 30
+              : 20,
+          bottom:
+              keyboardHeight +
+              (isDesktop
+                  ? 40
+                  : isTablet
+                  ? 30
+                  : 20),
+          left: isDesktop
+              ? 40
+              : isTablet
+              ? 20
+              : 10,
+          right: isDesktop
+              ? 40
+              : isTablet
+              ? 20
+              : 10,
         ),
         constraints: BoxConstraints(
-          maxWidth: isDesktop ? 900 : isTablet ? screenWidth * 0.85 : screenWidth * 0.95,
-          maxHeight: screenHeight * (isDesktop ? 0.85 : isTablet ? 0.88 : 0.93),
+          maxWidth: isDesktop
+              ? 900
+              : isTablet
+              ? screenWidth * 0.85
+              : screenWidth * 0.95,
+          maxHeight:
+              screenHeight *
+              (isDesktop
+                  ? 0.85
+                  : isTablet
+                  ? 0.88
+                  : 0.93),
         ),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              noteColors.primary,
-              noteColors.secondary,
-            ],
+            colors: [noteColors.primary, noteColors.secondary],
           ),
           borderRadius: BorderRadius.circular(
-            isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 24 : 28
+            isSmallMobile
+                ? 16
+                : isMobile
+                ? 20
+                : isTablet
+                ? 24
+                : 28,
           ),
           boxShadow: [
             BoxShadow(
               color: noteColors.primary.withValues(alpha: 0.3),
-              blurRadius: isDesktop ? 20 : isTablet ? 16 : 12,
+              blurRadius: isDesktop
+                  ? 20
+                  : isTablet
+                  ? 16
+                  : 12,
               offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(
-            isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 24 : 28
+            isSmallMobile
+                ? 16
+                : isMobile
+                ? 20
+                : isTablet
+                ? 24
+                : 28,
           ),
           child: Column(
             children: [
@@ -107,22 +145,45 @@ class NoteDetailModal extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
+  Widget _buildHeader(
+    ThemeData theme,
+    bool isSmallMobile,
+    bool isMobile,
+    bool isTablet,
+  ) {
     return Container(
-      padding: EdgeInsets.all(isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 24 : 28),
+      padding: EdgeInsets.all(
+        isSmallMobile
+            ? 16
+            : isMobile
+            ? 20
+            : isTablet
+            ? 24
+            : 28,
+      ),
       child: Row(
         children: [
           // Vertical line icon
           Container(
             width: 4,
-            height: isSmallMobile ? 40 : isMobile ? 48 : 56,
+            height: isSmallMobile
+                ? 40
+                : isMobile
+                ? 48
+                : 56,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          SizedBox(width: isSmallMobile ? 12 : isMobile ? 16 : 20),
-          
+          SizedBox(
+            width: isSmallMobile
+                ? 12
+                : isMobile
+                ? 16
+                : 20,
+          ),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,12 +192,22 @@ class NoteDetailModal extends StatelessWidget {
                 if (note.category != null) ...[
                   Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isSmallMobile ? 8 : isMobile ? 10 : 12,
-                      vertical: isSmallMobile ? 4 : isMobile ? 6 : 8,
+                      horizontal: isSmallMobile
+                          ? 8
+                          : isMobile
+                          ? 10
+                          : 12,
+                      vertical: isSmallMobile
+                          ? 4
+                          : isMobile
+                          ? 6
+                          : 8,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(isSmallMobile ? 12 : 16),
+                      borderRadius: BorderRadius.circular(
+                        isSmallMobile ? 12 : 16,
+                      ),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.3),
                         width: 1,
@@ -147,33 +218,59 @@ class NoteDetailModal extends StatelessWidget {
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
-                        fontSize: isSmallMobile ? 12 : isMobile ? 14 : 16,
+                        fontSize: isSmallMobile
+                            ? 12
+                            : isMobile
+                            ? 14
+                            : 16,
                       ),
                     ),
                   ),
-                  SizedBox(height: isSmallMobile ? 8 : isMobile ? 12 : 16),
+                  SizedBox(
+                    height: isSmallMobile
+                        ? 8
+                        : isMobile
+                        ? 12
+                        : 16,
+                  ),
                 ],
-                
+
                 // Title
                 Text(
                   note.title.isEmpty ? 'Untitled Note' : note.title,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    fontSize: isSmallMobile ? 20 : isMobile ? 24 : isTablet ? 28 : 32,
+                    fontSize: isSmallMobile
+                        ? 20
+                        : isMobile
+                        ? 24
+                        : isTablet
+                        ? 28
+                        : 32,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                
-                SizedBox(height: isSmallMobile ? 8 : isMobile ? 12 : 16),
-                
+
+                SizedBox(
+                  height: isSmallMobile
+                      ? 8
+                      : isMobile
+                      ? 12
+                      : 16,
+                ),
+
                 // Date and pin status
                 Row(
                   children: [
                     Icon(
                       Icons.access_time,
-                      size: isSmallMobile ? 14 : isMobile ? 16 : 18,
+                      size: isSmallMobile
+                          ? 14
+                          : isMobile
+                          ? 16
+                          : 18,
                       color: Colors.white.withValues(alpha: 0.8),
                     ),
                     SizedBox(width: isSmallMobile ? 4 : 8),
@@ -182,7 +279,11 @@ class NoteDetailModal extends StatelessWidget {
                         _formatDate(note.updatedAt),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: isSmallMobile ? 12 : isMobile ? 14 : 16,
+                          fontSize: isSmallMobile
+                              ? 12
+                              : isMobile
+                              ? 14
+                              : 16,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -197,7 +298,11 @@ class NoteDetailModal extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.push_pin,
-                          size: isSmallMobile ? 14 : isMobile ? 16 : 18,
+                          size: isSmallMobile
+                              ? 14
+                              : isMobile
+                              ? 16
+                              : 18,
                           color: Colors.white,
                         ),
                       ),
@@ -207,7 +312,7 @@ class NoteDetailModal extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Close button
           Builder(
             builder: (context) => IconButton(
@@ -220,7 +325,11 @@ class NoteDetailModal extends StatelessWidget {
                 ),
                 child: Icon(
                   Icons.close,
-                  size: isSmallMobile ? 18 : isMobile ? 20 : 22,
+                  size: isSmallMobile
+                      ? 18
+                      : isMobile
+                      ? 20
+                      : 22,
                   color: Colors.white,
                 ),
               ),
@@ -231,16 +340,41 @@ class NoteDetailModal extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
+  Widget _buildContent(
+    ThemeData theme,
+    bool isSmallMobile,
+    bool isMobile,
+    bool isTablet,
+  ) {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(
-        horizontal: isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 24 : 28,
+        horizontal: isSmallMobile
+            ? 16
+            : isMobile
+            ? 20
+            : isTablet
+            ? 24
+            : 28,
       ),
-      padding: EdgeInsets.all(isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 24 : 28),
+      padding: EdgeInsets.all(
+        isSmallMobile
+            ? 16
+            : isMobile
+            ? 20
+            : isTablet
+            ? 24
+            : 28,
+      ),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(isSmallMobile ? 12 : isMobile ? 16 : 20),
+        borderRadius: BorderRadius.circular(
+          isSmallMobile
+              ? 12
+              : isMobile
+              ? 16
+              : 20,
+        ),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.2),
           width: 1,
@@ -253,9 +387,15 @@ class NoteDetailModal extends StatelessWidget {
             // Display image if available
             if (note.imageBase64 != null && note.imageBase64!.isNotEmpty) ...[
               _buildDetailImage(theme, isSmallMobile, isMobile, isTablet),
-              SizedBox(height: isSmallMobile ? 16 : isMobile ? 20 : 24),
+              SizedBox(
+                height: isSmallMobile
+                    ? 16
+                    : isMobile
+                    ? 20
+                    : 24,
+              ),
             ],
-            
+
             // Note content
             if (note.content.trim().isEmpty)
               Center(
@@ -264,7 +404,11 @@ class NoteDetailModal extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.note_outlined,
-                      size: isSmallMobile ? 48 : isMobile ? 56 : 64,
+                      size: isSmallMobile
+                          ? 48
+                          : isMobile
+                          ? 56
+                          : 64,
                       color: Colors.white.withValues(alpha: 0.5),
                     ),
                     SizedBox(height: isSmallMobile ? 12 : 16),
@@ -272,7 +416,11 @@ class NoteDetailModal extends StatelessWidget {
                       'This note is empty',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: isSmallMobile ? 16 : isMobile ? 18 : 20,
+                        fontSize: isSmallMobile
+                            ? 16
+                            : isMobile
+                            ? 18
+                            : 20,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -291,39 +439,65 @@ class NoteDetailModal extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailImage(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
+  Widget _buildDetailImage(
+    ThemeData theme,
+    bool isSmallMobile,
+    bool isMobile,
+    bool isTablet,
+  ) {
     try {
       // Decode Base64 to Uint8List
       String cleanBase64 = note.imageBase64!;
       if (cleanBase64.contains(',')) {
         cleanBase64 = cleanBase64.split(',').last;
       }
-      
+
       final imageData = Uint8List.fromList(base64Decode(cleanBase64));
-      final maxWidth = isTablet ? 600.0 : isMobile ? 300.0 : 400.0;
-      
+      final maxWidth = isTablet
+          ? 600.0
+          : isMobile
+          ? 300.0
+          : 400.0;
+
       return Builder(
         builder: (context) => GestureDetector(
-          onTap: () => _showImagePreview(context: context, imageData: imageData),
+          onTap: () =>
+              _showImagePreview(context: context, imageData: imageData),
           child: Container(
             width: double.infinity,
             constraints: BoxConstraints(maxWidth: maxWidth),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(isSmallMobile ? 12 : isMobile ? 16 : 20),
+              borderRadius: BorderRadius.circular(
+                isSmallMobile
+                    ? 12
+                    : isMobile
+                    ? 16
+                    : 20,
+              ),
               border: Border.all(
                 color: Colors.white.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(isSmallMobile ? 12 : isMobile ? 16 : 20),
+              borderRadius: BorderRadius.circular(
+                isSmallMobile
+                    ? 12
+                    : isMobile
+                    ? 16
+                    : 20,
+              ),
               child: Stack(
                 children: [
                   Image.memory(
                     imageData,
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    height: isTablet ? 400 : isMobile ? 250 : 300,
+                    height: isTablet
+                        ? 400
+                        : isMobile
+                        ? 250
+                        : 300,
                   ),
                   // Overlay hint
                   Positioned(
@@ -331,7 +505,13 @@ class NoteDetailModal extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: Container(
-                      padding: EdgeInsets.all(isSmallMobile ? 8 : isMobile ? 12 : 16),
+                      padding: EdgeInsets.all(
+                        isSmallMobile
+                            ? 8
+                            : isMobile
+                            ? 12
+                            : 16,
+                      ),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
@@ -350,7 +530,11 @@ class NoteDetailModal extends StatelessWidget {
                               note.imageName ?? 'Image',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: Colors.white,
-                                fontSize: isSmallMobile ? 12 : isMobile ? 14 : 16,
+                                fontSize: isSmallMobile
+                                    ? 12
+                                    : isMobile
+                                    ? 14
+                                    : 16,
                                 fontWeight: FontWeight.w600,
                               ),
                               maxLines: 1,
@@ -360,7 +544,11 @@ class NoteDetailModal extends StatelessWidget {
                           SizedBox(width: isSmallMobile ? 8 : 12),
                           Icon(
                             Icons.zoom_in,
-                            size: isSmallMobile ? 18 : isMobile ? 20 : 22,
+                            size: isSmallMobile
+                                ? 18
+                                : isMobile
+                                ? 20
+                                : 22,
                             color: Colors.white,
                           ),
                         ],
@@ -376,14 +564,22 @@ class NoteDetailModal extends StatelessWidget {
     } catch (e) {
       // Fallback if Base64 decoding fails
       return Container(
-        height: isTablet ? 300 : isMobile ? 200 : 250,
+        height: isTablet
+            ? 300
+            : isMobile
+            ? 200
+            : 250,
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(isSmallMobile ? 12 : isMobile ? 16 : 20),
-          color: Colors.white.withValues(alpha: 0.1),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(
+            isSmallMobile
+                ? 12
+                : isMobile
+                ? 16
+                : 20,
           ),
+          color: Colors.white.withValues(alpha: 0.1),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
         ),
         child: Center(
           child: Column(
@@ -392,14 +588,22 @@ class NoteDetailModal extends StatelessWidget {
               Icon(
                 Icons.image_not_supported,
                 color: Colors.white.withValues(alpha: 0.5),
-                size: isSmallMobile ? 40 : isMobile ? 48 : 56,
+                size: isSmallMobile
+                    ? 40
+                    : isMobile
+                    ? 48
+                    : 56,
               ),
               SizedBox(height: isSmallMobile ? 8 : 12),
               Text(
                 'Image unavailable',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: Colors.white.withValues(alpha: 0.6),
-                  fontSize: isSmallMobile ? 14 : isMobile ? 16 : 18,
+                  fontSize: isSmallMobile
+                      ? 14
+                      : isMobile
+                      ? 16
+                      : 18,
                 ),
               ),
             ],
@@ -409,7 +613,10 @@ class NoteDetailModal extends StatelessWidget {
     }
   }
 
-  void _showImagePreview({required BuildContext context, required Uint8List imageData}) {
+  void _showImagePreview({
+    required BuildContext context,
+    required Uint8List imageData,
+  }) {
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -426,10 +633,7 @@ class NoteDetailModal extends StatelessWidget {
                 ),
                 title: Text(note.imageName ?? 'Image'),
               ),
-              Image.memory(
-                imageData,
-                fit: BoxFit.contain,
-              ),
+              Image.memory(imageData, fit: BoxFit.contain),
             ],
           ),
         ),
@@ -437,123 +641,136 @@ class NoteDetailModal extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
+  Widget _buildActionButtons(
+    ThemeData theme,
+    bool isSmallMobile,
+    bool isMobile,
+    bool isTablet,
+  ) {
     return Builder(
       builder: (context) => Container(
-      padding: EdgeInsets.all(isSmallMobile ? 16 : isMobile ? 20 : isTablet ? 24 : 28),
-      child: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (isMobile) ...[
-              // Mobile: Stacked buttons
-              _buildActionButton(
-                icon: Icons.print_outlined,
-                label: 'Print',
-                onPressed: () => _handlePrint(),
-                isSmallMobile: isSmallMobile,
-                isMobile: isMobile,
-              ),
-              SizedBox(height: isSmallMobile ? 8 : 12),
-              _buildActionButton(
-                icon: Icons.picture_as_pdf_outlined,
-                label: 'Download PDF',
-                onPressed: () async {
-                  try {
-                    await NotePdfService.downloadNotePdf(note);
-                  } catch (e) {
-                    // Handle error silently - could show a toast/snackbar if needed
-                    // For now, we'll just prevent crashes
-                  }
-                },
-                isSmallMobile: isSmallMobile,
-                isMobile: isMobile,
-              ),
-              SizedBox(height: isSmallMobile ? 8 : 12),
-              _buildActionButton(
-                icon: Icons.edit_outlined,
-                label: 'Edit Note',
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  AddNoteBottomSheet.show(context, existingNote: note);
-                },
-                isSmallMobile: isSmallMobile,
-                isMobile: isMobile,
-              ),
-              SizedBox(height: isSmallMobile ? 8 : 12),
-              _buildActionButton(
-                icon: Icons.delete_outline,
-                label: 'Delete Note',
-                onPressed: () {
-                  _showDeleteConfirmation(context);
-                },
-                isSmallMobile: isSmallMobile,
-                isMobile: isMobile,
-                isDestructive: true,
-              ),
-            ] else ...[
-              // Desktop/Tablet: Row of buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildActionButton(
-                      icon: Icons.print_outlined,
-                      label: 'Print',
-                      onPressed: () => _handlePrint(),
-                      isSmallMobile: isSmallMobile,
-                      isMobile: isMobile,
-                    ),
-                  ),
-                  SizedBox(width: isTablet ? 12 : 16),
-                  Expanded(
-                    child: _buildActionButton(
-                      icon: Icons.picture_as_pdf_outlined,
-                      label: 'Download PDF',
-                      onPressed: () async {
-                        try {
-                          await NotePdfService.downloadNotePdf(note);
-                        } catch (e) {
-                          // Handle error silently - could show a toast/snackbar if needed
-                          // For now, we'll just prevent crashes
-                        }
-                      },
-                      isSmallMobile: isSmallMobile,
-                      isMobile: isMobile,
-                    ),
-                  ),
-                  SizedBox(width: isTablet ? 12 : 16),
-                  Expanded(
-                    child: _buildActionButton(
-                      icon: Icons.edit_outlined,
-                      label: 'Edit Note',
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        AddNoteBottomSheet.show(context, existingNote: note);
-                      },
-                      isSmallMobile: isSmallMobile,
-                      isMobile: isMobile,
-                    ),
-                  ),
-                  SizedBox(width: isTablet ? 12 : 16),
-                  Expanded(
-                    child: _buildActionButton(
-                      icon: Icons.delete_outline,
-                      label: 'Delete Note',
-                      onPressed: () {
-                        _showDeleteConfirmation(context);
-                      },
-                      isSmallMobile: isSmallMobile,
-                      isMobile: isMobile,
-                      isDestructive: true,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ],
+        padding: EdgeInsets.all(
+          isSmallMobile
+              ? 16
+              : isMobile
+              ? 20
+              : isTablet
+              ? 24
+              : 28,
         ),
-      ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isMobile) ...[
+                // Mobile: Stacked buttons
+                _buildActionButton(
+                  icon: Icons.print_outlined,
+                  label: 'Print',
+                  onPressed: () => _handlePrint(),
+                  isSmallMobile: isSmallMobile,
+                  isMobile: isMobile,
+                ),
+                SizedBox(height: isSmallMobile ? 8 : 12),
+                _buildActionButton(
+                  icon: Icons.picture_as_pdf_outlined,
+                  label: 'Download PDF',
+                  onPressed: () async {
+                    try {
+                      await NotePdfService.downloadNotePdf(note);
+                    } catch (e) {
+                      // Handle error silently - could show a toast/snackbar if needed
+                      // For now, we'll just prevent crashes
+                    }
+                  },
+                  isSmallMobile: isSmallMobile,
+                  isMobile: isMobile,
+                ),
+                SizedBox(height: isSmallMobile ? 8 : 12),
+                _buildActionButton(
+                  icon: Icons.edit_outlined,
+                  label: 'Edit Note',
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    AddNoteBottomSheet.show(context, existingNote: note);
+                  },
+                  isSmallMobile: isSmallMobile,
+                  isMobile: isMobile,
+                ),
+                SizedBox(height: isSmallMobile ? 8 : 12),
+                _buildActionButton(
+                  icon: Icons.delete_outline,
+                  label: 'Delete Note',
+                  onPressed: () {
+                    _showDeleteConfirmation(context);
+                  },
+                  isSmallMobile: isSmallMobile,
+                  isMobile: isMobile,
+                  isDestructive: true,
+                ),
+              ] else ...[
+                // Desktop/Tablet: Row of buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildActionButton(
+                        icon: Icons.print_outlined,
+                        label: 'Print',
+                        onPressed: () => _handlePrint(),
+                        isSmallMobile: isSmallMobile,
+                        isMobile: isMobile,
+                      ),
+                    ),
+                    SizedBox(width: isTablet ? 12 : 16),
+                    Expanded(
+                      child: _buildActionButton(
+                        icon: Icons.picture_as_pdf_outlined,
+                        label: 'Download PDF',
+                        onPressed: () async {
+                          try {
+                            await NotePdfService.downloadNotePdf(note);
+                          } catch (e) {
+                            // Handle error silently - could show a toast/snackbar if needed
+                            // For now, we'll just prevent crashes
+                          }
+                        },
+                        isSmallMobile: isSmallMobile,
+                        isMobile: isMobile,
+                      ),
+                    ),
+                    SizedBox(width: isTablet ? 12 : 16),
+                    Expanded(
+                      child: _buildActionButton(
+                        icon: Icons.edit_outlined,
+                        label: 'Edit Note',
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          AddNoteBottomSheet.show(context, existingNote: note);
+                        },
+                        isSmallMobile: isSmallMobile,
+                        isMobile: isMobile,
+                      ),
+                    ),
+                    SizedBox(width: isTablet ? 12 : 16),
+                    Expanded(
+                      child: _buildActionButton(
+                        icon: Icons.delete_outline,
+                        label: 'Delete Note',
+                        onPressed: () {
+                          _showDeleteConfirmation(context);
+                        },
+                        isSmallMobile: isSmallMobile,
+                        isMobile: isMobile,
+                        isDestructive: true,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -566,34 +783,54 @@ class NoteDetailModal extends StatelessWidget {
     required bool isMobile,
     bool isDestructive = false,
   }) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      height: isSmallMobile ? 44 : isMobile ? 48 : 52,
+      height: isSmallMobile
+          ? 44
+          : isMobile
+          ? 48
+          : 52,
       child: OutlinedButton.icon(
         onPressed: onPressed,
         icon: Icon(
           icon,
-          size: isSmallMobile ? 16 : isMobile ? 18 : 20,
+          size: isSmallMobile
+              ? 16
+              : isMobile
+              ? 18
+              : 20,
           color: isDestructive ? Colors.red.shade300 : Colors.white,
         ),
         label: Text(
           label,
           style: TextStyle(
             color: isDestructive ? Colors.red.shade300 : Colors.white,
-            fontSize: isSmallMobile ? 13 : isMobile ? 14 : 16,
+            fontSize: isSmallMobile
+                ? 13
+                : isMobile
+                ? 14
+                : 16,
             fontWeight: FontWeight.w500,
           ),
         ),
         style: OutlinedButton.styleFrom(
           side: BorderSide(
-            color: isDestructive ? Colors.red.shade300 : Colors.white.withValues(alpha: 0.6),
+            color: isDestructive
+                ? Colors.red.shade300
+                : Colors.white.withValues(alpha: 0.6),
             width: 1.5,
           ),
-          backgroundColor: isDestructive 
+          backgroundColor: isDestructive
               ? Colors.red.withValues(alpha: 0.1)
               : Colors.white.withValues(alpha: 0.1),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(isSmallMobile ? 8 : isMobile ? 10 : 12),
+            borderRadius: BorderRadius.circular(
+              isSmallMobile
+                  ? 8
+                  : isMobile
+                  ? 10
+                  : 12,
+            ),
           ),
         ),
       ),
@@ -633,7 +870,7 @@ class NoteDetailModal extends StatelessWidget {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays > 0) {
       return '${difference.inDays}d ago';
     } else if (difference.inHours > 0) {
@@ -644,7 +881,7 @@ class NoteDetailModal extends StatelessWidget {
       return 'Just now';
     }
   }
-  
+
   /// Show delete confirmation dialog
   void _showDeleteConfirmation(BuildContext context) {
     showDialog(
@@ -659,9 +896,10 @@ class NoteDetailModal extends StatelessWidget {
             ),
           ),
           child: FadeTransition(
-            opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-              ModalRoute.of(dialogContext)!.animation!,
-            ),
+            opacity: Tween<double>(
+              begin: 0.0,
+              end: 1.0,
+            ).animate(ModalRoute.of(dialogContext)!.animation!),
             child: AlertDialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -687,7 +925,7 @@ class NoteDetailModal extends StatelessWidget {
                   onPressed: () async {
                     Navigator.of(dialogContext).pop(); // Close dialog
                     Navigator.of(context).pop(); // Close note detail modal
-                    
+
                     // Delete the note through NotesCubit
                     if (context.mounted) {
                       try {

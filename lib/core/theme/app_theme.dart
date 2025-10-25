@@ -16,7 +16,7 @@ class AppTheme {
       brightness: Brightness.light,
       primaryColor: AppColors.lightPrimary,
       scaffoldBackgroundColor: AppColors.lightBackground,
-      
+
       // Color Scheme
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.lightPrimary,
@@ -27,7 +27,7 @@ class AppTheme {
 
         error: AppColors.errorColor,
       ),
-      
+
       // Typography using Lato font
       textTheme: GoogleFonts.latoTextTheme().copyWith(
         headlineLarge: GoogleFonts.lato(
@@ -76,7 +76,7 @@ class AppTheme {
           color: AppColors.lightTextPrimary,
         ),
       ),
-      
+
       // App Bar Theme
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.lightBackground,
@@ -89,7 +89,7 @@ class AppTheme {
           color: AppColors.lightTextPrimary,
         ),
       ),
-      
+
       // Card Theme
       cardTheme: CardThemeData(
         color: AppColors.lightCard,
@@ -99,7 +99,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppConstants.borderRadius),
         ),
       ),
-      
+
       // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -116,7 +116,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Outlined Button Theme
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
@@ -132,7 +132,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -181,7 +181,7 @@ class AppTheme {
       brightness: Brightness.dark,
       primaryColor: AppColors.darkPrimary,
       scaffoldBackgroundColor: AppColors.darkBackground,
-      
+
       // Color Scheme
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.darkPrimary,
@@ -189,10 +189,10 @@ class AppTheme {
         primary: AppColors.darkPrimary,
         secondary: AppColors.darkSecondary,
         surface: AppColors.darkSurface,
-      
+
         error: AppColors.errorColor,
       ),
-      
+
       // Typography using Lato font
       textTheme: GoogleFonts.latoTextTheme(ThemeData.dark().textTheme).copyWith(
         headlineLarge: GoogleFonts.lato(
@@ -241,7 +241,7 @@ class AppTheme {
           color: AppColors.darkTextPrimary,
         ),
       ),
-      
+
       // App Bar Theme
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.darkSurface,
@@ -254,7 +254,7 @@ class AppTheme {
           color: AppColors.darkTextPrimary,
         ),
       ),
-      
+
       // Card Theme
       cardTheme: CardThemeData(
         color: AppColors.darkCard,
@@ -264,7 +264,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppConstants.borderRadius),
         ),
       ),
-      
+
       // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -281,7 +281,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Outlined Button Theme
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
@@ -297,7 +297,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

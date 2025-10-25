@@ -10,8 +10,6 @@ import '../cubit/login_state.dart';
 import '../widgets/login/login_desktop_layout.dart';
 import '../widgets/login/login_mobile_layout.dart';
 
-
-
 /// Main login view widget.
 class LoginView extends StatefulWidget {
   /// Creates a new [LoginView].
@@ -36,7 +34,7 @@ class _LoginViewState extends State<LoginView> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < AppConstants.mobileMaxWidth;
-    
+
     return ScreenUtilInit(
       designSize: isMobile ? const Size(375, 812) : const Size(1440, 900),
       minTextAdapt: true,
@@ -50,20 +48,20 @@ class _LoginViewState extends State<LoginView> {
               }
             },
             child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: isDark 
-                  ? AppColors.darkGradient
-                  : AppColors.lightGradient,
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDark
+                      ? AppColors.darkGradient
+                      : AppColors.lightGradient,
+                ),
               ),
-            ),
-            child: isMobile 
-              ? LoginMobileLayout(isDark: isDark)
-              : LoginDesktopLayout(isDark: isDark),
+              child: isMobile
+                  ? LoginMobileLayout(isDark: isDark)
+                  : LoginDesktopLayout(isDark: isDark),
             ),
           ),
         );

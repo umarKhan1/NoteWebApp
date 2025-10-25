@@ -6,7 +6,6 @@ import '../cubit/notes_cubit.dart';
 
 /// Content widget for sort popover
 class SortContent extends StatefulWidget {
-
   /// Creates a [SortContent]
   const SortContent({
     super.key,
@@ -14,6 +13,7 @@ class SortContent extends StatefulWidget {
     required this.onCancel,
     this.initialSort,
   });
+
   /// Callback when sort is applied
   final Function(NoteSortBy sortBy) onApply;
 
@@ -83,7 +83,9 @@ class _SortContentState extends State<SortContent> {
                       child: Text(
                         label,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
                         ),
                       ),
                     ),
@@ -95,10 +97,7 @@ class _SortContentState extends State<SortContent> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: widget.onCancel,
-          child: const Text('Cancel'),
-        ),
+        TextButton(onPressed: widget.onCancel, child: const Text('Cancel')),
         ElevatedButton(
           onPressed: () {
             widget.onApply(_selectedSort);

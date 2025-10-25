@@ -6,7 +6,6 @@ import '../../../../core/constants/app_constants.dart';
 
 /// Content widget for filter popover
 class FilterContent extends StatefulWidget {
-
   /// Creates a [FilterContent]
   const FilterContent({
     super.key,
@@ -15,6 +14,7 @@ class FilterContent extends StatefulWidget {
     this.initialOperator,
     this.initialValue,
   });
+
   /// Callback when filter is applied
   final Function(String operator, String value) onApply;
 
@@ -39,9 +39,7 @@ class _FilterContentState extends State<FilterContent> {
   void initState() {
     super.initState();
     _selectedOperator = widget.initialOperator ?? 'is';
-    _valueController = TextEditingController(
-      text: widget.initialValue ?? '',
-    );
+    _valueController = TextEditingController(text: widget.initialValue ?? '');
   }
 
   @override
@@ -98,10 +96,7 @@ class _FilterContentState extends State<FilterContent> {
                         },
                       ),
                       Expanded(
-                        child: Text(
-                          op,
-                          style: theme.textTheme.bodyMedium,
-                        ),
+                        child: Text(op, style: theme.textTheme.bodyMedium),
                       ),
                     ],
                   ),
@@ -109,7 +104,8 @@ class _FilterContentState extends State<FilterContent> {
               );
             }),
             // Conditional text field
-            if (_selectedOperator != AppConstants.filterOperatorHasAnyValue) ...[
+            if (_selectedOperator !=
+                AppConstants.filterOperatorHasAnyValue) ...[
               const SizedBox(height: 12),
               TextField(
                 controller: _valueController,
@@ -134,16 +130,8 @@ class _FilterContentState extends State<FilterContent> {
         ),
       ),
       actions: [
-        TextButton(
-          
-          onPressed: widget.onCancel,
-          child: const Text('Cancel'),
-        ),
+        TextButton(onPressed: widget.onCancel, child: const Text('Cancel')),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.primary,
-            minimumSize: const Size(64, 20),
-          ),
           onPressed: _applyFilter,
           child: const Text(AppConstants.filterApply),
         ),

@@ -47,20 +47,19 @@ class HttpClient {
   Future<dynamic> get(String endpoint) async {
     try {
       final uri = Uri.parse('$_baseUrl$endpoint');
-      
+
       if (kDebugMode) {
         developer.log('[HTTP] GET $uri', name: 'HttpClient');
       }
 
-      final response = await http.get(
-        uri,
-        headers: _headers,
-      ).timeout(
-        _timeout,
-        onTimeout: () => throw TimeoutException(
-          details: 'GET request to $endpoint timed out',
-        ),
-      );
+      final response = await http
+          .get(uri, headers: _headers)
+          .timeout(
+            _timeout,
+            onTimeout: () => throw TimeoutException(
+              details: 'GET request to $endpoint timed out',
+            ),
+          );
 
       return _handleResponse(response);
     } catch (e) {
@@ -70,31 +69,23 @@ class HttpClient {
   }
 
   /// POST request
-  Future<dynamic> post(
-    String endpoint, {
-    required dynamic body,
-  }) async {
+  Future<dynamic> post(String endpoint, {required dynamic body}) async {
     try {
       final uri = Uri.parse('$_baseUrl$endpoint');
       final jsonBody = jsonEncode(body);
 
       if (kDebugMode) {
-        developer.log(
-          '[HTTP] POST $uri - Body: $jsonBody',
-          name: 'HttpClient',
-        );
+        developer.log('[HTTP] POST $uri - Body: $jsonBody', name: 'HttpClient');
       }
 
-      final response = await http.post(
-        uri,
-        headers: _headers,
-        body: jsonBody,
-      ).timeout(
-        _timeout,
-        onTimeout: () => throw TimeoutException(
-          details: 'POST request to $endpoint timed out',
-        ),
-      );
+      final response = await http
+          .post(uri, headers: _headers, body: jsonBody)
+          .timeout(
+            _timeout,
+            onTimeout: () => throw TimeoutException(
+              details: 'POST request to $endpoint timed out',
+            ),
+          );
 
       return _handleResponse(response);
     } catch (e) {
@@ -104,31 +95,23 @@ class HttpClient {
   }
 
   /// PUT request
-  Future<dynamic> put(
-    String endpoint, {
-    required dynamic body,
-  }) async {
+  Future<dynamic> put(String endpoint, {required dynamic body}) async {
     try {
       final uri = Uri.parse('$_baseUrl$endpoint');
       final jsonBody = jsonEncode(body);
 
       if (kDebugMode) {
-        developer.log(
-          '[HTTP] PUT $uri - Body: $jsonBody',
-          name: 'HttpClient',
-        );
+        developer.log('[HTTP] PUT $uri - Body: $jsonBody', name: 'HttpClient');
       }
 
-      final response = await http.put(
-        uri,
-        headers: _headers,
-        body: jsonBody,
-      ).timeout(
-        _timeout,
-        onTimeout: () => throw TimeoutException(
-          details: 'PUT request to $endpoint timed out',
-        ),
-      );
+      final response = await http
+          .put(uri, headers: _headers, body: jsonBody)
+          .timeout(
+            _timeout,
+            onTimeout: () => throw TimeoutException(
+              details: 'PUT request to $endpoint timed out',
+            ),
+          );
 
       return _handleResponse(response);
     } catch (e) {
@@ -146,15 +129,14 @@ class HttpClient {
         developer.log('[HTTP] DELETE $uri', name: 'HttpClient');
       }
 
-      final response = await http.delete(
-        uri,
-        headers: _headers,
-      ).timeout(
-        _timeout,
-        onTimeout: () => throw TimeoutException(
-          details: 'DELETE request to $endpoint timed out',
-        ),
-      );
+      final response = await http
+          .delete(uri, headers: _headers)
+          .timeout(
+            _timeout,
+            onTimeout: () => throw TimeoutException(
+              details: 'DELETE request to $endpoint timed out',
+            ),
+          );
 
       return _handleResponse(response);
     } catch (e) {
@@ -238,11 +220,7 @@ class HttpClient {
   /// Handles errors
   void _handleError(dynamic error) {
     if (kDebugMode) {
-      developer.log(
-        '[HTTP] Error: $error',
-        name: 'HttpClient',
-        error: error,
-      );
+      developer.log('[HTTP] Error: $error', name: 'HttpClient', error: error);
     }
   }
 }

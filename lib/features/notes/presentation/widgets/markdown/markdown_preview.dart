@@ -4,7 +4,7 @@ import '../../../../../core/constants/app_strings.dart';
 
 /// A custom markdown preview widget with basic formatting support
 class MarkdownPreview extends StatelessWidget {
-///// Constructor [markdown preview widget]
+  ///// Constructor [markdown preview widget]
   const MarkdownPreview({
     super.key,
     required this.content,
@@ -15,13 +15,14 @@ class MarkdownPreview extends StatelessWidget {
   final String content;
   //// Responsive flag for small screens
   final bool isSmallScreen;
+
   /// Flag to indicate if the widget comes from the note detail view
   final bool comeFromDetail;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
@@ -32,15 +33,19 @@ class MarkdownPreview extends StatelessWidget {
                 Icon(
                   Icons.visibility_off_outlined,
                   size: isSmallScreen ? 40 : 48,
-                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                  color: theme.colorScheme.onSurfaceVariant.withValues(
+                    alpha: 0.5,
+                  ),
                 ),
                 SizedBox(height: isSmallScreen ? 12 : 16),
                 Text(
                   AppStrings.previewPlaceholder,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: comeFromDetail 
+                    color: comeFromDetail
                         ? Colors.white.withValues(alpha: 0.7)
-                        : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                        : theme.colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.7,
+                          ),
                     fontSize: isSmallScreen ? 16 : 18,
                   ),
                   textAlign: TextAlign.center,
@@ -49,9 +54,11 @@ class MarkdownPreview extends StatelessWidget {
                 Text(
                   AppStrings.previewEmptyDescription,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: comeFromDetail 
+                    color: comeFromDetail
                         ? Colors.white.withValues(alpha: 0.5)
-                        : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                        : theme.colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.5,
+                          ),
                     fontSize: isSmallScreen ? 14 : 16,
                   ),
                   textAlign: TextAlign.center,
@@ -70,19 +77,21 @@ class MarkdownPreview extends StatelessWidget {
   List<Widget> _parseMarkdown(String text, ThemeData theme) {
     final widgets = <Widget>[];
     final lines = text.split('\n');
-    
+
     bool inCodeBlock = false;
-    List<String> codeBlockLines = [];
+    final List<String> codeBlockLines = [];
     String? codeLanguage;
-    
+
     for (int i = 0; i < lines.length; i++) {
       final line = lines[i];
-      
+
       // Handle code blocks
       if (line.startsWith('```')) {
         if (inCodeBlock) {
           // End of code block
-          widgets.add(_buildCodeBlock(codeBlockLines.join('\n'), theme, codeLanguage));
+          widgets.add(
+            _buildCodeBlock(codeBlockLines.join('\n'), theme, codeLanguage),
+          );
           inCodeBlock = false;
           codeBlockLines.clear();
           codeLanguage = null;
@@ -94,17 +103,17 @@ class MarkdownPreview extends StatelessWidget {
         }
         continue;
       }
-      
+
       if (inCodeBlock) {
         codeBlockLines.add(line);
         continue;
       }
-      
+
       if (line.trim().isEmpty) {
         widgets.add(SizedBox(height: isSmallScreen ? 8 : 12));
         continue;
       }
-      
+
       // Headers
       if (line.startsWith('# ')) {
         widgets.add(_buildHeader(line.substring(2), theme, 1));
@@ -121,7 +130,9 @@ class MarkdownPreview extends StatelessWidget {
       else if (RegExp(r'^\s*\d+\.\s+').hasMatch(line)) {
         final match = RegExp(r'^\s*(\d+)\.\s+(.*)').firstMatch(line);
         if (match != null) {
-          widgets.add(_buildNumberedListItem(match.group(2)!, theme, match.group(1)!));
+          widgets.add(
+            _buildNumberedListItem(match.group(2)!, theme, match.group(1)!),
+          );
         }
       }
       // Quotes
@@ -132,15 +143,17 @@ class MarkdownPreview extends StatelessWidget {
       else {
         widgets.add(_buildParagraph(line, theme));
       }
-      
+
       widgets.add(SizedBox(height: isSmallScreen ? 6 : 8));
     }
-    
+
     // Handle unclosed code block
     if (inCodeBlock && codeBlockLines.isNotEmpty) {
-      widgets.add(_buildCodeBlock(codeBlockLines.join('\n'), theme, codeLanguage));
+      widgets.add(
+        _buildCodeBlock(codeBlockLines.join('\n'), theme, codeLanguage),
+      );
     }
-    
+
     return widgets;
   }
 
@@ -148,32 +161,40 @@ class MarkdownPreview extends StatelessWidget {
     late TextStyle style;
     switch (level) {
       case 1:
-        style = theme.textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          fontSize: isSmallScreen ? 20 : 24,
-          color: comeFromDetail ? Colors.white : null,
-        ) ?? const TextStyle();
+        style =
+            theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: isSmallScreen ? 20 : 24,
+              color: comeFromDetail ? Colors.white : null,
+            ) ??
+            const TextStyle();
         break;
       case 2:
-        style = theme.textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.bold,
-          fontSize: isSmallScreen ? 18 : 22,
-          color: comeFromDetail ? Colors.white : null,
-        ) ?? const TextStyle();
+        style =
+            theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: isSmallScreen ? 18 : 22,
+              color: comeFromDetail ? Colors.white : null,
+            ) ??
+            const TextStyle();
         break;
       case 3:
-        style = theme.textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-          fontSize: isSmallScreen ? 16 : 20,
-          color: comeFromDetail ? Colors.white : null,
-        ) ?? const TextStyle();
+        style =
+            theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: isSmallScreen ? 16 : 20,
+              color: comeFromDetail ? Colors.white : null,
+            ) ??
+            const TextStyle();
         break;
       default:
-        style = theme.textTheme.bodyLarge?.copyWith(
-          color: comeFromDetail ? Colors.white : null,
-        ) ?? const TextStyle();
+        style =
+            theme.textTheme.bodyLarge?.copyWith(
+              color: comeFromDetail ? Colors.white : null,
+            ) ??
+            const TextStyle();
     }
-    
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 4 : 8),
       child: RichText(
@@ -202,7 +223,7 @@ class MarkdownPreview extends StatelessWidget {
             width: isSmallScreen ? 4 : 6,
             height: isSmallScreen ? 4 : 6,
             decoration: BoxDecoration(
-              color: comeFromDetail 
+              color: comeFromDetail
                   ? Colors.white.withValues(alpha: 0.8)
                   : theme.colorScheme.onSurfaceVariant,
               shape: BoxShape.circle,
@@ -277,7 +298,7 @@ class MarkdownPreview extends StatelessWidget {
           children: _buildFormattedTextSpans(text, theme, isQuote: true),
           style: theme.textTheme.bodyMedium?.copyWith(
             fontStyle: FontStyle.italic,
-            color: comeFromDetail 
+            color: comeFromDetail
                 ? Colors.white.withValues(alpha: 0.8)
                 : theme.colorScheme.onSurfaceVariant,
             fontSize: isSmallScreen ? 14 : 16,
@@ -302,9 +323,13 @@ class MarkdownPreview extends StatelessWidget {
     );
   }
 
-  List<TextSpan> _buildFormattedTextSpans(String text, ThemeData theme, {bool isQuote = false}) {
+  List<TextSpan> _buildFormattedTextSpans(
+    String text,
+    ThemeData theme, {
+    bool isQuote = false,
+  }) {
     final spans = <TextSpan>[];
-    
+
     // Fixed RegExp pattern - properly escaped asterisks and better structure
     final regex = RegExp(r'(\*\*.*?\*\*|\*.*?\*|~~.*?~~|`.*?`|\[.*?\]\(.*?\))');
     final matches = regex.allMatches(text);
@@ -313,19 +338,21 @@ class MarkdownPreview extends StatelessWidget {
 
     for (final match in matches) {
       if (match.start > lastEnd) {
-        spans.add(TextSpan(
-          text: text.substring(lastEnd, match.start),
-          style: isQuote
-              ? theme.textTheme.bodyMedium?.copyWith(
-                  fontStyle: FontStyle.italic,
-                  color: comeFromDetail 
-                      ? Colors.white.withValues(alpha: 0.8)
-                      : theme.colorScheme.onSurfaceVariant,
-                )
-              : theme.textTheme.bodyMedium?.copyWith(
-                  color: comeFromDetail ? Colors.white : null,
-                ),
-        ));
+        spans.add(
+          TextSpan(
+            text: text.substring(lastEnd, match.start),
+            style: isQuote
+                ? theme.textTheme.bodyMedium?.copyWith(
+                    fontStyle: FontStyle.italic,
+                    color: comeFromDetail
+                        ? Colors.white.withValues(alpha: 0.8)
+                        : theme.colorScheme.onSurfaceVariant,
+                  )
+                : theme.textTheme.bodyMedium?.copyWith(
+                    color: comeFromDetail ? Colors.white : null,
+                  ),
+          ),
+        );
       }
 
       final matchText = match.group(0)!;
@@ -334,19 +361,21 @@ class MarkdownPreview extends StatelessWidget {
     }
 
     if (lastEnd < text.length) {
-      spans.add(TextSpan(
-        text: text.substring(lastEnd),
-        style: isQuote
-            ? theme.textTheme.bodyMedium?.copyWith(
-                fontStyle: FontStyle.italic,
-                color: comeFromDetail 
-                    ? Colors.white.withValues(alpha: 0.8)
-                    : theme.colorScheme.onSurfaceVariant,
-              )
-            : theme.textTheme.bodyMedium?.copyWith(
-                color: comeFromDetail ? Colors.white : null,
-              ),
-      ));
+      spans.add(
+        TextSpan(
+          text: text.substring(lastEnd),
+          style: isQuote
+              ? theme.textTheme.bodyMedium?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  color: comeFromDetail
+                      ? Colors.white.withValues(alpha: 0.8)
+                      : theme.colorScheme.onSurfaceVariant,
+                )
+              : theme.textTheme.bodyMedium?.copyWith(
+                  color: comeFromDetail ? Colors.white : null,
+                ),
+        ),
+      );
     }
 
     return spans.isEmpty
@@ -356,23 +385,27 @@ class MarkdownPreview extends StatelessWidget {
               style: isQuote
                   ? theme.textTheme.bodyMedium?.copyWith(
                       fontStyle: FontStyle.italic,
-                      color: comeFromDetail 
+                      color: comeFromDetail
                           ? Colors.white.withValues(alpha: 0.8)
                           : theme.colorScheme.onSurfaceVariant,
                     )
                   : theme.textTheme.bodyMedium?.copyWith(
                       color: comeFromDetail ? Colors.white : null,
                     ),
-            )
+            ),
           ]
         : spans;
   }
 
-  TextSpan _buildStyledTextSpan(String matchText, ThemeData theme, bool isQuote) {
+  TextSpan _buildStyledTextSpan(
+    String matchText,
+    ThemeData theme,
+    bool isQuote,
+  ) {
     final baseStyle = isQuote
         ? theme.textTheme.bodyMedium?.copyWith(
             fontStyle: FontStyle.italic,
-            color: comeFromDetail 
+            color: comeFromDetail
                 ? Colors.white.withValues(alpha: 0.8)
                 : theme.colorScheme.onSurfaceVariant,
           )

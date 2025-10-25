@@ -12,17 +12,19 @@ import '../../domain/entities/note.dart';
 enum MarkdownElementType {
   /// Header element
   header,
+
   /// Paragraph element
   paragraph,
+
   /// List item element
   listItem,
+
   /// Code block element
   codeBlock,
 }
 
 /// Class to represent markdown elements for PDF generation
 class MarkdownElement {
-
   /// Private constructor
   MarkdownElement._(this.type, this.content, [this.level = 0]);
 
@@ -41,12 +43,13 @@ class MarkdownElement {
   /// Factory constructor for code block elements
   factory MarkdownElement.codeBlock(String content) =>
       MarkdownElement._(MarkdownElementType.codeBlock, content);
+
   /// The type of markdown element
   final MarkdownElementType type;
-  
+
   /// The content of the element
   final String content;
-  
+
   /// The heading level for header elements
   final int level;
 }
@@ -58,7 +61,7 @@ class NotePdfService {
     try {
       final pdf = await _generatePdf(note);
       final bytes = await pdf.save();
-      
+
       await Printing.sharePdf(
         bytes: bytes,
         filename: '${_sanitizeFilename(note.title)}.pdf',
@@ -67,7 +70,9 @@ class NotePdfService {
       try {
         await _fallbackWebDownload(note);
       } catch (fallbackError) {
-        throw Exception('Failed to download PDF: $e. Fallback also failed: $fallbackError');
+        throw Exception(
+          'Failed to download PDF: $e. Fallback also failed: $fallbackError',
+        );
       }
     }
   }
@@ -76,9 +81,11 @@ class NotePdfService {
   static Future<void> printNotePdf(Note note) async {
     try {
       final pdf = await _generatePdf(note);
-      await Printing.layoutPdf(onLayout: (format) async {
-        return await pdf.save();
-      });
+      await Printing.layoutPdf(
+        onLayout: (format) async {
+          return await pdf.save();
+        },
+      );
     } catch (e) {
       throw Exception('Failed to print PDF: $e');
     }
@@ -110,11 +117,7 @@ class NotePdfService {
                   ),
                 ),
                 pw.SizedBox(height: 8),
-                pw.Container(
-                  height: 3,
-                  width: 80,
-                  color: PdfColors.blue600,
-                ),
+                pw.Container(height: 3, width: 80, color: PdfColors.blue600),
               ],
             ),
           ),
@@ -132,20 +135,21 @@ class NotePdfService {
               children: [
                 if (note.category != null) ...[
                   pw.Row(
-                    children: [                    pw.Text(
-                      'Category: ',
-                      style: const pw.TextStyle(
-                        fontSize: 12,
-                        color: PdfColors.grey800,
+                    children: [
+                      pw.Text(
+                        'Category: ',
+                        style: const pw.TextStyle(
+                          fontSize: 12,
+                          color: PdfColors.grey800,
+                        ),
                       ),
-                    ),
-                    pw.Text(
-                      _cleanText(note.category!),
-                      style: const pw.TextStyle(
-                        fontSize: 12,
-                        color: PdfColors.grey700,
+                      pw.Text(
+                        _cleanText(note.category!),
+                        style: const pw.TextStyle(
+                          fontSize: 12,
+                          color: PdfColors.grey700,
+                        ),
                       ),
-                    ),
                     ],
                   ),
                   pw.SizedBox(height: 6),
@@ -190,7 +194,10 @@ class NotePdfService {
                 if (note.isPinned) ...[
                   pw.SizedBox(height: 6),
                   pw.Container(
-                    padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const pw.EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: pw.BoxDecoration(
                       color: PdfColors.blue100,
                       borderRadius: pw.BorderRadius.circular(4),
@@ -289,7 +296,7 @@ class NotePdfService {
 
     for (var line in lines) {
       line = line.trim();
-      
+
       if (line.isEmpty) {
         if (currentParagraph.isNotEmpty) {
           elements.add(MarkdownElement.paragraph(currentParagraph.join(' ')));
@@ -304,7 +311,7 @@ class NotePdfService {
           elements.add(MarkdownElement.paragraph(currentParagraph.join(' ')));
           currentParagraph.clear();
         }
-        
+
         var level = 0;
         while (level < line.length && line[level] == '#') {
           level++;
@@ -325,12 +332,18 @@ class NotePdfService {
       }
 
       // Lists
-      if (line.startsWith('- ') || line.startsWith('* ') || RegExp(r'^\d+\.').hasMatch(line)) {
+      if (line.startsWith('- ') ||
+          line.startsWith('* ') ||
+          RegExp(r'^\d+\.').hasMatch(line)) {
         if (currentParagraph.isNotEmpty) {
           elements.add(MarkdownElement.paragraph(currentParagraph.join(' ')));
           currentParagraph.clear();
         }
-        elements.add(MarkdownElement.listItem(line.replaceFirst(RegExp(r'^[-*\d.]\s*'), '')));
+        elements.add(
+          MarkdownElement.listItem(
+            line.replaceFirst(RegExp(r'^[-*\d.]\s*'), ''),
+          ),
+        );
         continue;
       }
 
@@ -357,7 +370,9 @@ class NotePdfService {
             pw.Text(
               _cleanText(element.content),
               style: pw.TextStyle(
-                fontSize: element.level == 1 ? 20 : (element.level == 2 ? 16 : 14),
+                fontSize: element.level == 1
+                    ? 20
+                    : (element.level == 2 ? 16 : 14),
                 color: PdfColors.grey900,
               ),
             ),
@@ -439,7 +454,7 @@ class NotePdfService {
   /// Clean text from Unicode characters that might cause issues
   static String _cleanText(String text) {
     String cleaned = text;
-    
+
     // Replace common Unicode characters with ASCII equivalents step by step
     cleaned = cleaned
         // Emojis
@@ -454,7 +469,6 @@ class NotePdfService {
         .replaceAll('🔗', '[Link]')
         .replaceAll('📚', '[Book]')
         .replaceAll('🔍', '[Search]')
-        
         // Bullet points
         .replaceAll('•', '-')
         .replaceAll('◦', '-')
@@ -462,17 +476,14 @@ class NotePdfService {
         .replaceAll('▫', '-')
         .replaceAll('‣', '-')
         .replaceAll('⁃', '-')
-        
         // Quotation marks
-        .replaceAll('"', '"')  // Left double quotation mark
-        .replaceAll('"', '"')  // Right double quotation mark
+        .replaceAll('"', '"') // Left double quotation mark
+        .replaceAll('"', '"') // Right double quotation mark
         .replaceAll(''', "'")  // Left single quotation mark
-        .replaceAll(''', "'")  // Right single quotation mark
-        
+        .replaceAll(''', "'") // Right single quotation mark
         // Dashes and hyphens
         .replaceAll('—', '-')
         .replaceAll('–', '-')
-        
         // Other common symbols
         .replaceAll('…', '...')
         .replaceAll('×', 'x')
@@ -480,10 +491,10 @@ class NotePdfService {
         .replaceAll('®', '(R)')
         .replaceAll('™', '(TM)')
         .replaceAll('°', ' degrees');
-    
+
     // Remove any remaining non-ASCII characters to be absolutely safe
     cleaned = cleaned.replaceAll(RegExp(r'[^\x00-\x7F]'), '');
-    
+
     return cleaned.trim();
   }
 
@@ -492,7 +503,10 @@ class NotePdfService {
     final pdf = await _generatePdf(note);
     final bytes = await pdf.save();
 
-    final blob = web.Blob([bytes.toJS].toJS, web.BlobPropertyBag(type: 'application/pdf'));
+    final blob = web.Blob(
+      [bytes.toJS].toJS,
+      web.BlobPropertyBag(type: 'application/pdf'),
+    );
     final url = web.URL.createObjectURL(blob);
 
     final anchor = web.HTMLAnchorElement()
@@ -514,7 +528,10 @@ class NotePdfService {
   }
 
   static String _sanitizeFilename(String filename) {
-    var s = filename.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_').replaceAll(RegExp(r'\s+'), '_').trim();
+    var s = filename
+        .replaceAll(RegExp(r'[<>:"/\\|?*]'), '_')
+        .replaceAll(RegExp(r'\s+'), '_')
+        .trim();
     if (s.length > 50) s = s.substring(0, 50);
     return s.isEmpty ? 'note' : s;
   }

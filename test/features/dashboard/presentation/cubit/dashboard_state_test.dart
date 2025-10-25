@@ -52,10 +52,7 @@ void main() {
     });
 
     test('DashboardLoaded state with empty activities', () {
-      final state = DashboardLoaded(
-        stats: mockStats,
-        recentActivity: const [],
-      );
+      final state = DashboardLoaded(stats: mockStats, recentActivity: const []);
 
       expect(state.recentActivity.isEmpty, true);
       expect(state.recentActivity.length, 0);
@@ -133,8 +130,14 @@ void main() {
         ),
       ];
 
-      final state1 = DashboardLoaded(stats: mockStats, recentActivity: activities1);
-      final state2 = DashboardLoaded(stats: mockStats, recentActivity: activities2);
+      final state1 = DashboardLoaded(
+        stats: mockStats,
+        recentActivity: activities1,
+      );
+      final state2 = DashboardLoaded(
+        stats: mockStats,
+        recentActivity: activities2,
+      );
 
       expect(state1.recentActivity.length, 1);
       expect(state2.recentActivity.length, 2);

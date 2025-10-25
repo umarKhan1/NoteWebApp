@@ -8,13 +8,12 @@ import '../../features/notes/presentation/cubit/notes_cubit.dart';
 import '../../features/notes/presentation/widgets/category_filter_popover.dart';
 import '../../features/notes/presentation/widgets/sort_popover.dart';
 import 'responsive_sidebar.dart';
+
 /// Main shell widget with responsive sidebar and header
 class MainShell extends StatefulWidget {
   /// Creates a [MainShell].
-  const MainShell({
-    super.key,
-    required this.child,
-  });
+  const MainShell({super.key, required this.child});
+
   /// The child widget to display in the main content area.
   final Widget child;
 
@@ -39,7 +38,9 @@ class _MainShellState extends State<MainShell> {
     const double tabletCollapsedWidth = 88;
     const double tabletExpandedWidth = 260;
     final double sidebarWidth = isTablet
-        ? (_isTabletSidebarExpanded ? tabletExpandedWidth : tabletCollapsedWidth)
+        ? (_isTabletSidebarExpanded
+              ? tabletExpandedWidth
+              : tabletCollapsedWidth)
         : desktopSidebarWidth;
 
     final currentPath = GoRouterState.of(context).uri.path;
@@ -79,7 +80,8 @@ class _MainShellState extends State<MainShell> {
                   onToggle: isTablet
                       ? () {
                           setState(() {
-                            _isTabletSidebarExpanded = !_isTabletSidebarExpanded;
+                            _isTabletSidebarExpanded =
+                                !_isTabletSidebarExpanded;
                           });
                         }
                       : null,
@@ -176,11 +178,11 @@ class _MainShellState extends State<MainShell> {
     }
 
     // For other pages, show default icons
-    return const SizedBox();}
+    return const SizedBox();
+  }
 }
 
 class _NotesHeaderActions extends StatefulWidget {
-
   const _NotesHeaderActions({required this.theme});
   final ThemeData theme;
 
@@ -257,7 +259,10 @@ class _NotesHeaderActionsState extends State<_NotesHeaderActions> {
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
               ),
               onChanged: (value) {
                 _onSearchChanged(value);

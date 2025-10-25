@@ -13,7 +13,7 @@ class DashboardWelcomeSection extends StatelessWidget {
     final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 768;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

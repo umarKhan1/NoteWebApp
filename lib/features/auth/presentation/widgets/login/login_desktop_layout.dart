@@ -7,12 +7,9 @@ import 'login_hero_section.dart';
 
 /// Desktop layout widget for login page with two columns.
 class LoginDesktopLayout extends BaseStatelessWidget {
-
   /// Creates a new [LoginDesktopLayout].
-  const LoginDesktopLayout({
-    super.key,
-    required this.isDark,
-  });
+  const LoginDesktopLayout({super.key, required this.isDark});
+
   /// Theme flag indicating if dark mode is active.
   final bool isDark;
 
@@ -24,7 +21,9 @@ class LoginDesktopLayout extends BaseStatelessWidget {
         Expanded(
           flex: 1,
           child: Container(
-            color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+            color: isDark
+                ? AppColors.darkBackground
+                : AppColors.lightBackground,
             child: const Center(
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(AppConstants.extraLargePadding),
@@ -33,7 +32,7 @@ class LoginDesktopLayout extends BaseStatelessWidget {
             ),
           ),
         ),
-        
+
         // Right side - Hero Section
         Expanded(
           flex: 1,
@@ -42,9 +41,9 @@ class LoginDesktopLayout extends BaseStatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: isDark 
-                  ? AppColors.darkGradient
-                  : AppColors.lightGradient,
+                colors: isDark
+                    ? AppColors.darkGradient
+                    : AppColors.lightGradient,
               ),
             ),
             child: const Center(

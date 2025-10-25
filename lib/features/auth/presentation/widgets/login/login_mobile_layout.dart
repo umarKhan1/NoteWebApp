@@ -7,12 +7,9 @@ import 'login_form_card.dart';
 
 /// Mobile layout widget for login page.
 class LoginMobileLayout extends BaseStatelessWidget {
-
   /// Creates a new [LoginMobileLayout].
-  const LoginMobileLayout({
-    super.key,
-    required this.isDark,
-  });
+  const LoginMobileLayout({super.key, required this.isDark});
+
   /// Theme flag indicating if dark mode is active.
   final bool isDark;
 

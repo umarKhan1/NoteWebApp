@@ -8,12 +8,12 @@ class WebImagePickerService {
   static const int _maxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
 
   /// Pick a single image from the device and return as Base64
-  /// 
+  ///
   /// Returns a tuple of (base64String, fileName) or null if cancelled
   static Future<(String, String)?> pickImageAsBase64() async {
     try {
       final picker = ImagePicker();
-      
+
       final pickedFile = await picker.pickImage(
         source: ImageSource.gallery,
         imageQuality: 85, // Compress to 85% quality
@@ -66,7 +66,7 @@ class WebImagePickerService {
       if (base64String.contains(',')) {
         final parts = base64String.split(',');
         cleanBase64 = parts.last;
-        
+
         // Extract MIME type from data URI prefix if available
         if (parts.first.contains('data:')) {
           final mimeMatch = RegExp(r'data:([a-z/+]+);').firstMatch(parts.first);
@@ -91,7 +91,10 @@ class WebImagePickerService {
     }
 
     // PNG: 89 50 4E 47
-    if (bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47) {
+    if (bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4E &&
+        bytes[3] == 0x47) {
       return 'image/png';
     }
 
@@ -106,7 +109,10 @@ class WebImagePickerService {
     }
 
     // WebP: RIFF ... WEBP
-    if (bytes[0] == 0x52 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[3] == 0x46) {
+    if (bytes[0] == 0x52 &&
+        bytes[1] == 0x49 &&
+        bytes[2] == 0x46 &&
+        bytes[3] == 0x46) {
       if (bytes.length >= 12 &&
           bytes[8] == 0x57 &&
           bytes[9] == 0x45 &&

@@ -7,14 +7,11 @@ import 'sort_content.dart';
 
 /// Header widget for the notes list with search, filter, and sort functionality
 class NotesListHeader extends StatefulWidget {
+  /// Creates a [NotesListHeader]
+  const NotesListHeader({super.key, this.onAddPressed});
+
   /// Callback when the add button is pressed
   final VoidCallback? onAddPressed;
-
-  /// Creates a [NotesListHeader]
-  const NotesListHeader({
-    super.key,
-    this.onAddPressed,
-  });
 
   @override
   State<NotesListHeader> createState() => _NotesListHeaderState();
@@ -193,7 +190,10 @@ class _NotesListHeaderState extends State<NotesListHeader>
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
         ),
         onChanged: (value) {
           context.read<NotesCubit>().searchNotes(value);
@@ -237,4 +237,3 @@ class _NotesListHeaderState extends State<NotesListHeader>
     );
   }
 }
-

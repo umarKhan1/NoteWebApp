@@ -3,7 +3,7 @@ import '../repositories/notes_repository.dart';
 
 /// Use case for toggling pin status of a note
 class TogglePinNoteUseCase {
-/// Constructor [TogglePinNoteUseCase]
+  /// Constructor [TogglePinNoteUseCase]
   const TogglePinNoteUseCase(this._repository);
   final NotesRepository _repository;
 

@@ -3,9 +3,7 @@ import '../repositories/dashboard_repository.dart';
 /// Params for loading dashboard
 class LoadDashboardParams {
   /// Creates [LoadDashboardParams]
-  const LoadDashboardParams({
-    this.refresh = false,
-  });
+  const LoadDashboardParams({this.refresh = false});
 
   /// Whether to refresh the data
   final bool refresh;
@@ -23,21 +21,18 @@ class LoadDashboardUseCase {
   late DashboardData _lastData;
 
   /// Execute the use case
-  /// 
+  ///
   /// Returns dashboard data containing stats and activities
   Future<DashboardData> execute({bool refresh = false}) async {
     if (refresh) {
       await _repository.refreshDashboard();
     }
-    
+
     final stats = await _repository.getDashboardStats();
     final activities = await _repository.getRecentActivity();
-    
-    _lastData = DashboardData(
-      stats: stats,
-      activities: activities,
-    );
-    
+
+    _lastData = DashboardData(stats: stats, activities: activities);
+
     return _lastData;
   }
 }
@@ -45,10 +40,7 @@ class LoadDashboardUseCase {
 /// Model for dashboard data
 class DashboardData {
   /// Creates [DashboardData]
-  const DashboardData({
-    this.stats,
-    this.activities = const [],
-  });
+  const DashboardData({this.stats, this.activities = const []});
 
   /// Dashboard statistics
   final dynamic stats;

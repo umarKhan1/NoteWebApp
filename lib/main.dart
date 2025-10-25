@@ -14,12 +14,12 @@ import 'shared/services/theme_storage_service.dart';
 /// Entry point of the application.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize local storage services
   await LocalNotesService.initialize();
   await MockNotesService.initialize();
   await ThemeStorageService.initialize();
-  
+
   runApp(const MyApp());
 }
 
@@ -51,4 +51,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

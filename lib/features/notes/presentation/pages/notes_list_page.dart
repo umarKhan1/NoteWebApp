@@ -40,7 +40,7 @@ class _NotesViewState extends State<_NotesView> {
     // Load notes when page loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotesCubit>().loadNotes();
-      
+
       // Initialize sidebar state based on screen size
       final screenWidth = MediaQuery.of(context).size.width;
       context.read<NotesUiCubit>().initializeSidebar(screenWidth);
@@ -56,10 +56,10 @@ class _NotesViewState extends State<_NotesView> {
 
     return BlocBuilder<NotesUiCubit, NotesUiState>(
       builder: (context, uiState) {
-          return Scaffold(
-            key: _scaffoldKey,
-            backgroundColor: theme.colorScheme.surface,
-            drawer: isMobile 
+        return Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: theme.colorScheme.surface,
+          drawer: isMobile
               ? Drawer(
                   child: ResponsiveSidebar(
                     isExpanded: true,
@@ -68,32 +68,30 @@ class _NotesViewState extends State<_NotesView> {
                   ),
                 )
               : null,
-            body: Row(
-              children: [
-                // Desktop/Tablet Sidebar
-                if (showSidebar)
-                  ResponsiveSidebar(
-                    isExpanded: uiState.sidebarExpanded,
-                    currentPath: '/notes',
-                    onToggle: () => context.read<NotesUiCubit>().toggleSidebar(),
-                  ),
-                
-                // Main Content
-                Expanded(
-                  child: Column(
-                    children: [
-                      // Content
-                      Expanded(
-                        child: _buildNotesContent(),
-                      ),
-                    ],
-                  ),
+          body: Row(
+            children: [
+              // Desktop/Tablet Sidebar
+              if (showSidebar)
+                ResponsiveSidebar(
+                  isExpanded: uiState.sidebarExpanded,
+                  currentPath: '/notes',
+                  onToggle: () => context.read<NotesUiCubit>().toggleSidebar(),
                 ),
-              ],
-            ),
-          );
-        },
-      );
+
+              // Main Content
+              Expanded(
+                child: Column(
+                  children: [
+                    // Content
+                    Expanded(child: _buildNotesContent()),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildNotesContent() {
@@ -116,7 +114,10 @@ class _NotesViewState extends State<_NotesView> {
         }
 
         if (state is NotesOperationInProgress && state.notes != null) {
-          return _buildNotesGrid(context, NotesLoaded(notes: state.notes!, allNotes: state.notes));
+          return _buildNotesGrid(
+            context,
+            NotesLoaded(notes: state.notes!, allNotes: state.notes),
+          );
         }
 
         return const NotesLoadingShimmer();
@@ -140,8 +141,8 @@ class _NotesViewState extends State<_NotesView> {
             Text(
               state.message,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                color: Theme.of(context).colorScheme.error,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 3.h),
@@ -200,7 +201,10 @@ class _NotesViewState extends State<_NotesView> {
   }
 
   void _showDeleteConfirmation(
-      BuildContext context, String noteId, String noteTitle) {
+    BuildContext context,
+    String noteId,
+    String noteTitle,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

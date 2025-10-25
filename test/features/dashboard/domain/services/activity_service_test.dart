@@ -5,7 +5,7 @@ import 'package:notewebapp/features/dashboard/domain/services/activity_service.d
 
 class FakeActivityRepository implements ActivityRepository {
   final List<Activity> _activities = [];
-  
+
   @override
   Future<void> logActivity(String userId, Activity activity) async {
     _activities.add(activity);
@@ -17,7 +17,10 @@ class FakeActivityRepository implements ActivityRepository {
   }
 
   @override
-  Future<List<Activity>> getRecentActivities(String userId, {int limit = 10}) async {
+  Future<List<Activity>> getRecentActivities(
+    String userId, {
+    int limit = 10,
+  }) async {
     return _activities.take(limit).toList();
   }
 
@@ -119,8 +122,18 @@ void main() {
       final activities = await fakeRepository.getActivities('user1');
       expect(activities[0].timestamp, isNotNull);
       // ignore: prefer_const_constructors
-      expect(activities[0].timestamp.isAfter(beforeTime.subtract(Duration(seconds: 1))), true);
-      expect(activities[0].timestamp.isBefore(afterTime.add(const Duration(seconds: 1))), true);
+      expect(
+        activities[0].timestamp.isAfter(
+          beforeTime.subtract(const Duration(seconds: 1)),
+        ),
+        true,
+      );
+      expect(
+        activities[0].timestamp.isBefore(
+          afterTime.add(const Duration(seconds: 1)),
+        ),
+        true,
+      );
     });
 
     test('logCustomActivity should log custom activity', () async {

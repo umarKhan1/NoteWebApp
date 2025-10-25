@@ -7,10 +7,7 @@ import '../../../core/router/route_names.dart';
 /// Sidebar logout button widget
 class SidebarUserProfile extends BaseStatelessWidget {
   /// Creates a [SidebarUserProfile].
-  const SidebarUserProfile({
-    super.key,
-    required this.showText,
-  });
+  const SidebarUserProfile({super.key, required this.showText});
 
   /// Whether to show text labels
   final bool showText;
@@ -18,7 +15,7 @@ class SidebarUserProfile extends BaseStatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = getTheme(context);
-    
+
     if (!showText) {
       return Container(
         margin: const EdgeInsets.all(12),
@@ -31,7 +28,7 @@ class SidebarUserProfile extends BaseStatelessWidget {
               gradient: LinearGradient(
                 colors: [
                   theme.colorScheme.error,
-                  theme.colorScheme.error.withValues(alpha: 0.8)
+                  theme.colorScheme.error.withValues(alpha: 0.8),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -50,12 +47,8 @@ class SidebarUserProfile extends BaseStatelessWidget {
               child: InkWell(
                 onTap: () => _handleLogout(context),
                 borderRadius: BorderRadius.circular(8),
-                child: Center(
-                  child: Icon(
-                    Icons.logout,
-                    size: 18,
-                    color: Colors.white,
-                  ),
+                child: const Center(
+                  child: Icon(Icons.logout, size: 18, color: Colors.white),
                 ),
               ),
             ),
@@ -92,11 +85,7 @@ class SidebarUserProfile extends BaseStatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.logout,
-                  size: 18,
-                  color: theme.colorScheme.error,
-                ),
+                Icon(Icons.logout, size: 18, color: theme.colorScheme.error),
                 const SizedBox(width: 8),
                 Text(
                   'Logout',

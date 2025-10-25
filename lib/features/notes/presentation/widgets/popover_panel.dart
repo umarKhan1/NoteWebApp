@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 /// Reusable popover panel widget for filter and sort UI
 class PopoverPanel extends StatefulWidget {
-
   /// Creates a [PopoverPanel]
   const PopoverPanel({
     super.key,
@@ -12,6 +11,7 @@ class PopoverPanel extends StatefulWidget {
     required this.onCancel,
     this.primaryButtonLabel = 'Apply',
   });
+
   /// Title displayed at the top
   final String title;
 

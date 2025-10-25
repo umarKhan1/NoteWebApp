@@ -10,7 +10,7 @@ class GetRecentActivitiesUseCase {
   final ActivityRepository _repository;
 
   /// Execute the use case
-  /// 
+  ///
   /// Returns recent activities for a specific user
   /// Limit defaults to 10 activities
   Future<List<Activity>> call(String userId, {int limit = 10}) async {

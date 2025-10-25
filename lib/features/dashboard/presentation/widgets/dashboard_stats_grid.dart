@@ -8,12 +8,9 @@ import '../../domain/entities/dashboard_stats.dart';
 
 /// Dashboard statistics grid
 class DashboardStatsGrid extends BaseStatelessWidget {
-
   // ignore: public_member_api_docs
-  const DashboardStatsGrid({
-    super.key,
-    this.stats,
-  });
+  const DashboardStatsGrid({super.key, this.stats});
+
   /// Dashboard statistics data
   final DashboardStats? stats;
 
@@ -21,7 +18,7 @@ class DashboardStatsGrid extends BaseStatelessWidget {
   Widget build(BuildContext context) {
     final responsiveInfo = getResponsiveInfo(context);
     final theme = getTheme(context);
-    
+
     // Return empty container if no stats
     if (stats == null) {
       return const SizedBox.shrink();
@@ -90,7 +87,7 @@ class DashboardStatsGrid extends BaseStatelessWidget {
         ],
       );
     }
-    
+
     // For tablet: 2x2 grid with larger cards
     if (responsiveInfo.isTablet) {
       return Column(
@@ -153,7 +150,7 @@ class DashboardStatsGrid extends BaseStatelessWidget {
         ],
       );
     }
-    
+
     // For desktop: Single row with 4 cards
     return Row(
       children: [
@@ -223,7 +220,7 @@ class DashboardStatsGrid extends BaseStatelessWidget {
     final valueFontSize = isMobile ? 20.0 : 28.0;
     final subtitleFontSize = isMobile ? 9.0 : 11.0;
     final iconSize = isMobile ? 16.0 : 20.0;
-    
+
     return ScaleInAnimation(
       duration: AppAnimations.normal,
       curve: AppAnimations.fastOutSlowIn,
@@ -247,79 +244,78 @@ class DashboardStatsGrid extends BaseStatelessWidget {
               ),
             ],
           ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: titleFontSize,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    fontWeight: FontWeight.w500,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: titleFontSize,
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
+                        ),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  overflow: TextOverflow.ellipsis,
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: EdgeInsets.all(isMobile ? 6 : 8),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(icon, size: iconSize, color: color),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: valueFontSize,
+                  fontWeight: FontWeight.w700,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(width: 8),
-              Container(
-                padding: EdgeInsets.all(isMobile ? 6 : 8),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha:  0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  icon,
-                  size: iconSize,
-                  color: color,
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: subtitleFontSize,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: valueFontSize,
-              fontWeight: FontWeight.w700,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: TextStyle(
-              fontSize: subtitleFontSize,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-            ),
-          ),
-        ],
+        ),
       ),
-      ),
-    ));
+    );
   }
 
   /// Gets accent color based on theme and index
   Color _getAccentColor(ThemeData theme, int index) {
     final isDark = theme.brightness == Brightness.dark;
-    
+
     // Use theme-appropriate colors
     const lightColors = [
       Color(0xFF10B981), // Green
       Color(0xFFF59E0B), // Amber
       Color(0xFFEF4444), // Red
     ];
-    
+
     const darkColors = [
       Color(0xFF34D399), // Green (lighter for dark theme)
       Color(0xFFFBBF24), // Amber (lighter for dark theme)
       Color(0xFFF87171), // Red (lighter for dark theme)
     ];
-    
+
     final colors = isDark ? darkColors : lightColors;
     return colors[index % colors.length];
   }

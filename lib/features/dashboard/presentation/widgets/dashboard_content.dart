@@ -35,7 +35,7 @@ class _DashboardContentState extends State<DashboardContent> {
     final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 768;
-    
+
     return BlocBuilder<DashboardCubit, DashboardState>(
       builder: (context, state) {
         if (state is DashboardLoading) {
@@ -47,49 +47,46 @@ class _DashboardContentState extends State<DashboardContent> {
                 // Welcome Section Skeleton
                 const WelcomeSectionSkeleton(),
                 const SizedBox(height: 24),
-                
+
                 // Stats Grid Skeleton
                 const DashboardStatsGridSkeleton(),
                 const SizedBox(height: 32),
-                
+
                 // Content Grid Skeleton
                 if (isMobile)
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const RecentNotesSkeleton(),
-                      const SizedBox(height: 32),
-                      const PinnedNotesSkeleton(),
-                      const SizedBox(height: 32),
-                      const ActivitySectionSkeleton(),
+                      RecentNotesSkeleton(),
+                      SizedBox(height: 32),
+                      PinnedNotesSkeleton(),
+                      SizedBox(height: 32),
+                      ActivitySectionSkeleton(),
                     ],
                   )
                 else
-                  Row(
+                  const Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         flex: 2,
                         child: Column(
                           children: [
-                            const RecentNotesSkeleton(),
-                            const SizedBox(height: 32),
-                            const PinnedNotesSkeleton(),
+                            RecentNotesSkeleton(),
+                            SizedBox(height: 32),
+                            PinnedNotesSkeleton(),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 24),
-                      Expanded(
-                        flex: 1,
-                        child: const ActivitySectionSkeleton(),
-                      ),
+                      SizedBox(width: 24),
+                      Expanded(flex: 1, child: ActivitySectionSkeleton()),
                     ],
                   ),
               ],
             ),
           );
         }
-        
+
         if (state is DashboardError) {
           return Center(
             child: Column(
@@ -113,14 +110,15 @@ class _DashboardContentState extends State<DashboardContent> {
                 ),
                 AppSpacing.md.verticalSpace,
                 ElevatedButton(
-                  onPressed: () => context.read<DashboardCubit>().loadDashboard(),
+                  onPressed: () =>
+                      context.read<DashboardCubit>().loadDashboard(),
                   child: const Text('Retry'),
                 ),
               ],
             ),
           );
         }
-        
+
         return SingleChildScrollView(
           padding: EdgeInsets.all(isMobile ? AppSpacing.md : AppSpacing.lg),
           child: Column(
@@ -128,15 +126,15 @@ class _DashboardContentState extends State<DashboardContent> {
             children: [
               // Welcome Section
               const DashboardWelcomeSection(),
-              
+
               AppSpacing.lg.verticalSpace,
-              
+
               // Stats Grid
               if (state is DashboardLoaded)
                 DashboardStatsGrid(stats: state.stats),
-              
+
               AppSpacing.xl.verticalSpace,
-              
+
               // Content Grid (Recent Notes, Activity, etc.)
               const DashboardContentGrid(),
             ],

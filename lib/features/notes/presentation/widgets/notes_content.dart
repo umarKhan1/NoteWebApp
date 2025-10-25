@@ -26,7 +26,7 @@ class NotesContent extends BaseStatelessWidget {
     final responsiveInfo = getResponsiveInfo(context);
     final theme = getTheme(context);
     final isMobile = responsiveInfo.isMobile;
-    
+
     return BlocBuilder<NotesCubit, NotesState>(
       builder: (context, state) {
         // Load notes on first build
@@ -42,61 +42,64 @@ class NotesContent extends BaseStatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              // Page header info
-              Text(
-                'Organize your thoughts and ideas',
-                style: TextStyle(
-                  fontSize: isMobile ? 14 : 16,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-              
-              AppSpacing.lg.verticalSpace,
-              
-              // Notes content based on state
-              if (state is NotesLoading)
-                const NotesLoadingShimmer()
-              else if (state is NotesError)
-                Center(
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: AppSpacing.massive,
-                        color: theme.colorScheme.error,
-                      ),
-                      AppSpacing.md.verticalSpace,
-                      Text(
-                        'Failed to load notes',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: theme.colorScheme.error,
-                        ),
-                      ),
-                      AppSpacing.sm.verticalSpace,
-                      Text(
-                        state.message,
-                        style: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                      ),
-                      AppSpacing.md.verticalSpace,
-                      ElevatedButton(
-                        onPressed: () => context.read<NotesCubit>().loadNotes(),
-                        child: const Text('Try Again'),
-                      ),
-                    ],
+                  // Page header info
+                  Text(
+                    'Organize your thoughts and ideas',
+                    style: TextStyle(
+                      fontSize: isMobile ? 14 : 16,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
-                )
-              else if (state is NotesLoaded)
-                _buildNotesGrid(context, state, isMobile)
-              else
-                const NotesEmptyState(),
+
+                  AppSpacing.lg.verticalSpace,
+
+                  // Notes content based on state
+                  if (state is NotesLoading)
+                    const NotesLoadingShimmer()
+                  else if (state is NotesError)
+                    Center(
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: AppSpacing.massive,
+                            color: theme.colorScheme.error,
+                          ),
+                          AppSpacing.md.verticalSpace,
+                          Text(
+                            'Failed to load notes',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: theme.colorScheme.error,
+                            ),
+                          ),
+                          AppSpacing.sm.verticalSpace,
+                          Text(
+                            state.message,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
+                          ),
+                          AppSpacing.md.verticalSpace,
+                          ElevatedButton(
+                            onPressed: () =>
+                                context.read<NotesCubit>().loadNotes(),
+                            child: const Text('Try Again'),
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (state is NotesLoaded)
+                    _buildNotesGrid(context, state, isMobile)
+                  else
+                    const NotesEmptyState(),
                 ],
               ),
             ),
-            
+
             // Floating Action Button (only show when there are notes)
             if (state is NotesLoaded && state.notes.isNotEmpty)
               Positioned(
@@ -115,7 +118,11 @@ class NotesContent extends BaseStatelessWidget {
     );
   }
 
-  Widget _buildNotesGrid(BuildContext context, NotesLoaded state, bool isMobile) {
+  Widget _buildNotesGrid(
+    BuildContext context,
+    NotesLoaded state,
+    bool isMobile,
+  ) {
     if (state.notes.isEmpty) {
       return const NotesEmptyState();
     }
@@ -129,11 +136,12 @@ class NotesContent extends BaseStatelessWidget {
     final crossAxisCount = _getCrossAxisCount(screenWidth);
 
     // Sort notes: pinned notes first, then unpinned
-    final sortedNotes = [...state.notes]..sort((a, b) {
-      if (a.isPinned && !b.isPinned) return -1;
-      if (!a.isPinned && b.isPinned) return 1;
-      return 0;
-    });
+    final sortedNotes = [...state.notes]
+      ..sort((a, b) {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        return 0;
+      });
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -141,8 +149,10 @@ class NotesContent extends BaseStatelessWidget {
           spacing: 16,
           runSpacing: 16,
           children: sortedNotes.map((note) {
-            final itemWidth = (constraints.maxWidth - (16 * (crossAxisCount - 1))) / crossAxisCount;
-            
+            final itemWidth =
+                (constraints.maxWidth - (16 * (crossAxisCount - 1))) /
+                crossAxisCount;
+
             return SizedBox(
               width: itemWidth,
               child: NotesListItem(
@@ -150,15 +160,9 @@ class NotesContent extends BaseStatelessWidget {
                 onTap: () {
                   NoteDetailModal.show(context, note);
                 },
-                onEdit: () {
-                  // TODO: Navigate to note edit
-                },
-                onDelete: () {
-                  // TODO: Show delete confirmation
-                },
-                onTogglePin: () {
-                  // TODO: Toggle pin status
-                },
+                onEdit: () {},
+                onDelete: () {},
+                onTogglePin: () {},
               ),
             );
           }).toList(),

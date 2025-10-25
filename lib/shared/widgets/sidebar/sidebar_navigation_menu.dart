@@ -19,14 +19,14 @@ class SidebarNavigationMenu extends BaseStatelessWidget {
 
   /// Whether to show text labels
   final bool showText;
-  
+
   /// Current route path
   final String currentPath;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
@@ -46,7 +46,7 @@ class SidebarNavigationMenu extends BaseStatelessWidget {
               ),
             ),
           ],
-          
+
           _SidebarNavItem(
             icon: Icons.dashboard_outlined,
             title: AppStrings.dashboard,
@@ -61,7 +61,7 @@ class SidebarNavigationMenu extends BaseStatelessWidget {
             showText: showText,
             currentPath: currentPath,
           ),
-          
+
           const SizedBox(height: 24),
         ],
       ),
@@ -88,14 +88,16 @@ class _SidebarNavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isActive = currentPath == route;
-    
+
     return BlocBuilder<ResponsiveSidebarCubit, ResponsiveSidebarState>(
       builder: (context, state) {
         final isHovered = state.hoveredItem == title;
-        
+
         return MouseRegion(
-          onEnter: (_) => context.read<ResponsiveSidebarCubit>().setHoveredItem(title),
-          onExit: (_) => context.read<ResponsiveSidebarCubit>().clearHoveredItem(),
+          onEnter: (_) =>
+              context.read<ResponsiveSidebarCubit>().setHoveredItem(title),
+          onExit: (_) =>
+              context.read<ResponsiveSidebarCubit>().clearHoveredItem(),
           child: Container(
             margin: const EdgeInsets.only(bottom: 4),
             child: Material(
@@ -111,61 +113,71 @@ class _SidebarNavItem extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: isActive 
-                      ? theme.primaryColor
-                      : isHovered
+                    color: isActive
+                        ? theme.primaryColor
+                        : isHovered
                         ? theme.primaryColor.withValues(alpha: 0.08)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
-                    boxShadow: isActive ? [
-                      BoxShadow(
-                        color: theme.primaryColor.withValues(alpha: 0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ] : null,
+                    boxShadow: isActive
+                        ? [
+                            BoxShadow(
+                              color: theme.primaryColor.withValues(alpha: 0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
                   ),
-                  child: showText 
-                    ? Row(
-                        children: [
-                          Icon(
-                            icon,
-                            size: 20,
-                            color: isActive 
-                              ? Colors.white
-                              : isHovered
-                                ? theme.primaryColor
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              title,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-                                color: isActive 
+                  child: showText
+                      ? Row(
+                          children: [
+                            Icon(
+                              icon,
+                              size: 20,
+                              color: isActive
                                   ? Colors.white
                                   : isHovered
-                                    ? theme.primaryColor
-                                    : theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                                  ? theme.primaryColor
+                                  : theme.colorScheme.onSurface.withValues(
+                                      alpha: 0.6,
+                                    ),
                             ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: isActive
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                                  color: isActive
+                                      ? Colors.white
+                                      : isHovered
+                                      ? theme.primaryColor
+                                      : theme.colorScheme.onSurface.withValues(
+                                          alpha: 0.7,
+                                        ),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Center(
+                          child: Icon(
+                            icon,
+                            size: 20,
+                            color: isActive
+                                ? Colors.white
+                                : isHovered
+                                ? theme.primaryColor
+                                : theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.6,
+                                  ),
                           ),
-                        ],
-                      )
-                    : Center(
-                        child: Icon(
-                          icon,
-                          size: 20,
-                          color: isActive 
-                            ? Colors.white
-                            : isHovered
-                              ? theme.primaryColor
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
-                      ),
                 ),
               ),
             ),

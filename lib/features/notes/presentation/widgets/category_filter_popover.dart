@@ -5,7 +5,6 @@ import '../cubit/notes_cubit.dart';
 
 /// Category filter popover widget with anchored positioning
 class CategoryFilterPopover extends StatefulWidget {
-
   /// Creates a [CategoryFilterPopover]
   const CategoryFilterPopover({
     super.key,
@@ -13,6 +12,7 @@ class CategoryFilterPopover extends StatefulWidget {
     required this.onCancel,
     this.initialCategory,
   });
+
   /// Callback when Apply is tapped
   final VoidCallback onApply;
 
@@ -53,7 +53,8 @@ class _CategoryFilterPopoverState extends State<CategoryFilterPopover> {
     final categoryCounts = <String, int>{};
     for (final note in cubit.allNotes) {
       if (note.category != null && note.category!.isNotEmpty) {
-        categoryCounts[note.category!] = (categoryCounts[note.category!] ?? 0) + 1;
+        categoryCounts[note.category!] =
+            (categoryCounts[note.category!] ?? 0) + 1;
       }
     }
 
@@ -163,7 +164,6 @@ class _CategoryFilterPopoverState extends State<CategoryFilterPopover> {
 
 /// Single category tile with icon, label, and count
 class _CategoryTile extends StatelessWidget {
-
   const _CategoryTile({
     required this.icon,
     required this.label,

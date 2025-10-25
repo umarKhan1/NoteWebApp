@@ -9,39 +9,39 @@ class DashboardStatsGridSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsiveInfo = MediaQuery.of(context).size.width < 768;
-    
+
     if (responsiveInfo) {
       // Mobile: 2x2 grid
-      return Column(
+      return const Column(
         children: [
           Row(
             children: [
-              Expanded(child: const StatCardSkeleton()),
-              const SizedBox(width: 8),
-              Expanded(child: const StatCardSkeleton()),
+              Expanded(child: StatCardSkeleton()),
+              SizedBox(width: 8),
+              Expanded(child: StatCardSkeleton()),
             ],
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Row(
             children: [
-              Expanded(child: const StatCardSkeleton()),
-              const SizedBox(width: 8),
-              Expanded(child: const StatCardSkeleton()),
+              Expanded(child: StatCardSkeleton()),
+              SizedBox(width: 8),
+              Expanded(child: StatCardSkeleton()),
             ],
           ),
         ],
       );
     } else {
       // Desktop: 4 column grid
-      return Row(
+      return const Row(
         children: [
-          Expanded(child: const StatCardSkeleton()),
-          const SizedBox(width: 8),
-          Expanded(child: const StatCardSkeleton()),
-          const SizedBox(width: 8),
-          Expanded(child: const StatCardSkeleton()),
-          const SizedBox(width: 8),
-          Expanded(child: const StatCardSkeleton()),
+          Expanded(child: StatCardSkeleton()),
+          SizedBox(width: 8),
+          Expanded(child: StatCardSkeleton()),
+          SizedBox(width: 8),
+          Expanded(child: StatCardSkeleton()),
+          SizedBox(width: 8),
+          Expanded(child: StatCardSkeleton()),
         ],
       );
     }
@@ -88,10 +88,7 @@ class RecentNotesSkeleton extends StatelessWidget {
             itemBuilder: (context, index) {
               return Padding(
                 padding: EdgeInsets.only(right: index == 2 ? 0 : 12),
-                child: SizedBox(
-                  width: 160,
-                  child: const NoteCardSkeleton(),
-                ),
+                child: const SizedBox(width: 160, child: NoteCardSkeleton()),
               );
             },
           ),
@@ -187,10 +184,7 @@ class PinnedNotesSkeleton extends StatelessWidget {
             itemBuilder: (context, index) {
               return Padding(
                 padding: EdgeInsets.only(right: index == 1 ? 0 : 12),
-                child: SizedBox(
-                  width: 160,
-                  child: const NoteCardSkeleton(),
-                ),
+                child: const SizedBox(width: 160, child: NoteCardSkeleton()),
               );
             },
           ),

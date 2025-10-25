@@ -6,12 +6,9 @@ import '../../../../shared/widgets/animations/animation_widgets.dart';
 
 /// Dashboard header with menu and actions
 class DashboardHeader extends BaseStatelessWidget {
-
   // ignore: public_member_api_docs
-  const DashboardHeader({
-    super.key,
-    this.onMenuPressed,
-  });
+  const DashboardHeader({super.key, this.onMenuPressed});
+
   /// Callback for menu button press (mobile)
   final VoidCallback? onMenuPressed;
 
@@ -19,11 +16,11 @@ class DashboardHeader extends BaseStatelessWidget {
   Widget build(BuildContext context) {
     final responsiveInfo = getResponsiveInfo(context);
     final theme = getTheme(context);
-    
+
     return Container(
       height: 70,
       padding: EdgeInsets.symmetric(
-        horizontal: responsiveInfo.isMobile ? 16 : 24, 
+        horizontal: responsiveInfo.isMobile ? 16 : 24,
         vertical: 8,
       ),
       decoration: BoxDecoration(
@@ -50,7 +47,7 @@ class DashboardHeader extends BaseStatelessWidget {
               ),
               const SizedBox(width: 8),
             ],
-            
+
             // Title
             Text(
               'Dashboard',
@@ -60,14 +57,12 @@ class DashboardHeader extends BaseStatelessWidget {
                 color: theme.colorScheme.onSurface,
               ),
             ),
-            
+
             const Spacer(),
-            
+
             // Actions
             IconButton(
-              onPressed: () {
-              
-              },
+              onPressed: () {},
               icon: Icon(
                 Icons.notifications_outlined,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -75,9 +70,7 @@ class DashboardHeader extends BaseStatelessWidget {
             ),
             const SizedBox(width: 8),
             IconButton(
-              onPressed: () {
-             
-              },
+              onPressed: () {},
               icon: Icon(
                 Icons.search,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),

@@ -8,20 +8,22 @@ class MarkdownToolbar extends StatelessWidget {
     required this.isSmallScreen,
     required this.onInsertMarkdown,
   });
+
   /// Responsive flag for small screens
   final bool isSmallScreen;
+
   /// Callback for inserting markdown syntax
   final Function(String before, String after) onInsertMarkdown;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       height: isSmallScreen ? 44 : 52,
       padding: EdgeInsets.symmetric(
-        horizontal: isSmallScreen ? 8 : 12, 
-        vertical: isSmallScreen ? 4 : 8
+        horizontal: isSmallScreen ? 8 : 12,
+        vertical: isSmallScreen ? 4 : 8,
       ),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer,
@@ -118,7 +120,9 @@ class MarkdownToolbar extends StatelessWidget {
           padding: EdgeInsets.all(isSmallScreen ? 4 : 6),
           minimumSize: Size(isSmallScreen ? 28 : 32, isSmallScreen ? 28 : 32),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          visualDensity: isSmallScreen ? VisualDensity.compact : VisualDensity.standard,
+          visualDensity: isSmallScreen
+              ? VisualDensity.compact
+              : VisualDensity.standard,
         ),
       ),
     );
@@ -128,7 +132,7 @@ class MarkdownToolbar extends StatelessWidget {
     return Container(
       height: isSmallScreen ? 20 : 24,
       width: 1,
-      color: theme.colorScheme.outline.withValues(alpha:  0.3),
+      color: theme.colorScheme.outline.withValues(alpha: 0.3),
       margin: const EdgeInsets.symmetric(horizontal: 4),
     );
   }

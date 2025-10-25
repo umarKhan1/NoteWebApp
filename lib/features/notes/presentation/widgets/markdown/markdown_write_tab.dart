@@ -11,11 +11,13 @@ class MarkdownWriteTab extends StatefulWidget {
     required this.isSmallScreen,
     required this.onInsertMarkdown,
   });
-  
+
   /// The controller for the markdown content
   final TextEditingController contentController;
+
   /// Responsive flag for small screens
   final bool isSmallScreen;
+
   /// Callback for inserting markdown syntax
   final Function(String before, String after) onInsertMarkdown;
 
@@ -29,20 +31,20 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       children: [
         // Hint section - different layouts for mobile and desktop
-        if (widget.isSmallScreen) 
+        if (widget.isSmallScreen)
           _buildMobileHintSection(theme)
-        else 
+        else
           _buildDesktopHintSection(theme),
-        
+
         // Main text editor
         Expanded(
           child: Container(
             width: double.infinity,
-            padding: EdgeInsets.all(widget.isSmallScreen ? 16 :10),
+            padding: EdgeInsets.all(widget.isSmallScreen ? 16 : 10),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.only(
@@ -57,13 +59,14 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
               expands: false,
               textAlignVertical: TextAlignVertical.top,
               decoration: InputDecoration(
-                hintText: widget.isSmallScreen 
+                hintText: widget.isSmallScreen
                     ? AppStrings.markdownHintsSmall
                     : AppStrings.markdownHintsLarge,
                 hintStyle: TextStyle(
-                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                  color: theme.colorScheme.onSurfaceVariant.withValues(
+                    alpha: 0.6,
+                  ),
                   fontSize: widget.isSmallScreen ? 12 : 12,
-            
                 ),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
@@ -95,11 +98,7 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.info_outline,
-            size: 16,
-            color: theme.colorScheme.primary,
-          ),
+          Icon(Icons.info_outline, size: 16, color: theme.colorScheme.primary),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -156,7 +155,9 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                      color: theme.colorScheme.primaryContainer.withValues(
+                        alpha: 0.3,
+                      ),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Column(
@@ -184,22 +185,23 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
                           AppStrings.pdfFriendlyFeatures,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface,
-                         
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(width: 9),
-                
+
                 // PDF Limitations
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.errorContainer.withValues(alpha: 0.2),
+                      color: theme.colorScheme.errorContainer.withValues(
+                        alpha: 0.2,
+                      ),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Column(
@@ -227,7 +229,6 @@ class _MarkdownWriteTabState extends State<MarkdownWriteTab> {
                           AppStrings.pdfLimitations,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface,
-                          
                           ),
                         ),
                       ],

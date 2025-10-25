@@ -9,10 +9,10 @@ import '../models/activity_model.dart';
 class ActivityLocalDatasource {
   /// Base key for storing activities
   static const String _baseKey = 'activities_';
-  
+
   /// Maximum number of activities to store per user
   static const int _maxActivities = 50;
-  
+
   /// Default limit for recent activities
   static const int _defaultLimit = 10;
 
@@ -20,10 +20,7 @@ class ActivityLocalDatasource {
   String _getKeyForUser(String userId) => '$_baseKey$userId';
 
   /// Save an activity for a specific user
-  Future<void> saveActivity(
-    String userId,
-    ActivityModel activity,
-  ) async {
+  Future<void> saveActivity(String userId, ActivityModel activity) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final key = _getKeyForUser(userId);
@@ -66,7 +63,7 @@ class ActivityLocalDatasource {
       final result = activities
           .map((a) => ActivityModel.fromJson(a as Map<String, dynamic>))
           .toList();
-      
+
       return result;
     } catch (e) {
       throw ActivityDatasourceException(
@@ -113,7 +110,9 @@ class ActivityLocalDatasource {
       final json = prefs.getString(key) ?? '[]';
       final List activities = jsonDecode(json) as List;
 
-      activities.removeWhere((a) => (a as Map<String, dynamic>)['id'] == activityId);
+      activities.removeWhere(
+        (a) => (a as Map<String, dynamic>)['id'] == activityId,
+      );
 
       await prefs.setString(key, jsonEncode(activities));
     } catch (e) {

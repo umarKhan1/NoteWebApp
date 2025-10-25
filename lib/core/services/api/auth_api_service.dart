@@ -2,9 +2,9 @@ import '../../network/http_client.dart';
 
 /// API service for authentication operations
 class AuthApiService {
-
   /// Creates a new [AuthApiService].
   AuthApiService(this._httpClient);
+
   /// HTTP client instance
   final HttpClient _httpClient;
 
@@ -19,10 +19,7 @@ class AuthApiService {
     try {
       final response = await _httpClient.post(
         '$_endpoint/login',
-        body: {
-          'email': email,
-          'password': password,
-        },
+        body: {'email': email, 'password': password},
       );
       return response as Map<String, dynamic>;
     } catch (e) {
@@ -39,11 +36,7 @@ class AuthApiService {
     try {
       final response = await _httpClient.post(
         '$_endpoint/register',
-        body: {
-          'email': email,
-          'password': password,
-          'name': name,
-        },
+        body: {'email': email, 'password': password, 'name': name},
       );
       return response as Map<String, dynamic>;
     } catch (e) {
@@ -63,10 +56,7 @@ class AuthApiService {
   /// Refresh token
   Future<Map<String, dynamic>> refreshToken() async {
     try {
-      final response = await _httpClient.post(
-        '$_endpoint/refresh',
-        body: {},
-      );
+      final response = await _httpClient.post('$_endpoint/refresh', body: {});
       return response as Map<String, dynamic>;
     } catch (e) {
       rethrow;

@@ -9,13 +9,13 @@ class NotesLoadingShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     // Responsive design for different screen sizes
     late int crossAxisCount;
     late double childAspectRatio;
     late double horizontalPadding;
     late double verticalPadding;
-    
+
     if (screenWidth >= 1200) {
       // Desktop
       crossAxisCount = 4;
@@ -35,7 +35,7 @@ class NotesLoadingShimmer extends StatelessWidget {
       horizontalPadding = 2.w;
       verticalPadding = 1.h;
     }
-    
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: horizontalPadding,
@@ -95,17 +95,13 @@ class _ShimmerNoteCardState extends State<_ShimmerNoteCard>
     return Card(
       elevation: 2,
       margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(2.w),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.w)),
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
           return Container(
             padding: EdgeInsets.all(2.5.w),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(2.w),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(2.w)),
             child: SingleChildScrollView(
               physics: const NeverScrollableScrollPhysics(),
               child: Column(
@@ -133,7 +129,7 @@ class _ShimmerNoteCardState extends State<_ShimmerNoteCard>
                     ],
                   ),
                   SizedBox(height: 0.8.h),
-                  
+
                   // Title lines (2 lines max)
                   _buildShimmerBox(
                     width: double.infinity,
@@ -147,7 +143,7 @@ class _ShimmerNoteCardState extends State<_ShimmerNoteCard>
                     opacity: _animation.value,
                   ),
                   SizedBox(height: 0.8.h),
-                  
+
                   // Content lines (2 lines max for mobile, 3 for larger screens)
                   _buildShimmerBox(
                     width: double.infinity,
@@ -161,7 +157,7 @@ class _ShimmerNoteCardState extends State<_ShimmerNoteCard>
                     opacity: _animation.value * 0.7,
                   ),
                   SizedBox(height: 0.8.h),
-                  
+
                   // Footer with time
                   _buildShimmerBox(
                     width: 50.w,
@@ -186,14 +182,13 @@ class _ShimmerNoteCardState extends State<_ShimmerNoteCard>
     return Container(
       width: width == double.infinity ? null : width,
       height: height,
-      constraints: width == double.infinity 
+      constraints: width == double.infinity
           ? const BoxConstraints(minWidth: 0, maxWidth: double.infinity)
           : null,
       decoration: BoxDecoration(
-        color: Theme.of(context)
-            .colorScheme
-            .onSurface
-            .withValues(alpha: 0.1 + (opacity * 0.1)),
+        color: Theme.of(
+          context,
+        ).colorScheme.onSurface.withValues(alpha: 0.1 + (opacity * 0.1)),
         borderRadius: BorderRadius.circular(borderRadius ?? 1.w),
       ),
     );

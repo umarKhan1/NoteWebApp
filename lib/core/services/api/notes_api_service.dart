@@ -2,9 +2,9 @@ import '../../network/http_client.dart';
 
 /// API service for notes operations
 class NotesApiService {
-
   /// Creates a new [NotesApiService].
   NotesApiService(this._httpClient);
+
   /// HTTP client instance
   final HttpClient _httpClient;
 
@@ -100,9 +100,7 @@ class NotesApiService {
   /// Get notes by category
   Future<List<dynamic>> getNotesByCategory(String category) async {
     try {
-      final response = await _httpClient.get(
-        '$_endpoint/category/$category',
-      );
+      final response = await _httpClient.get('$_endpoint/category/$category');
       return response is List ? response : [];
     } catch (e) {
       rethrow;

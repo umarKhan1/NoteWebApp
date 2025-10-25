@@ -18,13 +18,13 @@ class SidebarHeader extends BaseStatelessWidget {
 
   /// Whether the sidebar is expanded
   final bool isExpanded;
-  
+
   /// Whether to show text labels
   final bool showText;
-  
+
   /// Toggle callback
   final VoidCallback? onToggle;
-  
+
   /// Current screen width
   final double screenWidth;
 
@@ -32,7 +32,7 @@ class SidebarHeader extends BaseStatelessWidget {
   Widget build(BuildContext context) {
     final theme = getTheme(context);
     final responsive = getResponsiveInfo(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -40,9 +40,7 @@ class SidebarHeader extends BaseStatelessWidget {
           // Top row: Title and toggle button
           Row(
             children: [
-              if (showText) ...[
-                _buildTitle(theme),
-              ],
+              if (showText) ...[_buildTitle(theme)],
               if (!responsive.isMobile) ...[
                 const SizedBox(width: 8),
                 _buildToggleButton(theme),
@@ -56,9 +54,7 @@ class SidebarHeader extends BaseStatelessWidget {
       ),
     );
   }
-  
-  
-  
+
   /// Builds the app title
   Widget _buildTitle(ThemeData theme) {
     return Expanded(
@@ -74,7 +70,7 @@ class SidebarHeader extends BaseStatelessWidget {
       ),
     );
   }
-  
+
   /// Builds the toggle button
   Widget _buildToggleButton(ThemeData theme) {
     return Material(
@@ -114,7 +110,10 @@ class SidebarHeader extends BaseStatelessWidget {
               },
               borderRadius: BorderRadius.circular(20),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: theme.brightness == Brightness.light
                       ? theme.colorScheme.primary
@@ -141,7 +140,10 @@ class SidebarHeader extends BaseStatelessWidget {
               },
               borderRadius: BorderRadius.circular(20),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: theme.brightness == Brightness.dark
                       ? theme.colorScheme.primary

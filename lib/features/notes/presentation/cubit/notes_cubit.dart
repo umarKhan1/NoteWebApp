@@ -4,13 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/user_utils.dart';
+import '../../../dashboard/domain/services/activity_service.dart';
+import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
 import '../../domain/entities/note.dart';
 import '../../domain/usecases/add_note_usecase.dart';
 import '../../domain/usecases/delete_note_usecase.dart';
 import '../../domain/usecases/get_notes_usecase.dart';
 import '../../domain/usecases/update_note_usecase.dart';
-import '../../../dashboard/domain/services/activity_service.dart';
-import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'notes_state.dart';
 
 /// Cubit for managing notes operations and state
@@ -23,13 +23,13 @@ class NotesCubit extends Cubit<NotesState> {
     required DeleteNoteUseCase deleteNoteUseCase,
     ActivityService? activityService,
     DashboardCubit? dashboardCubit,
-  })  : _getNotesUseCase = getNotesUseCase,
-        _createNoteUseCase = createNoteUseCase,
-        _updateNoteUseCase = updateNoteUseCase,
-        _deleteNoteUseCase = deleteNoteUseCase,
-        _activityService = activityService,
-        _dashboardCubit = dashboardCubit,
-        super(const NotesInitial());
+  }) : _getNotesUseCase = getNotesUseCase,
+       _createNoteUseCase = createNoteUseCase,
+       _updateNoteUseCase = updateNoteUseCase,
+       _deleteNoteUseCase = deleteNoteUseCase,
+       _activityService = activityService,
+       _dashboardCubit = dashboardCubit,
+       super(const NotesInitial());
 
   final GetNotesUseCase _getNotesUseCase;
   final CreateNoteUseCase _createNoteUseCase;
@@ -48,7 +48,8 @@ class NotesCubit extends Cubit<NotesState> {
   List<Note> get allNotes => _allNotes;
 
   /// Gets visible notes
-  List<Note> get visibleNotes => (state is NotesLoaded) ? (state as NotesLoaded).notes : [];
+  List<Note> get visibleNotes =>
+      (state is NotesLoaded) ? (state as NotesLoaded).notes : [];
 
   /// Gets current query
   String get query => _query;
@@ -63,24 +64,22 @@ class NotesCubit extends Cubit<NotesState> {
   Future<void> loadNotes() async {
     try {
       emit(const NotesLoading());
-      
+
       final notes = await _getNotesUseCase();
-      
+
       _allNotes = notes;
       _query = '';
       _selectedCategory = null;
       _sortBy = NoteSortBy.recentlyUpdated;
-      
+
       if (kDebugMode) {
-        developer.log('Loaded ${notes.length} notes', 
-          name: 'NotesCubit');
+        developer.log('Loaded ${notes.length} notes', name: 'NotesCubit');
       }
-      
+
       _rebuildVisible();
     } catch (e) {
       if (kDebugMode) {
-        developer.log('Error loading notes: $e', 
-          name: 'NotesCubit', error: e);
+        developer.log('Error loading notes: $e', name: 'NotesCubit', error: e);
       }
       emit(NotesError(message: e.toString()));
     }
@@ -90,24 +89,31 @@ class NotesCubit extends Cubit<NotesState> {
   void _rebuildVisible() {
     // Start from all notes
     var visible = List<Note>.from(_allNotes);
-    
+
     // Apply search query on title and content
     if (_query.isNotEmpty) {
       final queryLower = _query.toLowerCase();
-      visible = visible.where((note) =>
-          note.title.toLowerCase().contains(queryLower) ||
-          note.content.toLowerCase().contains(queryLower) ||
-          (note.category?.toLowerCase().contains(queryLower) ?? false)
-      ).toList();
+      visible = visible
+          .where(
+            (note) =>
+                note.title.toLowerCase().contains(queryLower) ||
+                note.content.toLowerCase().contains(queryLower) ||
+                (note.category?.toLowerCase().contains(queryLower) ?? false),
+          )
+          .toList();
     }
-    
+
     // Apply category filter
     if (_selectedCategory != null) {
-      visible = visible.where((note) =>
-          note.category?.toLowerCase() == _selectedCategory!.toLowerCase()
-      ).toList();
+      visible = visible
+          .where(
+            (note) =>
+                note.category?.toLowerCase() ==
+                _selectedCategory!.toLowerCase(),
+          )
+          .toList();
     }
-    
+
     // Apply sorting
     switch (_sortBy) {
       case NoteSortBy.recentlyUpdated:
@@ -131,14 +137,16 @@ class NotesCubit extends Cubit<NotesState> {
         });
         break;
     }
-    
-    emit(NotesLoaded(
-      notes: visible,
-      allNotes: _allNotes,
-      query: _query.isEmpty ? null : _query,
-      selectedCategory: _selectedCategory,
-      sortBy: _sortBy,
-    ));
+
+    emit(
+      NotesLoaded(
+        notes: visible,
+        allNotes: _allNotes,
+        query: _query.isEmpty ? null : _query,
+        selectedCategory: _selectedCategory,
+        sortBy: _sortBy,
+      ),
+    );
   }
 
   /// Creates a new note
@@ -151,9 +159,9 @@ class NotesCubit extends Cubit<NotesState> {
     String? imageName,
   }) async {
     try {
-      final userId = await UserUtils.getCurrentUserId() ?? 
-                     UserUtils.getDefaultUserId();
-      
+      final userId =
+          await UserUtils.getCurrentUserId() ?? UserUtils.getDefaultUserId();
+
       final note = await _createNoteUseCase(
         CreateNoteParams(
           title: title,
@@ -167,7 +175,7 @@ class NotesCubit extends Cubit<NotesState> {
 
       // Log activity
       await _activityService?.logNoteCreated(userId, title, note.id);
-      
+
       if (kDebugMode) {
         developer.log('[Activity] create $title', name: 'NotesCubit');
       }
@@ -179,8 +187,7 @@ class NotesCubit extends Cubit<NotesState> {
       await loadNotes();
     } catch (e) {
       if (kDebugMode) {
-        developer.log('Error creating note: $e', 
-          name: 'NotesCubit', error: e);
+        developer.log('Error creating note: $e', name: 'NotesCubit', error: e);
       }
       emit(NotesError(message: e.toString()));
     }
@@ -197,9 +204,9 @@ class NotesCubit extends Cubit<NotesState> {
     String? imageName,
   }) async {
     try {
-      final userId = await UserUtils.getCurrentUserId() ?? 
-                     UserUtils.getDefaultUserId();
-      
+      final userId =
+          await UserUtils.getCurrentUserId() ?? UserUtils.getDefaultUserId();
+
       await _updateNoteUseCase(
         UpdateNoteParams(
           id: id,
@@ -214,7 +221,7 @@ class NotesCubit extends Cubit<NotesState> {
 
       // Log activity
       await _activityService?.logNoteUpdated(userId, title, id);
-      
+
       if (kDebugMode) {
         developer.log('[Activity] update $title', name: 'NotesCubit');
       }
@@ -226,8 +233,7 @@ class NotesCubit extends Cubit<NotesState> {
       await loadNotes();
     } catch (e) {
       if (kDebugMode) {
-        developer.log('Error updating note: $e', 
-          name: 'NotesCubit', error: e);
+        developer.log('Error updating note: $e', name: 'NotesCubit', error: e);
       }
       emit(NotesError(message: e.toString()));
     }
@@ -236,9 +242,9 @@ class NotesCubit extends Cubit<NotesState> {
   /// Deletes a note
   Future<void> deleteNote(String noteId) async {
     try {
-      final userId = await UserUtils.getCurrentUserId() ?? 
-                     UserUtils.getDefaultUserId();
-      
+      final userId =
+          await UserUtils.getCurrentUserId() ?? UserUtils.getDefaultUserId();
+
       // Get the note title before deleting (for activity logging)
       String noteTitle = 'Note';
       if (state is NotesLoaded) {
@@ -248,7 +254,7 @@ class NotesCubit extends Cubit<NotesState> {
           noteTitle = currentNotes[noteIndex].title;
         }
       }
-      
+
       await _deleteNoteUseCase(noteId);
 
       // Log activity
@@ -265,8 +271,7 @@ class NotesCubit extends Cubit<NotesState> {
       await loadNotes();
     } catch (e) {
       if (kDebugMode) {
-        developer.log('Error deleting note: $e', 
-          name: 'NotesCubit', error: e);
+        developer.log('Error deleting note: $e', name: 'NotesCubit', error: e);
       }
       emit(NotesError(message: e.toString()));
     }
@@ -277,7 +282,7 @@ class NotesCubit extends Cubit<NotesState> {
     if (state is NotesLoaded) {
       final currentNotes = (state as NotesLoaded).notes;
       final noteIndex = currentNotes.indexWhere((n) => n.id == noteId);
-      
+
       if (noteIndex != -1) {
         final note = currentNotes[noteIndex];
         await togglePinned(noteId, note.isPinned);
@@ -288,16 +293,16 @@ class NotesCubit extends Cubit<NotesState> {
   /// Toggles the pinned state of a note
   Future<void> togglePinned(String noteId, bool currentPinned) async {
     try {
-      final userId = await UserUtils.getCurrentUserId() ?? 
-                     UserUtils.getDefaultUserId();
+      final userId =
+          await UserUtils.getCurrentUserId() ?? UserUtils.getDefaultUserId();
 
       if (state is NotesLoaded) {
         final currentNotes = (state as NotesLoaded).notes;
         final noteIndex = currentNotes.indexWhere((n) => n.id == noteId);
-        
+
         if (noteIndex != -1) {
           final note = currentNotes[noteIndex];
-          
+
           await _updateNoteUseCase(
             UpdateNoteParams(
               id: noteId,
@@ -330,8 +335,7 @@ class NotesCubit extends Cubit<NotesState> {
       }
     } catch (e) {
       if (kDebugMode) {
-        developer.log('Error toggling pin: $e', 
-          name: 'NotesCubit', error: e);
+        developer.log('Error toggling pin: $e', name: 'NotesCubit', error: e);
       }
       emit(NotesError(message: e.toString()));
     }
@@ -379,12 +383,16 @@ class NotesCubit extends Cubit<NotesState> {
 enum NoteSortBy {
   /// Sort by most recently updated
   recentlyUpdated,
+
   /// Sort by oldest first
   oldestFirst,
+
   /// Sort by title A to Z
   titleAtoZ,
+
   /// Sort by title Z to A
   titleZtoA,
+
   /// Sort with pinned notes first
   pinnedFirst,
 }

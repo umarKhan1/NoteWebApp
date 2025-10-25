@@ -19,7 +19,7 @@ class DashboardContentGrid extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 768;
     final isTablet = screenWidth >= 768 && screenWidth < 1200;
-    
+
     if (isMobile) {
       return Column(
         children: [
@@ -39,7 +39,7 @@ class DashboardContentGrid extends StatelessWidget {
         ],
       );
     }
-    
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -55,11 +55,11 @@ class DashboardContentGrid extends StatelessWidget {
           ),
         ),
         (isTablet ? AppSpacing.md : AppSpacing.lg).horizontalSpace,
-        
+
         // Right Column
         Expanded(
           flex: isTablet ? 2 : 1,
-          child:          BlocBuilder<DashboardCubit, DashboardState>(
+          child: BlocBuilder<DashboardCubit, DashboardState>(
             builder: (context, state) {
               List<Activity> activity = [];
               if (state is DashboardLoaded) {

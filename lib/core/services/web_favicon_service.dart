@@ -8,12 +8,14 @@ class WebFaviconService {
   /// and can be triggered via JavaScript interop if needed
   static void updateFavicon(bool isDarkMode) {
     if (!kIsWeb) return;
-    
+
     try {
       // On web platform, this would typically use dart:html
       // For now, we'll implement this through the HTML meta tags setup
       // The favicon change requires server-side handling or JavaScript
-      _updateFaviconViaJavaScript(isDarkMode ? 'logo-dark.png' : 'logo-light.png');
+      _updateFaviconViaJavaScript(
+        isDarkMode ? 'logo-dark.png' : 'logo-light.png',
+      );
     } catch (e) {
       // Handle any errors silently
     }
@@ -25,4 +27,3 @@ class WebFaviconService {
     // for browser-specific functionality if needed
   }
 }
-

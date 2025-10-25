@@ -110,9 +110,7 @@ class _NotesToolbarState extends State<NotesToolbar> {
               const SizedBox(width: 12),
 
               // Sort dropdown
-              Expanded(
-                child: _buildSortDropdown(theme),
-              ),
+              Expanded(child: _buildSortDropdown(theme)),
 
               // Clear all filters
               if (_searchController.text.isNotEmpty ||
@@ -148,10 +146,11 @@ class _NotesToolbarState extends State<NotesToolbar> {
       initialValue: _selectedSort,
       decoration: InputDecoration(
         labelText: 'Sort by',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 12,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
       items: const [
         DropdownMenuItem(
@@ -212,17 +211,13 @@ class _NotesToolbarState extends State<NotesToolbar> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Filter by Category',
-                style: theme.textTheme.labelLarge,
-              ),
+              Text('Filter by Category', style: theme.textTheme.labelLarge),
               const SizedBox(height: 12),
               if (categories.isEmpty)
                 Text(
                   'No categories available',
                   style: TextStyle(
-                    color:
-                        theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 )
               else
@@ -255,9 +250,9 @@ class _NotesToolbarState extends State<NotesToolbar> {
                             }
                           });
                           if (selected) {
-                            context
-                                .read<NotesCubit>()
-                                .filterByCategory( category);
+                            context.read<NotesCubit>().filterByCategory(
+                              category,
+                            );
                           } else {
                             context.read<NotesCubit>().clearFilter();
                           }

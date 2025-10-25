@@ -2,16 +2,16 @@
 enum ActivityType {
   /// Note was created
   noteCreated,
-  
+
   /// Note was updated
   noteUpdated,
-  
+
   /// Note was deleted
   noteDeleted,
-  
+
   /// Note was pinned
   notePinned,
-  
+
   /// Note was unpinned
   noteUnpinned,
 }

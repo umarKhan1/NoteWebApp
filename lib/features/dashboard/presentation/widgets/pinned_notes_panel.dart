@@ -11,10 +11,7 @@ import '../../../notes/presentation/widgets/note_detail/note_detail_modal.dart';
 /// Pinned notes panel widget shown as an overlay
 class PinnedNotesPanel extends BaseStatelessWidget {
   /// Creates a [PinnedNotesPanel].
-  const PinnedNotesPanel({
-    super.key,
-    required this.onClose,
-  });
+  const PinnedNotesPanel({super.key, required this.onClose});
 
   /// Callback when panel is closed
   final VoidCallback onClose;
@@ -29,8 +26,8 @@ class PinnedNotesPanel extends BaseStatelessWidget {
     final panelWidth = responsiveInfo.isMobile
         ? screenWidth
         : screenWidth < 1200
-            ? screenWidth * 0.4
-            : screenWidth * 0.35;
+        ? screenWidth * 0.4
+        : screenWidth * 0.35;
 
     return GestureDetector(
       onTap: onClose,
@@ -63,7 +60,9 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: theme.colorScheme.outline.withValues(alpha: 0.1),
+                          color: theme.colorScheme.outline.withValues(
+                            alpha: 0.1,
+                          ),
                           width: 1,
                         ),
                       ),
@@ -126,10 +125,13 @@ class PinnedNotesPanel extends BaseStatelessWidget {
 
                         if (state is NotesLoaded && state.notes.isNotEmpty) {
                           // Filter pinned notes and sort by date
-                          final pinnedNotes = state.notes
-                              .where((note) => note.isPinned)
-                              .toList()
-                            ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+                          final pinnedNotes =
+                              state.notes
+                                  .where((note) => note.isPinned)
+                                  .toList()
+                                ..sort(
+                                  (a, b) => b.updatedAt.compareTo(a.updatedAt),
+                                );
 
                           if (pinnedNotes.isEmpty) {
                             return Center(
@@ -176,16 +178,18 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                               Icon(
                                 Icons.push_pin_outlined,
                                 size: 48,
-                                color: theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.3),
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.3,
+                                ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 'No pinned notes',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.5),
+                                  color: theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.5,
+                                  ),
                                 ),
                               ),
                             ],
@@ -238,8 +242,10 @@ class PinnedNotesPanel extends BaseStatelessWidget {
               children: [
                 // Red pinned badge
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFEF4444),
                     borderRadius: BorderRadius.circular(6),
@@ -247,11 +253,7 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.push_pin,
-                        size: 12,
-                        color: Colors.white,
-                      ),
+                      Icon(Icons.push_pin, size: 12, color: Colors.white),
                       SizedBox(width: 4),
                       Text(
                         'Pinned',
@@ -287,7 +289,9 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                           'on ${note.category}',
                           style: TextStyle(
                             fontSize: 11,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.6,
+                            ),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -299,8 +303,9 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
-                          color:
-                              theme.colorScheme.onSurface.withValues(alpha:0.5),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.5,
+                          ),
                         ),
                       ),
                     ],

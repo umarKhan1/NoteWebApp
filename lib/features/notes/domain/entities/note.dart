@@ -1,35 +1,5 @@
 /// Note entity representing a user's note
 class Note {
-  /// Unique identifier for the note
-  final String id;
-  
-  /// Title of the note
-  final String title;
-  
-  /// Content/body of the note
-  final String content;
-  
-  /// Date when the note was created
-  final DateTime createdAt;
-  
-  /// Date when the note was last updated
-  final DateTime updatedAt;
-  
-  /// Category or tag for the note
-  final String? category;
-  
-  /// Whether the note is pinned
-  final bool isPinned;
-  
-  /// Color identifier for the note (optional)
-  final String? color;
-  
-  /// Base64 encoded image data for the note (optional, single image only)
-  final String? imageBase64;
-  
-  /// Original image filename (optional)
-  final String? imageName;
-
   /// Creates an instance of [Note]
   const Note({
     required this.id,
@@ -43,6 +13,52 @@ class Note {
     this.imageBase64,
     this.imageName,
   });
+
+  /// Creates a Note instance from a JSON map
+  factory Note.fromJson(Map<String, dynamic> json) {
+    return Note(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      content: json['content'] as String,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      category: json['category'] as String?,
+      isPinned: json['isPinned'] as bool? ?? false,
+      color: json['color'] as String?,
+      imageBase64: json['imageBase64'] as String?,
+      imageName: json['imageName'] as String?,
+    );
+  }
+
+  /// Unique identifier for the note
+  final String id;
+
+  /// Title of the note
+  final String title;
+
+  /// Content/body of the note
+  final String content;
+
+  /// Date when the note was created
+  final DateTime createdAt;
+
+  /// Date when the note was last updated
+  final DateTime updatedAt;
+
+  /// Category or tag for the note
+  final String? category;
+
+  /// Whether the note is pinned
+  final bool isPinned;
+
+  /// Color identifier for the note (optional)
+  final String? color;
+
+  /// Base64 encoded image data for the note (optional, single image only)
+  final String? imageBase64;
+
+  /// Original image filename (optional)
+  final String? imageName;
 
   /// Creates a copy of this note with the given fields replaced with new values
   Note copyWith({
@@ -74,7 +90,7 @@ class Note {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    
+
     return other is Note &&
         other.id == id &&
         other.title == title &&
@@ -121,21 +137,5 @@ class Note {
       'imageBase64': imageBase64,
       'imageName': imageName,
     };
-  }
-
-  /// Creates a Note instance from a JSON map
-  factory Note.fromJson(Map<String, dynamic> json) {
-    return Note(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      content: json['content'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      category: json['category'] as String?,
-      isPinned: json['isPinned'] as bool? ?? false,
-      color: json['color'] as String?,
-      imageBase64: json['imageBase64'] as String?,
-      imageName: json['imageName'] as String?,
-    );
   }
 }

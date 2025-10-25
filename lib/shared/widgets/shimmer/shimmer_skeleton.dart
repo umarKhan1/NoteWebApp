@@ -27,14 +27,18 @@ class ShimmerSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Shimmer.fromColors(
-      baseColor: baseColor ?? (theme.brightness == Brightness.dark 
-        ? Colors.grey[800]! 
-        : Colors.grey[300]!),
-      highlightColor: highlightColor ?? (theme.brightness == Brightness.dark 
-        ? Colors.grey[700]! 
-        : Colors.grey[100]!),
+      baseColor:
+          baseColor ??
+          (theme.brightness == Brightness.dark
+              ? Colors.grey[800]!
+              : Colors.grey[300]!),
+      highlightColor:
+          highlightColor ??
+          (theme.brightness == Brightness.dark
+              ? Colors.grey[700]!
+              : Colors.grey[100]!),
       enabled: enabled,
       child: child,
     );
@@ -49,7 +53,7 @@ class StatCardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return ShimmerSkeleton(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -114,7 +118,7 @@ class NoteCardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return ShimmerSkeleton(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -124,10 +128,7 @@ class NoteCardSkeleton extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Colors.grey[300]!,
-              Colors.grey[200]!,
-            ],
+            colors: [Colors.grey[300]!, Colors.grey[200]!],
           ),
         ),
         child: Column(

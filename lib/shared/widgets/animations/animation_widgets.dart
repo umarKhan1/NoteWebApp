@@ -24,10 +24,7 @@ class _FadeInAnimationState extends BaseAnimatedWidgetState<FadeInAnimation> {
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
-        return Opacity(
-          opacity: animation.value,
-          child: widget.child,
-        );
+        return Opacity(opacity: animation.value, child: widget.child);
       },
     );
   }
@@ -35,7 +32,6 @@ class _FadeInAnimationState extends BaseAnimatedWidgetState<FadeInAnimation> {
 
 /// Slide in animation widget.
 class SlideInAnimation extends BaseAnimatedWidget {
-  
   /// Creates a [SlideInAnimation]
   const SlideInAnimation({
     super.key,
@@ -46,6 +42,7 @@ class SlideInAnimation extends BaseAnimatedWidget {
     super.delay = Duration.zero,
     super.autoStart = true,
   });
+
   /// The offset to slide from.
   final Offset offsetFrom;
 
@@ -55,7 +52,7 @@ class SlideInAnimation extends BaseAnimatedWidget {
 
 class _SlideInAnimationState extends BaseAnimatedWidgetState<SlideInAnimation> {
   late Animation<Offset> slideAnimation;
-  
+
   @override
   void setupCustomAnimations() {
     slideAnimation = Tween<Offset>(
@@ -63,16 +60,13 @@ class _SlideInAnimationState extends BaseAnimatedWidgetState<SlideInAnimation> {
       end: Offset.zero,
     ).animate(animation);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: slideAnimation,
       builder: (context, child) {
-        return SlideTransition(
-          position: slideAnimation,
-          child: widget.child,
-        );
+        return SlideTransition(position: slideAnimation, child: widget.child);
       },
     );
   }
@@ -80,7 +74,6 @@ class _SlideInAnimationState extends BaseAnimatedWidgetState<SlideInAnimation> {
 
 /// Scale in animation widget.
 class ScaleInAnimation extends BaseAnimatedWidget {
-  
   /// Creates a [ScaleInAnimation]
   const ScaleInAnimation({
     super.key,
@@ -91,6 +84,7 @@ class ScaleInAnimation extends BaseAnimatedWidget {
     super.delay = Duration.zero,
     super.autoStart = true,
   });
+
   /// The scale to start from.
   final double scaleFrom;
 
@@ -100,7 +94,7 @@ class ScaleInAnimation extends BaseAnimatedWidget {
 
 class _ScaleInAnimationState extends BaseAnimatedWidgetState<ScaleInAnimation> {
   late Animation<double> scaleAnimation;
-  
+
   @override
   void setupCustomAnimations() {
     scaleAnimation = Tween<double>(
@@ -108,7 +102,7 @@ class _ScaleInAnimationState extends BaseAnimatedWidgetState<ScaleInAnimation> {
       end: AppAnimations.scaleTo,
     ).animate(animation);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -125,7 +119,6 @@ class _ScaleInAnimationState extends BaseAnimatedWidgetState<ScaleInAnimation> {
 
 /// Combined fade and slide animation widget.
 class FadeSlideInAnimation extends BaseAnimatedWidget {
-  
   /// Creates a [FadeSlideInAnimation]
   const FadeSlideInAnimation({
     super.key,
@@ -136,6 +129,7 @@ class FadeSlideInAnimation extends BaseAnimatedWidget {
     super.delay = Duration.zero,
     super.autoStart = true,
   });
+
   /// The offset to slide from.
   final Offset offsetFrom;
 
@@ -143,9 +137,10 @@ class FadeSlideInAnimation extends BaseAnimatedWidget {
   State<FadeSlideInAnimation> createState() => _FadeSlideInAnimationState();
 }
 
-class _FadeSlideInAnimationState extends BaseAnimatedWidgetState<FadeSlideInAnimation> {
+class _FadeSlideInAnimationState
+    extends BaseAnimatedWidgetState<FadeSlideInAnimation> {
   late Animation<Offset> slideAnimation;
-  
+
   @override
   void setupCustomAnimations() {
     slideAnimation = Tween<Offset>(
@@ -153,7 +148,7 @@ class _FadeSlideInAnimationState extends BaseAnimatedWidgetState<FadeSlideInAnim
       end: Offset.zero,
     ).animate(animation);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -161,10 +156,7 @@ class _FadeSlideInAnimationState extends BaseAnimatedWidgetState<FadeSlideInAnim
       builder: (context, child) {
         return Opacity(
           opacity: animation.value,
-          child: SlideTransition(
-            position: slideAnimation,
-            child: widget.child,
-          ),
+          child: SlideTransition(position: slideAnimation, child: widget.child),
         );
       },
     );
@@ -173,7 +165,6 @@ class _FadeSlideInAnimationState extends BaseAnimatedWidgetState<FadeSlideInAnim
 
 /// Staggered list animation widget.
 class StaggeredListAnimation extends StatelessWidget {
-  
   /// Creates a [StaggeredListAnimation]
   const StaggeredListAnimation({
     super.key,
@@ -183,18 +174,19 @@ class StaggeredListAnimation extends StatelessWidget {
     this.curve = AppAnimations.easeInOut,
     this.initialDelay = Duration.zero,
   });
+
   /// List of children to animate.
   final List<Widget> children;
-  
+
   /// Stagger delay between each child.
   final Duration staggerDelay;
-  
+
   /// Animation duration for each child.
   final Duration duration;
-  
+
   /// Animation curve.
   final Curve curve;
-  
+
   /// Initial delay before starting animations.
   final Duration initialDelay;
 
@@ -204,9 +196,9 @@ class StaggeredListAnimation extends StatelessWidget {
       children: children.asMap().entries.map((entry) {
         final index = entry.key;
         final child = entry.value;
-        
+
         final delay = initialDelay + (staggerDelay * index);
-        
+
         return FadeSlideInAnimation(
           delay: delay,
           duration: duration,

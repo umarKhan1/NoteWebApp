@@ -4,6 +4,7 @@ import 'responsive_sidebar_state.dart';
 
 /// Cubit for managing responsive sidebar state
 class ResponsiveSidebarCubit extends Cubit<ResponsiveSidebarState> {
+  /// Creates a new instance of [ResponsiveSidebarCubit]
   ResponsiveSidebarCubit() : super(const ResponsiveSidebarState());
 
   /// Sets the hovered navigation item

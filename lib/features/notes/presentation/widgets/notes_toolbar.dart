@@ -39,7 +39,7 @@ class _NotesToolbarState extends State<NotesToolbar> {
       children: [
         // Search bar
         Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Container(
             decoration: BoxDecoration(
               color: theme.colorScheme.surfaceContainerHighest,
@@ -61,7 +61,7 @@ class _NotesToolbarState extends State<NotesToolbar> {
                 ),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: Icon(Icons.clear),
+                        icon: const Icon(Icons.clear),
                         onPressed: () {
                           _searchController.clear();
                           context.read<NotesCubit>().searchNotes('');
@@ -70,7 +70,7 @@ class _NotesToolbarState extends State<NotesToolbar> {
                       )
                     : null,
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 12,
                 ),
@@ -85,7 +85,7 @@ class _NotesToolbarState extends State<NotesToolbar> {
 
         // Filter and Sort buttons
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Row(
             children: [
               // Filter button
@@ -96,8 +96,8 @@ class _NotesToolbarState extends State<NotesToolbar> {
                       _showFilters = !_showFilters;
                     });
                   },
-                  icon: Icon(Icons.filter_list),
-                  label: Text('Filters'),
+                  icon: const Icon(Icons.filter_list),
+                  label: const Text('Filters'),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
                       color: _showFilters
@@ -107,7 +107,7 @@ class _NotesToolbarState extends State<NotesToolbar> {
                   ),
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
 
               // Sort dropdown
               Expanded(
@@ -117,11 +117,11 @@ class _NotesToolbarState extends State<NotesToolbar> {
               // Clear all filters
               if (_searchController.text.isNotEmpty ||
                   _selectedCategory != null)
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
               if (_searchController.text.isNotEmpty ||
                   _selectedCategory != null)
                 IconButton(
-                  icon: Icon(Icons.close),
+                  icon: const Icon(Icons.close),
                   tooltip: 'Clear all filters',
                   onPressed: () {
                     _searchController.clear();
@@ -145,15 +145,15 @@ class _NotesToolbarState extends State<NotesToolbar> {
 
   Widget _buildSortDropdown(ThemeData theme) {
     return DropdownButtonFormField<NoteSortBy>(
-      value: _selectedSort,
+      initialValue: _selectedSort,
       decoration: InputDecoration(
         labelText: 'Sort by',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
-      items: [
+      items: const [
         DropdownMenuItem(
           value: NoteSortBy.recentlyUpdated,
           child: Text('Recently Updated'),
@@ -188,7 +188,7 @@ class _NotesToolbarState extends State<NotesToolbar> {
 
   Widget _buildFilterPanel(ThemeData theme) {
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         border: Border(
@@ -216,7 +216,7 @@ class _NotesToolbarState extends State<NotesToolbar> {
                 'Filter by Category',
                 style: theme.textTheme.labelLarge,
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               if (categories.isEmpty)
                 Text(
                   'No categories available',
@@ -232,7 +232,7 @@ class _NotesToolbarState extends State<NotesToolbar> {
                   children: [
                     // "All" chip
                     FilterChip(
-                      label: Text('All'),
+                      label: const Text('All'),
                       selected: _selectedCategory == null,
                       onSelected: (selected) {
                         setState(() {

@@ -1,9 +1,19 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 import '../cubit/notes_cubit.dart';
 
 /// Content widget for sort popover
 class SortContent extends StatefulWidget {
+
+  /// Creates a [SortContent]
+  const SortContent({
+    super.key,
+    required this.onApply,
+    required this.onCancel,
+    this.initialSort,
+  });
   /// Callback when sort is applied
   final Function(NoteSortBy sortBy) onApply;
 
@@ -12,13 +22,6 @@ class SortContent extends StatefulWidget {
 
   /// Initial sort option
   final NoteSortBy? initialSort;
-
-  const SortContent({
-    super.key,
-    required this.onApply,
-    required this.onCancel,
-    this.initialSort,
-  });
 
   @override
   State<SortContent> createState() => _SortContentState();

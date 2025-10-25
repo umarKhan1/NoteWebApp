@@ -5,9 +5,12 @@ import '../cubit/notes_cubit.dart';
 import 'filter_content.dart';
 import 'sort_content.dart';
 
+/// Header widget for the notes list with search, filter, and sort functionality
 class NotesListHeader extends StatefulWidget {
+  /// Callback when the add button is pressed
   final VoidCallback? onAddPressed;
 
+  /// Creates a [NotesListHeader]
   const NotesListHeader({
     super.key,
     this.onAddPressed,

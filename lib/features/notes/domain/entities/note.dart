@@ -24,6 +24,7 @@ class Note {
   /// Color identifier for the note (optional)
   final String? color;
 
+  /// Creates an instance of [Note]
   const Note({
     required this.id,
     required this.title,

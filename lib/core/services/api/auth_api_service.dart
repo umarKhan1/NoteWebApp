@@ -2,11 +2,11 @@ import '../../network/http_client.dart';
 
 /// API service for authentication operations
 class AuthApiService {
-  /// HTTP client instance
-  final HttpClient _httpClient;
 
   /// Creates a new [AuthApiService].
   AuthApiService(this._httpClient);
+  /// HTTP client instance
+  final HttpClient _httpClient;
 
   /// Endpoint for authentication
   static const String _endpoint = '/auth';

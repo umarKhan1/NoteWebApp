@@ -6,6 +6,7 @@ import 'add_note_bottom_sheet.dart';
 
 /// Empty state widget shown when there are no notes
 class NotesEmptyState extends StatelessWidget {
+  /// Creates a [NotesEmptyState]
   const NotesEmptyState({super.key});
 
   void _showAddNoteDialog(BuildContext context) {

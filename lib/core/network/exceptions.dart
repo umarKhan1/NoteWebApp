@@ -1,25 +1,48 @@
 /// HTTP status codes
 class HttpStatusCodes {
-  /// Success response codes
+  /// OK - 200 success response code
   static const int ok = 200;
+  
+  /// Created - 201 success response code
   static const int created = 201;
+  
+  /// No Content - 204 success response code
   static const int noContent = 204;
 
-  /// Client error codes
+  /// Bad Request - 400 client error code
   static const int badRequest = 400;
+  
+  /// Unauthorized - 401 client error code
   static const int unauthorized = 401;
+  
+  /// Forbidden - 403 client error code
   static const int forbidden = 403;
+  
+  /// Not Found - 404 client error code
   static const int notFound = 404;
+  
+  /// Conflict - 409 client error code
   static const int conflict = 409;
 
-  /// Server error codes
+  /// Internal Server Error - 500 server error code
   static const int internalServerError = 500;
+  
+  /// Not Implemented - 501 server error code
   static const int notImplemented = 501;
+  
+  /// Service Unavailable - 503 server error code
   static const int serviceUnavailable = 503;
 }
 
 /// Network exception
 class NetworkException implements Exception {
+
+  /// Creates a new [NetworkException].
+  NetworkException({
+    required this.message,
+    this.statusCode,
+    this.details,
+  });
   /// Exception message
   final String message;
 
@@ -29,13 +52,6 @@ class NetworkException implements Exception {
   /// Exception details
   final String? details;
 
-  /// Creates a new [NetworkException].
-  NetworkException({
-    required this.message,
-    this.statusCode,
-    this.details,
-  });
-
   @override
   String toString() => 'NetworkException: $message${details != null ? ' - $details' : ''}';
 }
@@ -44,12 +60,10 @@ class NetworkException implements Exception {
 class TimeoutException extends NetworkException {
   /// Creates a new [TimeoutException].
   TimeoutException({
-    String message = 'Request timeout',
-    String? details,
+    super.message = 'Request timeout',
+    super.details,
   }) : super(
-    message: message,
     statusCode: null,
-    details: details,
   );
 }
 
@@ -57,12 +71,10 @@ class TimeoutException extends NetworkException {
 class ConnectionException extends NetworkException {
   /// Creates a new [ConnectionException].
   ConnectionException({
-    String message = 'Connection error',
-    String? details,
+    super.message = 'Connection error',
+    super.details,
   }) : super(
-    message: message,
     statusCode: null,
-    details: details,
   );
 }
 
@@ -70,12 +82,10 @@ class ConnectionException extends NetworkException {
 class UnauthorizedException extends NetworkException {
   /// Creates a new [UnauthorizedException].
   UnauthorizedException({
-    String message = 'Unauthorized',
-    String? details,
+    super.message = 'Unauthorized',
+    super.details,
   }) : super(
-    message: message,
     statusCode: HttpStatusCodes.unauthorized,
-    details: details,
   );
 }
 
@@ -83,12 +93,10 @@ class UnauthorizedException extends NetworkException {
 class ServerException extends NetworkException {
   /// Creates a new [ServerException].
   ServerException({
-    String message = 'Server error',
+    super.message = 'Server error',
     int? statusCode,
-    String? details,
+    super.details,
   }) : super(
-    message: message,
     statusCode: statusCode ?? HttpStatusCodes.internalServerError,
-    details: details,
   );
 }

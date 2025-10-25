@@ -1,9 +1,20 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
 
 /// Content widget for filter popover
 class FilterContent extends StatefulWidget {
+
+  /// Creates a [FilterContent]
+  const FilterContent({
+    super.key,
+    required this.onApply,
+    required this.onCancel,
+    this.initialOperator,
+    this.initialValue,
+  });
   /// Callback when filter is applied
   final Function(String operator, String value) onApply;
 
@@ -15,14 +26,6 @@ class FilterContent extends StatefulWidget {
 
   /// Initial value
   final String? initialValue;
-
-  const FilterContent({
-    super.key,
-    required this.onApply,
-    required this.onCancel,
-    this.initialOperator,
-    this.initialValue,
-  });
 
   @override
   State<FilterContent> createState() => _FilterContentState();
@@ -65,7 +68,7 @@ class _FilterContentState extends State<FilterContent> {
     ];
 
     return AlertDialog(
-      title: Text(AppConstants.filterTitle),
+      title: const Text(AppConstants.filterTitle),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -137,7 +140,7 @@ class _FilterContentState extends State<FilterContent> {
         ),
         ElevatedButton(
           onPressed: _applyFilter,
-          child: Text(AppConstants.filterApply),
+          child: const Text(AppConstants.filterApply),
         ),
       ],
     );

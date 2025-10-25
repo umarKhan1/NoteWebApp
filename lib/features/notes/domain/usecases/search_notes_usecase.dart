@@ -5,6 +5,7 @@ import '../repositories/notes_repository.dart';
 class SearchNotesUseCase {
   final NotesRepository _repository;
 
+  /// Creates a new instance of [SearchNotesUseCase]
   const SearchNotesUseCase(this._repository);
 
   /// Execute the use case to search notes

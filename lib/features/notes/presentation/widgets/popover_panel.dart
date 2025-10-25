@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 
 /// Reusable popover panel widget for filter and sort UI
 class PopoverPanel extends StatefulWidget {
+
+  /// Creates a [PopoverPanel]
+  const PopoverPanel({
+    super.key,
+    required this.title,
+    required this.content,
+    required this.onApply,
+    required this.onCancel,
+    this.primaryButtonLabel = 'Apply',
+  });
   /// Title displayed at the top
   final String title;
 
@@ -16,15 +26,6 @@ class PopoverPanel extends StatefulWidget {
 
   /// Label for the primary button (default: 'Apply')
   final String primaryButtonLabel;
-
-  const PopoverPanel({
-    super.key,
-    required this.title,
-    required this.content,
-    required this.onApply,
-    required this.onCancel,
-    this.primaryButtonLabel = 'Apply',
-  });
 
   @override
   State<PopoverPanel> createState() => _PopoverPanelState();

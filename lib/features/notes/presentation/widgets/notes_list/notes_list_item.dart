@@ -9,6 +9,16 @@ import '../../../domain/entities/note.dart';
 /// It displays note information and provides interactive controls for
 /// viewing, editing, deleting, and pinning notes.
 class NotesListItem extends StatelessWidget {
+
+  /// Creates a new notes list item widget
+  const NotesListItem({
+    super.key,
+    required this.note,
+    required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
+    required this.onTogglePin,
+  });
   /// The note data to display
   final Note note;
   
@@ -23,16 +33,6 @@ class NotesListItem extends StatelessWidget {
   
   /// Callback when the pin toggle is pressed
   final VoidCallback onTogglePin;
-
-  /// Creates a new notes list item widget
-  const NotesListItem({
-    super.key,
-    required this.note,
-    required this.onTap,
-    required this.onEdit,
-    required this.onDelete,
-    required this.onTogglePin,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +139,7 @@ class NotesListItem extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
+                const Icon(
                   Icons.push_pin,
                   size: 12,
                   color: Colors.white,
@@ -266,7 +266,7 @@ class NotesListItem extends StatelessWidget {
       if (line.startsWith('# ')) {
         spans.add(TextSpan(
           text: line.substring(2),
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
             color: Colors.white,
@@ -275,7 +275,7 @@ class NotesListItem extends StatelessWidget {
       } else if (line.startsWith('## ')) {
         spans.add(TextSpan(
           text: line.substring(3),
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 15,
             color: Colors.white,
@@ -284,7 +284,7 @@ class NotesListItem extends StatelessWidget {
       } else if (line.startsWith('### ')) {
         spans.add(TextSpan(
           text: line.substring(4),
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 14,
             color: Colors.white,
@@ -356,7 +356,7 @@ class NotesListItem extends StatelessWidget {
       if (matchText.startsWith('**') && matchText.endsWith('**')) {
         spans.add(TextSpan(
           text: matchText.substring(2, matchText.length - 2),
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -399,7 +399,7 @@ class NotesListItem extends StatelessWidget {
         if (linkMatch != null) {
           spans.add(TextSpan(
             text: linkMatch.group(1)!,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               decoration: TextDecoration.underline,
             ),
@@ -446,7 +446,7 @@ class NotesListItem extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              const Icon(
                 Icons.access_time,
                 size: 12,
                 color: Colors.white,

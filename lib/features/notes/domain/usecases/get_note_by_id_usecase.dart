@@ -5,6 +5,7 @@ import '../repositories/notes_repository.dart';
 class GetNoteByIdUseCase {
   final NotesRepository _repository;
 
+  /// Creates a new instance of [GetNoteByIdUseCase]
   const GetNoteByIdUseCase(this._repository);
 
   /// Execute the use case to get a note by ID

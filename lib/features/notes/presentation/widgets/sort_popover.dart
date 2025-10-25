@@ -5,6 +5,14 @@ import '../cubit/notes_cubit.dart';
 
 /// Sort popover widget with anchored positioning
 class SortPopover extends StatefulWidget {
+
+  /// Creates a [SortPopover]
+  const SortPopover({
+    super.key,
+    required this.onApply,
+    required this.onCancel,
+    this.initialSort,
+  });
   /// Callback when Apply is tapped
   final VoidCallback onApply;
 
@@ -13,13 +21,6 @@ class SortPopover extends StatefulWidget {
 
   /// Initial selected sort
   final NoteSortBy? initialSort;
-
-  const SortPopover({
-    super.key,
-    required this.onApply,
-    required this.onCancel,
-    this.initialSort,
-  });
 
   @override
   State<SortPopover> createState() => _SortPopoverState();
@@ -135,15 +136,15 @@ class _SortPopoverState extends State<SortPopover> {
 
 /// Single sort option tile
 class _SortTile extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
 
   const _SortTile({
     required this.label,
     required this.isSelected,
     required this.onTap,
   });
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +156,7 @@ class _SortTile extends StatelessWidget {
           : Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        hoverColor: theme.colorScheme.surfaceVariant,
+        hoverColor: theme.colorScheme.surfaceContainerHighest,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           child: Row(

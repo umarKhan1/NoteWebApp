@@ -3,6 +3,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 /// Loading shimmer effect for notes list
 class NotesLoadingShimmer extends StatelessWidget {
+  /// Creates a [NotesLoadingShimmer]
   const NotesLoadingShimmer({super.key});
 
   @override

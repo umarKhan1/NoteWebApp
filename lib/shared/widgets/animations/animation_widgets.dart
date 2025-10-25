@@ -4,6 +4,7 @@ import '../../../core/constants/app_animations.dart';
 
 /// Fade in animation widget.
 class FadeInAnimation extends BaseAnimatedWidget {
+  /// Creates a [FadeInAnimation]
   const FadeInAnimation({
     super.key,
     required super.child,
@@ -34,9 +35,8 @@ class _FadeInAnimationState extends BaseAnimatedWidgetState<FadeInAnimation> {
 
 /// Slide in animation widget.
 class SlideInAnimation extends BaseAnimatedWidget {
-  /// The offset to slide from.
-  final Offset offsetFrom;
   
+  /// Creates a [SlideInAnimation]
   const SlideInAnimation({
     super.key,
     required super.child,
@@ -46,6 +46,8 @@ class SlideInAnimation extends BaseAnimatedWidget {
     super.delay = Duration.zero,
     super.autoStart = true,
   });
+  /// The offset to slide from.
+  final Offset offsetFrom;
 
   @override
   State<SlideInAnimation> createState() => _SlideInAnimationState();
@@ -78,9 +80,8 @@ class _SlideInAnimationState extends BaseAnimatedWidgetState<SlideInAnimation> {
 
 /// Scale in animation widget.
 class ScaleInAnimation extends BaseAnimatedWidget {
-  /// The scale to start from.
-  final double scaleFrom;
   
+  /// Creates a [ScaleInAnimation]
   const ScaleInAnimation({
     super.key,
     required super.child,
@@ -90,6 +91,8 @@ class ScaleInAnimation extends BaseAnimatedWidget {
     super.delay = Duration.zero,
     super.autoStart = true,
   });
+  /// The scale to start from.
+  final double scaleFrom;
 
   @override
   State<ScaleInAnimation> createState() => _ScaleInAnimationState();
@@ -122,9 +125,8 @@ class _ScaleInAnimationState extends BaseAnimatedWidgetState<ScaleInAnimation> {
 
 /// Combined fade and slide animation widget.
 class FadeSlideInAnimation extends BaseAnimatedWidget {
-  /// The offset to slide from.
-  final Offset offsetFrom;
   
+  /// Creates a [FadeSlideInAnimation]
   const FadeSlideInAnimation({
     super.key,
     required super.child,
@@ -134,6 +136,8 @@ class FadeSlideInAnimation extends BaseAnimatedWidget {
     super.delay = Duration.zero,
     super.autoStart = true,
   });
+  /// The offset to slide from.
+  final Offset offsetFrom;
 
   @override
   State<FadeSlideInAnimation> createState() => _FadeSlideInAnimationState();
@@ -169,6 +173,16 @@ class _FadeSlideInAnimationState extends BaseAnimatedWidgetState<FadeSlideInAnim
 
 /// Staggered list animation widget.
 class StaggeredListAnimation extends StatelessWidget {
+  
+  /// Creates a [StaggeredListAnimation]
+  const StaggeredListAnimation({
+    super.key,
+    required this.children,
+    this.staggerDelay = AppAnimations.mediumStagger,
+    this.duration = AppAnimations.normal,
+    this.curve = AppAnimations.easeInOut,
+    this.initialDelay = Duration.zero,
+  });
   /// List of children to animate.
   final List<Widget> children;
   
@@ -183,15 +197,6 @@ class StaggeredListAnimation extends StatelessWidget {
   
   /// Initial delay before starting animations.
   final Duration initialDelay;
-  
-  const StaggeredListAnimation({
-    super.key,
-    required this.children,
-    this.staggerDelay = AppAnimations.mediumStagger,
-    this.duration = AppAnimations.normal,
-    this.curve = AppAnimations.easeInOut,
-    this.initialDelay = Duration.zero,
-  });
 
   @override
   Widget build(BuildContext context) {

@@ -3,13 +3,25 @@ import '../repositories/notes_repository.dart';
 
 /// Parameters for updating a note
 class UpdateNoteParams {
+  /// The unique identifier of the note to update
   final String id;
+  
+  /// The updated title of the note
   final String? title;
+  
+  /// The updated content of the note
   final String? content;
+  
+  /// The updated category of the note
   final String? category;
+  
+  /// Whether the note is pinned
   final bool? isPinned;
+  
+  /// The updated color of the note
   final String? color;
 
+  /// Creates an instance of [UpdateNoteParams]
   const UpdateNoteParams({
     required this.id,
     this.title,
@@ -24,6 +36,7 @@ class UpdateNoteParams {
 class UpdateNoteUseCase {
   final NotesRepository _repository;
 
+  /// Creates a new instance of [UpdateNoteUseCase]
   const UpdateNoteUseCase(this._repository);
 
   /// Execute the use case to update a note

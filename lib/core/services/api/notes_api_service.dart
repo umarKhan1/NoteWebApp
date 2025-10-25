@@ -2,11 +2,11 @@ import '../../network/http_client.dart';
 
 /// API service for notes operations
 class NotesApiService {
-  /// HTTP client instance
-  final HttpClient _httpClient;
 
   /// Creates a new [NotesApiService].
   NotesApiService(this._httpClient);
+  /// HTTP client instance
+  final HttpClient _httpClient;
 
   /// Endpoint for notes
   static const String _endpoint = '/notes';

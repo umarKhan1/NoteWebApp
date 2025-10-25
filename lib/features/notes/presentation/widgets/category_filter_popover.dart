@@ -5,6 +5,14 @@ import '../cubit/notes_cubit.dart';
 
 /// Category filter popover widget with anchored positioning
 class CategoryFilterPopover extends StatefulWidget {
+
+  /// Creates a [CategoryFilterPopover]
+  const CategoryFilterPopover({
+    super.key,
+    required this.onApply,
+    required this.onCancel,
+    this.initialCategory,
+  });
   /// Callback when Apply is tapped
   final VoidCallback onApply;
 
@@ -13,13 +21,6 @@ class CategoryFilterPopover extends StatefulWidget {
 
   /// Initial selected category
   final String? initialCategory;
-
-  const CategoryFilterPopover({
-    super.key,
-    required this.onApply,
-    required this.onCancel,
-    this.initialCategory,
-  });
 
   @override
   State<CategoryFilterPopover> createState() => _CategoryFilterPopoverState();
@@ -159,11 +160,6 @@ class _CategoryFilterPopoverState extends State<CategoryFilterPopover> {
 
 /// Single category tile with icon, label, and count
 class _CategoryTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final int count;
-  final bool isSelected;
-  final VoidCallback onTap;
 
   const _CategoryTile({
     required this.icon,
@@ -172,6 +168,11 @@ class _CategoryTile extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
   });
+  final IconData icon;
+  final String label;
+  final int count;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +184,7 @@ class _CategoryTile extends StatelessWidget {
           : Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        hoverColor: theme.colorScheme.surfaceVariant,
+        hoverColor: theme.colorScheme.surfaceContainerHighest,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
@@ -210,7 +211,7 @@ class _CategoryTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceVariant,
+                  color: theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(

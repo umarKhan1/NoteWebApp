@@ -8,29 +8,49 @@ import 'package:web/web.dart' as web;
 import '../../domain/entities/note.dart';
 
 /// Enum for markdown element types
-enum MarkdownElementType { header, paragraph, listItem, codeBlock }
+enum MarkdownElementType {
+  /// Header element
+  header,
+  /// Paragraph element
+  paragraph,
+  /// List item element
+  listItem,
+  /// Code block element
+  codeBlock,
+}
 
 /// Class to represent markdown elements for PDF generation
 class MarkdownElement {
-  final MarkdownElementType type;
-  final String content;
-  final int level; // For headers
 
+  /// Private constructor
   MarkdownElement._(this.type, this.content, [this.level = 0]);
 
+  /// Factory constructor for header elements
   factory MarkdownElement.header(String content, int level) =>
       MarkdownElement._(MarkdownElementType.header, content, level);
 
+  /// Factory constructor for paragraph elements
   factory MarkdownElement.paragraph(String content) =>
       MarkdownElement._(MarkdownElementType.paragraph, content);
 
+  /// Factory constructor for list item elements
   factory MarkdownElement.listItem(String content) =>
       MarkdownElement._(MarkdownElementType.listItem, content);
 
+  /// Factory constructor for code block elements
   factory MarkdownElement.codeBlock(String content) =>
       MarkdownElement._(MarkdownElementType.codeBlock, content);
+  /// The type of markdown element
+  final MarkdownElementType type;
+  
+  /// The content of the element
+  final String content;
+  
+  /// The heading level for header elements
+  final int level;
 }
 
+/// Service for generating and managing PDF exports of notes
 class NotePdfService {
   /// Generate and download a PDF of the note
   static Future<void> downloadNotePdf(Note note) async {
@@ -233,7 +253,7 @@ class NotePdfService {
   static List<MarkdownElement> _processMarkdownForPdf(String markdown) {
     final lines = markdown.split('\n');
     final elements = <MarkdownElement>[];
-    var currentParagraph = <String>[];
+    final currentParagraph = <String>[];
 
     for (var line in lines) {
       line = line.trim();
@@ -297,7 +317,7 @@ class NotePdfService {
   static List<pw.Widget> _buildMarkdownContent(List<MarkdownElement> elements) {
     final widgets = <pw.Widget>[];
 
-    for (var element in elements) {
+    for (final element in elements) {
       switch (element.type) {
         case MarkdownElementType.header:
           widgets.add(pw.SizedBox(height: element.level == 1 ? 20 : 16));

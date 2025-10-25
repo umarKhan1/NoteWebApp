@@ -180,9 +180,9 @@ class _MainShellState extends State<MainShell> {
 }
 
 class _NotesHeaderActions extends StatefulWidget {
-  final ThemeData theme;
 
   const _NotesHeaderActions({required this.theme});
+  final ThemeData theme;
 
   @override
   State<_NotesHeaderActions> createState() => _NotesHeaderActionsState();

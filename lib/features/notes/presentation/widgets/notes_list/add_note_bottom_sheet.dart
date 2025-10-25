@@ -3,18 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../shared/extensions/widget_extensions.dart';
+import '../../../domain/entities/note.dart';
 import '../../cubit/add_note_form_cubit.dart';
 import '../../cubit/notes_cubit.dart';
-import '../../../domain/entities/note.dart';
 import '../markdown/markdown_editor.dart';
 
 /// Beautiful sliding bottom sheet for adding notes
 class AddNoteBottomSheet extends StatelessWidget {
-  /// The existing note to edit (optional)
-  final Note? existingNote;
-  
-  /// Whether this is in edit mode
-  final bool isEdit;
   
   /// Constructor for add note bottom sheet [AddNoteBottomSheet]
   const AddNoteBottomSheet({
@@ -22,6 +17,11 @@ class AddNoteBottomSheet extends StatelessWidget {
     this.existingNote,
     this.isEdit = false,
   });
+  /// The existing note to edit (optional)
+  final Note? existingNote;
+  
+  /// Whether this is in edit mode
+  final bool isEdit;
 
   /// Show the add note bottom sheet
   static void show(BuildContext context, {Note? existingNote}) {
@@ -62,16 +62,16 @@ class AddNoteBottomSheet extends StatelessWidget {
 
 /// Internal content widget for the bottom sheet
 class _AddNoteBottomSheetContent extends StatefulWidget {
-  /// The existing note to edit (optional)
-  final Note? existingNote;
-  
-  /// Whether this is in edit mode
-  final bool isEdit;
   
   const _AddNoteBottomSheetContent({
     this.existingNote,
     this.isEdit = false,
   });
+  /// The existing note to edit (optional)
+  final Note? existingNote;
+  
+  /// Whether this is in edit mode
+  final bool isEdit;
 
   @override
   State<_AddNoteBottomSheetContent> createState() => _AddNoteBottomSheetContentState();
@@ -571,7 +571,7 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: Text(AppStrings.cancel),
+                          child: const Text(AppStrings.cancel),
                         ),
                       ),
                       const SizedBox(width: 16),

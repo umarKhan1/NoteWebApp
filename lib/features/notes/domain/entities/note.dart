@@ -23,6 +23,12 @@ class Note {
   
   /// Color identifier for the note (optional)
   final String? color;
+  
+  /// Base64 encoded image data for the note (optional, single image only)
+  final String? imageBase64;
+  
+  /// Original image filename (optional)
+  final String? imageName;
 
   /// Creates an instance of [Note]
   const Note({
@@ -34,6 +40,8 @@ class Note {
     this.category,
     this.isPinned = false,
     this.color,
+    this.imageBase64,
+    this.imageName,
   });
 
   /// Creates a copy of this note with the given fields replaced with new values
@@ -46,6 +54,8 @@ class Note {
     String? category,
     bool? isPinned,
     String? color,
+    String? imageBase64,
+    String? imageName,
   }) {
     return Note(
       id: id ?? this.id,
@@ -56,6 +66,8 @@ class Note {
       category: category ?? this.category,
       isPinned: isPinned ?? this.isPinned,
       color: color ?? this.color,
+      imageBase64: imageBase64 ?? this.imageBase64,
+      imageName: imageName ?? this.imageName,
     );
   }
 
@@ -71,7 +83,9 @@ class Note {
         other.updatedAt == updatedAt &&
         other.category == category &&
         other.isPinned == isPinned &&
-        other.color == color;
+        other.color == color &&
+        other.imageBase64 == imageBase64 &&
+        other.imageName == imageName;
   }
 
   @override
@@ -83,11 +97,45 @@ class Note {
         updatedAt.hashCode ^
         category.hashCode ^
         isPinned.hashCode ^
-        color.hashCode;
+        color.hashCode ^
+        imageBase64.hashCode ^
+        imageName.hashCode;
   }
 
   @override
   String toString() {
-    return 'Note(id: $id, title: $title, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, category: $category, isPinned: $isPinned, color: $color)';
+    return 'Note(id: $id, title: $title, content: $content, createdAt: $createdAt, updatedAt: $updatedAt, category: $category, isPinned: $isPinned, color: $color, imageBase64: ${imageBase64 != null ? 'present' : 'null'}, imageName: $imageName)';
+  }
+
+  /// Converts the Note to a JSON map for storage
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'content': content,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'category': category,
+      'isPinned': isPinned,
+      'color': color,
+      'imageBase64': imageBase64,
+      'imageName': imageName,
+    };
+  }
+
+  /// Creates a Note instance from a JSON map
+  factory Note.fromJson(Map<String, dynamic> json) {
+    return Note(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      content: json['content'] as String,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      category: json['category'] as String?,
+      isPinned: json['isPinned'] as bool? ?? false,
+      color: json['color'] as String?,
+      imageBase64: json['imageBase64'] as String?,
+      imageName: json['imageName'] as String?,
+    );
   }
 }

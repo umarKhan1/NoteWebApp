@@ -67,6 +67,14 @@ class UpcomingDeadlinesCard extends BaseStatelessWidget {
           
           BlocBuilder<NotesCubit, NotesState>(
             builder: (context, state) {
+              // Auto-load notes if in initial state
+              if (state is NotesInitial) {
+                Future.microtask(() {
+                  context.read<NotesCubit>().loadNotes();
+                });
+                return const Center(child: CircularProgressIndicator());
+              }
+
               if (state is NotesLoading) {
                 return const Center(child: CircularProgressIndicator());
               }

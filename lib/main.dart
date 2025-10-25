@@ -5,11 +5,19 @@ import 'core/constants/app_strings.dart';
 import 'core/constants/provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'features/notes/data/services/local_notes_service.dart';
+import 'features/notes/data/services/mock_notes_service.dart';
 import 'shared/cubit/theme_cubit.dart';
 import 'shared/cubit/theme_state.dart';
 
 /// Entry point of the application.
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize local storage services
+  await LocalNotesService.initialize();
+  await MockNotesService.initialize();
+  
   runApp(const MyApp());
 }
 

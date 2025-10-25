@@ -20,6 +20,12 @@ class CreateNoteParams {
   
   /// Optional color identifier for the note
   final String? color;
+  
+  /// Optional Base64 encoded image data
+  final String? imageBase64;
+  
+  /// Optional original image filename
+  final String? imageName;
 
   /// Creates a new instance of [CreateNoteParams]
   const CreateNoteParams({
@@ -28,6 +34,8 @@ class CreateNoteParams {
     this.category,
     this.isPinned = false,
     this.color,
+    this.imageBase64,
+    this.imageName,
   });
 }
 
@@ -53,6 +61,8 @@ class CreateNoteUseCase {
       category: params.category,
       isPinned: params.isPinned,
       color: params.color,
+      imageBase64: params.imageBase64,
+      imageName: params.imageName,
     );
   }
 }

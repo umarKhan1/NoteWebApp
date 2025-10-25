@@ -1,10 +1,21 @@
 import '../../domain/entities/note.dart';
+import 'local_notes_service.dart';
 
-/// Mock data service for notes (temporary until API integration)
+/// Mock data service for notes (integrates with local persistence)
 class MockNotesService {
-  static final List<Note> _mockNotes = <Note>[
-    // Empty list to show empty state initially
+  static List<Note> _mockNotes = <Note>[
+    // Loaded from local storage on initialization
   ];
+
+  /// Initialize the service by loading persisted notes
+  static Future<void> initialize() async {
+    try {
+      _mockNotes = await LocalNotesService.loadNotes();
+    } catch (e) {
+      // Error initializing notes from local storage
+      _mockNotes = [];
+    }
+  }
 
   /// Get all notes
   static Future<List<Note>> getAllNotes() async {
@@ -30,6 +41,8 @@ class MockNotesService {
     String? category,
     bool isPinned = false,
     String? color,
+    String? imageBase64,
+    String? imageName,
   }) async {
     await Future.delayed(const Duration(milliseconds: 800));
     
@@ -42,9 +55,15 @@ class MockNotesService {
       category: category,
       isPinned: isPinned,
       color: color,
+      imageBase64: imageBase64,
+      imageName: imageName,
     );
     
     _mockNotes.insert(0, newNote);
+    
+    // Persist to local storage
+    await LocalNotesService.saveNotes(_mockNotes);
+    
     return newNote;
   }
 
@@ -56,6 +75,8 @@ class MockNotesService {
     String? category,
     bool? isPinned,
     String? color,
+    String? imageBase64,
+    String? imageName,
   }) async {
     await Future.delayed(const Duration(milliseconds: 600));
     
@@ -71,9 +92,15 @@ class MockNotesService {
       isPinned: isPinned,
       color: color,
       updatedAt: DateTime.now(),
+      imageBase64: imageBase64,
+      imageName: imageName,
     );
     
     _mockNotes[index] = updatedNote;
+    
+    // Persist to local storage
+    await LocalNotesService.saveNotes(_mockNotes);
+    
     return updatedNote;
   }
 
@@ -87,6 +114,10 @@ class MockNotesService {
     }
     
     _mockNotes.removeAt(index);
+    
+    // Persist to local storage
+    await LocalNotesService.saveNotes(_mockNotes);
+    
     return true;
   }
 
@@ -142,6 +173,10 @@ class MockNotesService {
     );
     
     _mockNotes[index] = updatedNote;
+    
+    // Persist to local storage
+    await LocalNotesService.saveNotes(_mockNotes);
+    
     return updatedNote;
   }
 }

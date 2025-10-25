@@ -41,6 +41,8 @@ class AddNoteFormContentUpdated extends AddNoteFormState {
     required this.content,
     this.selectedCategory,
     this.isPinned = false,
+    this.imageBase64,
+    this.imageName,
   });
   /// Current content
   final String content;
@@ -48,22 +50,30 @@ class AddNoteFormContentUpdated extends AddNoteFormState {
   final String? selectedCategory;
   /// Pin status
   final bool isPinned;
+  /// Base64 encoded image data
+  final String? imageBase64;
+  /// Original image filename
+  final String? imageName;
   
   /// Create a copy with modified fields
   AddNoteFormContentUpdated copyWith({
     String? content,
     String? selectedCategory,
     bool? isPinned,
+    String? imageBase64,
+    String? imageName,
   }) {
     return AddNoteFormContentUpdated(
       content: content ?? this.content,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       isPinned: isPinned ?? this.isPinned,
+      imageBase64: imageBase64 ?? this.imageBase64,
+      imageName: imageName ?? this.imageName,
     );
   }
   
   @override
-  List<Object?> get props => [content, selectedCategory, isPinned];
+  List<Object?> get props => [content, selectedCategory, isPinned, imageBase64, imageName];
 }
 
 /// Save success state
@@ -73,6 +83,8 @@ class AddNoteFormSaveSuccess extends AddNoteFormState {
     required this.content,
     this.selectedCategory,
     this.isPinned = false,
+    this.imageBase64,
+    this.imageName,
   });
   /// Current content
   final String content;
@@ -80,9 +92,13 @@ class AddNoteFormSaveSuccess extends AddNoteFormState {
   final String? selectedCategory;
   /// Pin status
   final bool isPinned;
+  /// Base64 encoded image data
+  final String? imageBase64;
+  /// Original image filename
+  final String? imageName;
   
   @override
-  List<Object?> get props => [content, selectedCategory, isPinned];
+  List<Object?> get props => [content, selectedCategory, isPinned, imageBase64, imageName];
 }
 
 /// Save error state
@@ -93,6 +109,8 @@ class AddNoteFormSaveError extends AddNoteFormState {
     required this.content,
     this.selectedCategory,
     this.isPinned = false,
+    this.imageBase64,
+    this.imageName,
   });
   /// Error message
   final String error;
@@ -102,9 +120,13 @@ class AddNoteFormSaveError extends AddNoteFormState {
   final String? selectedCategory;
   /// Pin status
   final bool isPinned;
+  /// Base64 encoded image data
+  final String? imageBase64;
+  /// Original image filename
+  final String? imageName;
   
   @override
-  List<Object?> get props => [error, content, selectedCategory, isPinned];
+  List<Object?> get props => [error, content, selectedCategory, isPinned, imageBase64, imageName];
 }
 
 /// Cubit for managing add note form state
@@ -115,6 +137,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
   String? _selectedCategory;
   String _content = '';
   bool _isPinned = false;
+  String? _imageBase64;
+  String? _imageName;
   
   /// Get current selected category
   String? get selectedCategory => _selectedCategory;
@@ -124,6 +148,12 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
   
   /// Get pin status
   bool get isPinned => _isPinned;
+  
+  /// Get current image Base64
+  String? get imageBase64 => _imageBase64;
+  
+  /// Get current image filename
+  String? get imageName => _imageName;
   
   /// Set loading state
   void setLoading(bool isLoading) {
@@ -135,6 +165,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
         content: _content,
         selectedCategory: _selectedCategory,
         isPinned: _isPinned,
+        imageBase64: _imageBase64,
+        imageName: _imageName,
       ));
     }
   }
@@ -147,6 +179,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
       content: _content,
       selectedCategory: category,
       isPinned: _isPinned,
+      imageBase64: _imageBase64,
+      imageName: _imageName,
     ));
   }
   
@@ -158,6 +192,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
       content: content,
       selectedCategory: _selectedCategory,
       isPinned: _isPinned,
+      imageBase64: _imageBase64,
+      imageName: _imageName,
     ));
   }
   
@@ -169,6 +205,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
       content: _content,
       selectedCategory: _selectedCategory,
       isPinned: _isPinned,
+      imageBase64: _imageBase64,
+      imageName: _imageName,
     ));
   }
   
@@ -177,6 +215,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
     _selectedCategory = null;
     _content = '';
     _isPinned = false;
+    _imageBase64 = null;
+    _imageName = null;
     emit(const AddNoteFormInitial());
   }
   
@@ -186,14 +226,46 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
     required String content,
     String? category,
     bool isPinned = false,
+    String? imageBase64,
+    String? imageName,
   }) {
     _content = content;
     _selectedCategory = category;
     _isPinned = isPinned;
+    _imageBase64 = imageBase64;
+    _imageName = imageName;
     emit(AddNoteFormContentUpdated(
       content: content,
       selectedCategory: category,
       isPinned: isPinned,
+      imageBase64: imageBase64,
+      imageName: imageName,
+    ));
+  }
+  
+  /// Set image with Base64 data
+  void setImage(String imageBase64, String imageName) {
+    _imageBase64 = imageBase64;
+    _imageName = imageName;
+    emit(AddNoteFormContentUpdated(
+      content: _content,
+      selectedCategory: _selectedCategory,
+      isPinned: _isPinned,
+      imageBase64: imageBase64,
+      imageName: imageName,
+    ));
+  }
+  
+  /// Remove image
+  void removeImage() {
+    _imageBase64 = null;
+    _imageName = null;
+    emit(AddNoteFormContentUpdated(
+      content: _content,
+      selectedCategory: _selectedCategory,
+      isPinned: _isPinned,
+      imageBase64: null,
+      imageName: null,
     ));
   }
   
@@ -211,6 +283,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
         content: content,
         category: _selectedCategory,
         isPinned: _isPinned,
+        imageBase64: _imageBase64,
+        imageName: _imageName,
       );
       
       // Emit success state with all current data preserved
@@ -218,6 +292,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
         content: _content,
         selectedCategory: _selectedCategory,
         isPinned: _isPinned,
+        imageBase64: _imageBase64,
+        imageName: _imageName,
       ));
     } catch (e) {
       // Emit error state with all current data preserved
@@ -226,6 +302,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
         content: _content,
         selectedCategory: _selectedCategory,
         isPinned: _isPinned,
+        imageBase64: _imageBase64,
+        imageName: _imageName,
       ));
     }
   }
@@ -246,6 +324,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
         content: content,
         category: _selectedCategory,
         isPinned: _isPinned,
+        imageBase64: _imageBase64,
+        imageName: _imageName,
       );
       
       // Emit success state with all current data preserved
@@ -253,6 +333,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
         content: _content,
         selectedCategory: _selectedCategory,
         isPinned: _isPinned,
+        imageBase64: _imageBase64,
+        imageName: _imageName,
       ));
     } catch (e) {
       // Emit error state with all current data preserved
@@ -261,6 +343,8 @@ class AddNoteFormCubit extends Cubit<AddNoteFormState> {
         content: _content,
         selectedCategory: _selectedCategory,
         isPinned: _isPinned,
+        imageBase64: _imageBase64,
+        imageName: _imageName,
       ));
     }
   }

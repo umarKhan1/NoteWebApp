@@ -15,6 +15,8 @@ abstract class NotesRepository {
     String? category,
     bool isPinned = false,
     String? color,
+    String? imageBase64,
+    String? imageName,
   });
 
   /// Update an existing note
@@ -25,6 +27,8 @@ abstract class NotesRepository {
     String? category,
     bool? isPinned,
     String? color,
+    String? imageBase64,
+    String? imageName,
   });
 
   /// Delete a note

@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../shared/extensions/widget_extensions.dart';
+import '../../../data/services/web_image_picker.dart';
 import '../../../domain/entities/note.dart';
 import '../../cubit/add_note_form_cubit.dart';
 import '../../cubit/notes_cubit.dart';
 import '../markdown/markdown_editor.dart';
+import '../note_image_section.dart';
 
 /// Beautiful sliding bottom sheet for adding notes
 class AddNoteBottomSheet extends StatelessWidget {
@@ -112,6 +114,8 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
         content: note.content,
         category: note.category,
         isPinned: note.isPinned,
+        imageBase64: note.imageBase64,
+        imageName: note.imageName,
       );
     }
   }
@@ -126,6 +130,49 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
 
   void _onContentChanged() {
     context.read<AddNoteFormCubit>().updateContent(_contentController.text);
+  }
+
+  Future<void> _handlePickImage() async {
+    try {
+      final result = await WebImagePickerService.pickImageAsBase64();
+      
+      if (result != null && mounted) {
+        final (base64, fileName) = result;
+        context.read<AddNoteFormCubit>().setImage(base64, fileName);
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Image added successfully'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error picking image: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _handleRemoveImage() {
+    context.read<AddNoteFormCubit>().removeImage();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Image removed'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 1),
+        ),
+      );
+    }
   }
 
   void _handleSave() async {
@@ -256,16 +303,49 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
                           
                           2.vSpace,
                           
-                          // Markdown editor
+                          // Scrollable content area with image and markdown
                           Expanded(
-                            child: MarkdownEditor(
-                              tabController: _tabController,
-                              contentController: _contentController,
-                              isSmallMobile: isSmallMobile,
-                              isMobile: isMobile,
-                              isTablet: isTablet,
-                              onInsertMarkdown: _insertMarkdown,
-                              onContentChanged: _onContentChanged,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Image section
+                                  BlocBuilder<AddNoteFormCubit, AddNoteFormState>(
+                                    builder: (context, state) {
+                                      String? imageBase64;
+                                      String? imageName;
+                                      
+                                      if (state is AddNoteFormContentUpdated) {
+                                        imageBase64 = state.imageBase64;
+                                        imageName = state.imageName;
+                                      }
+                                      
+                                      return NoteImageSection(
+                                        imageBase64: imageBase64,
+                                        imageName: imageName,
+                                        onPickImage: _handlePickImage,
+                                        onRemoveImage: _handleRemoveImage,
+                                      );
+                                    },
+                                  ),
+                                  
+                                  2.vSpace,
+                                  
+                                  // Markdown editor
+                                  SizedBox(
+                                    height: 250,
+                                    child: MarkdownEditor(
+                                      tabController: _tabController,
+                                      contentController: _contentController,
+                                      isSmallMobile: isSmallMobile,
+                                      isMobile: isMobile,
+                                      isTablet: isTablet,
+                                      onInsertMarkdown: _insertMarkdown,
+                                      onContentChanged: _onContentChanged,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

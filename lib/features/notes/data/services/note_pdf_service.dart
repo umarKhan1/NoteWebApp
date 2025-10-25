@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:js_interop';
 
 import 'package:pdf/pdf.dart';
@@ -206,6 +207,37 @@ class NotePdfService {
               ],
             ),
           ),
+
+          // Image Section (if available)
+          if (note.imageBase64 != null && note.imageBase64!.isNotEmpty) ...[
+            pw.Container(
+              margin: const pw.EdgeInsets.only(bottom: 24),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Container(
+                    constraints: const pw.BoxConstraints(maxWidth: 400),
+                    child: pw.Image(
+                      pw.MemoryImage(
+                        base64Decode(_cleanBase64(note.imageBase64!)),
+                      ),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                  if (note.imageName != null && note.imageName!.isNotEmpty) ...[
+                    pw.SizedBox(height: 8),
+                    pw.Text(
+                      'Image: ${note.imageName}',
+                      style: const pw.TextStyle(
+                        fontSize: 10,
+                        color: PdfColors.grey600,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
 
           // Content Section
           pw.Container(
@@ -485,5 +517,12 @@ class NotePdfService {
     var s = filename.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_').replaceAll(RegExp(r'\s+'), '_').trim();
     if (s.length > 50) s = s.substring(0, 50);
     return s.isEmpty ? 'note' : s;
+  }
+
+  static String _cleanBase64(String base64String) {
+    if (base64String.contains(',')) {
+      return base64String.split(',').last;
+    }
+    return base64String;
   }
 }

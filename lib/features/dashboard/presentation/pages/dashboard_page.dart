@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/user_utils.dart';
 import '../../../../shared/widgets/responsive_sidebar.dart';
+import '../../../notes/presentation/cubit/notes_cubit.dart';
 import '../cubit/dashboard_cubit.dart';
 import '../cubit/dashboard_state.dart';
 import '../cubit/dashboard_ui_cubit.dart';
@@ -49,7 +50,11 @@ class _DashboardViewState extends State<_DashboardView> {
                      UserUtils.getDefaultUserId();
       
       if (mounted) {
+        // Load dashboard stats
         _dashboardCubit.loadDashboard(userId: userId);
+        
+        // Load notes for Recent Notes and Pinned Notes sections
+        context.read<NotesCubit>().loadNotes();
         
         // Initialize sidebar state based on screen size
         final screenWidth = MediaQuery.of(context).size.width;

@@ -20,6 +20,12 @@ class UpdateNoteParams {
   
   /// The updated color of the note
   final String? color;
+  
+  /// The updated Base64 encoded image data
+  final String? imageBase64;
+  
+  /// The updated original image filename
+  final String? imageName;
 
   /// Creates an instance of [UpdateNoteParams]
   const UpdateNoteParams({
@@ -29,6 +35,8 @@ class UpdateNoteParams {
     this.category,
     this.isPinned,
     this.color,
+    this.imageBase64,
+    this.imageName,
   });
 }
 
@@ -48,6 +56,8 @@ class UpdateNoteUseCase {
       category: params.category,
       isPinned: params.isPinned,
       color: params.color,
+      imageBase64: params.imageBase64,
+      imageName: params.imageName,
     );
   }
 }

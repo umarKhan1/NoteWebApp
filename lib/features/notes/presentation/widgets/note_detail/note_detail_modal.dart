@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -244,8 +247,18 @@ class NoteDetailModal extends StatelessWidget {
         ),
       ),
       child: SingleChildScrollView(
-        child: note.content.trim().isEmpty
-            ? Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Display image if available
+            if (note.imageBase64 != null && note.imageBase64!.isNotEmpty) ...[
+              _buildDetailImage(theme, isSmallMobile, isMobile, isTablet),
+              SizedBox(height: isSmallMobile ? 16 : isMobile ? 20 : 24),
+            ],
+            
+            // Note content
+            if (note.content.trim().isEmpty)
+              Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -266,11 +279,160 @@ class NoteDetailModal extends StatelessWidget {
                   ],
                 ),
               )
-            : MarkdownPreview(
+            else
+              MarkdownPreview(
                 content: note.content,
                 isSmallScreen: isMobile,
                 comeFromDetail: true,
               ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailImage(ThemeData theme, bool isSmallMobile, bool isMobile, bool isTablet) {
+    try {
+      // Decode Base64 to Uint8List
+      String cleanBase64 = note.imageBase64!;
+      if (cleanBase64.contains(',')) {
+        cleanBase64 = cleanBase64.split(',').last;
+      }
+      
+      final imageData = Uint8List.fromList(base64Decode(cleanBase64));
+      final maxWidth = isTablet ? 600.0 : isMobile ? 300.0 : 400.0;
+      
+      return Builder(
+        builder: (context) => GestureDetector(
+          onTap: () => _showImagePreview(context: context, imageData: imageData),
+          child: Container(
+            width: double.infinity,
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(isSmallMobile ? 12 : isMobile ? 16 : 20),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.3),
+                width: 1,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(isSmallMobile ? 12 : isMobile ? 16 : 20),
+              child: Stack(
+                children: [
+                  Image.memory(
+                    imageData,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: isTablet ? 400 : isMobile ? 250 : 300,
+                  ),
+                  // Overlay hint
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(isSmallMobile ? 8 : isMobile ? 12 : 16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.6),
+                          ],
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              note.imageName ?? 'Image',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: Colors.white,
+                                fontSize: isSmallMobile ? 12 : isMobile ? 14 : 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          SizedBox(width: isSmallMobile ? 8 : 12),
+                          Icon(
+                            Icons.zoom_in,
+                            size: isSmallMobile ? 18 : isMobile ? 20 : 22,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    } catch (e) {
+      // Fallback if Base64 decoding fails
+      return Container(
+        height: isTablet ? 300 : isMobile ? 200 : 250,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(isSmallMobile ? 12 : isMobile ? 16 : 20),
+          color: Colors.white.withValues(alpha: 0.1),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.image_not_supported,
+                color: Colors.white.withValues(alpha: 0.5),
+                size: isSmallMobile ? 40 : isMobile ? 48 : 56,
+              ),
+              SizedBox(height: isSmallMobile ? 8 : 12),
+              Text(
+                'Image unavailable',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: Colors.white.withValues(alpha: 0.6),
+                  fontSize: isSmallMobile ? 14 : isMobile ? 16 : 18,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  void _showImagePreview({required BuildContext context, required Uint8List imageData}) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.black87,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppBar(
+                backgroundColor: Colors.black,
+                leading: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                title: Text(note.imageName ?? 'Image'),
+              ),
+              Image.memory(
+                imageData,
+                fit: BoxFit.contain,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

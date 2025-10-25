@@ -21,6 +21,8 @@ class NotesRepositoryImpl implements NotesRepository {
     String? category,
     bool isPinned = false,
     String? color,
+    String? imageBase64,
+    String? imageName,
   }) async {
     return await MockNotesService.createNote(
       title: title,
@@ -28,6 +30,8 @@ class NotesRepositoryImpl implements NotesRepository {
       category: category,
       isPinned: isPinned,
       color: color,
+      imageBase64: imageBase64,
+      imageName: imageName,
     );
   }
 
@@ -39,6 +43,8 @@ class NotesRepositoryImpl implements NotesRepository {
     String? category,
     bool? isPinned,
     String? color,
+    String? imageBase64,
+    String? imageName,
   }) async {
     return await MockNotesService.updateNote(
       id: id,
@@ -47,6 +53,8 @@ class NotesRepositoryImpl implements NotesRepository {
       category: category,
       isPinned: isPinned,
       color: color,
+      imageBase64: imageBase64,
+      imageName: imageName,
     );
   }
 

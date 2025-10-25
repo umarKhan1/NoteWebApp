@@ -147,6 +147,8 @@ class NotesCubit extends Cubit<NotesState> {
     required String content,
     required String category,
     required bool isPinned,
+    String? imageBase64,
+    String? imageName,
   }) async {
     try {
       final userId = await UserUtils.getCurrentUserId() ?? 
@@ -158,6 +160,8 @@ class NotesCubit extends Cubit<NotesState> {
           content: content,
           category: category,
           isPinned: isPinned,
+          imageBase64: imageBase64,
+          imageName: imageName,
         ),
       );
 
@@ -189,6 +193,8 @@ class NotesCubit extends Cubit<NotesState> {
     required String content,
     required String category,
     required bool isPinned,
+    String? imageBase64,
+    String? imageName,
   }) async {
     try {
       final userId = await UserUtils.getCurrentUserId() ?? 
@@ -201,6 +207,8 @@ class NotesCubit extends Cubit<NotesState> {
           content: content,
           category: category,
           isPinned: isPinned,
+          imageBase64: imageBase64,
+          imageName: imageName,
         ),
       );
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../shared/widgets/responsive_sidebar.dart';
 import '../cubit/notes_cubit.dart';
 import '../cubit/notes_state.dart';
@@ -83,9 +82,6 @@ class _NotesViewState extends State<_NotesView> {
                 Expanded(
                   child: Column(
                     children: [
-                      // Header
-                      _buildNotesHeader(isMobile),
-                      
                       // Content
                       Expanded(
                         child: _buildNotesContent(),
@@ -100,145 +96,31 @@ class _NotesViewState extends State<_NotesView> {
       );
   }
 
-  Widget _buildNotesHeader(bool isMobile) {
-    final theme = Theme.of(context);
-    
-    return Container(
-      height: 70,
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 16 : 24, 
-        vertical: 8,
-      ),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: theme.colorScheme.outline.withOpacity(0.2),
-            width: 1,
-          ),
-        ),
-      ),
-      child: Row(
-        children: [
-          // Menu button for mobile
-          if (isMobile) ...[
-            IconButton(
-              onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-              icon: Icon(
-                Icons.menu,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
-            ),
-            const SizedBox(width: 8),
-          ],
-          
-          // Title
-          Text(
-            AppStrings.notes,
-            style: TextStyle(
-              fontSize: isMobile ? 16 : 18,
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-          
-          const Spacer(),
-          
-          // Actions
-          IconButton(
-            onPressed: () {
-              // TODO: Implement search
-            },
-            icon: Icon(
-              Icons.search,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
-            ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            onPressed: () {
-              // TODO: Implement add note
-            },
-            icon: Icon(
-              Icons.add,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildNotesContent() {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        title: Text(
-          AppStrings.notesTitle,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            onPressed: () {
-          
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.filter_list,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            onPressed: () {
-        
-            },
-          ),
-        ],
-      ),
-      body: BlocBuilder<NotesCubit, NotesState>(
-        builder: (context, state) {
-          if (state is NotesInitial || state is NotesLoading) {
-            return const NotesLoadingShimmer();
-          }
-          
-          if (state is NotesError) {
-            return _buildErrorState(context, state);
-          }
-          
-          if (state is NotesLoaded) {
-            if (state.notes.isEmpty) {
-              return const NotesEmptyState();
-            }
-            
-            return buildNotesGrid(context, state);
-          }
-          
-          if (state is NotesOperationInProgress && state.notes != null) {
-            return buildNotesGrid(context, NotesLoaded(notes: state.notes!));
-          }
-          
+    return BlocBuilder<NotesCubit, NotesState>(
+      builder: (context, state) {
+        if (state is NotesInitial || state is NotesLoading) {
           return const NotesLoadingShimmer();
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-        
-          _showAddNoteDialog(context);
-        },
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: Icon(
-          Icons.add,
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-      ),
+        }
+
+        if (state is NotesError) {
+          return _buildErrorState(context, state);
+        }
+
+        if (state is NotesLoaded) {
+          if (state.notes.isEmpty) {
+            return const NotesEmptyState();
+          }
+
+          return _buildNotesGrid(context, state);
+        }
+
+        if (state is NotesOperationInProgress && state.notes != null) {
+          return _buildNotesGrid(context, NotesLoaded(notes: state.notes!, allNotes: state.notes));
+        }
+
+        return const NotesLoadingShimmer();
+      },
     );
   }
 
@@ -258,8 +140,8 @@ class _NotesViewState extends State<_NotesView> {
             Text(
               state.message,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.error,
-              ),
+                    color: Theme.of(context).colorScheme.error,
+                  ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 3.h),
@@ -267,7 +149,7 @@ class _NotesViewState extends State<_NotesView> {
               onPressed: () {
                 context.read<NotesCubit>().loadNotes();
               },
-              child: const Text(AppStrings.tryAgain),
+              child: const Text('Try Again'),
             ),
           ],
         ),
@@ -275,17 +157,10 @@ class _NotesViewState extends State<_NotesView> {
     );
   }
 
-  Widget buildNotesGrid(BuildContext context, NotesLoaded state) {
+  Widget _buildNotesGrid(BuildContext context, NotesLoaded state) {
     final isTablet = Device.screenType == ScreenType.tablet;
     final crossAxisCount = isTablet ? 3 : 2;
-    
-    // Sort notes: pinned notes first, then unpinned
-    final sortedNotes = [...state.notes]..sort((a, b) {
-      if (a.isPinned && !b.isPinned) return -1;
-      if (!a.isPinned && b.isPinned) return 1;
-      return 0;
-    });
-    
+
     return RefreshIndicator(
       onRefresh: () async {
         await context.read<NotesCubit>().loadNotes();
@@ -299,9 +174,9 @@ class _NotesViewState extends State<_NotesView> {
             mainAxisSpacing: 2.w,
             childAspectRatio: isTablet ? 1.2 : 0.8,
           ),
-          itemCount: sortedNotes.length,
+          itemCount: state.notes.length,
           itemBuilder: (context, index) {
-            final note = sortedNotes[index];
+            final note = state.notes[index];
             return NotesListItem(
               note: note,
               onTap: () {
@@ -324,39 +199,8 @@ class _NotesViewState extends State<_NotesView> {
     );
   }
 
-  void _showAddNoteDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Note'),
-        content: const Text('Add note functionality will be implemented soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void showEditNoteDialog(BuildContext context, note) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Note'),
-        content: const Text('Edit note functionality will be implemented soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showDeleteConfirmation(BuildContext context, String noteId, String noteTitle) {
+  void _showDeleteConfirmation(
+      BuildContext context, String noteId, String noteTitle) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

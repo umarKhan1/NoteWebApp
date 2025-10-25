@@ -30,39 +30,48 @@ class NotesLoading extends NotesState {
 /// State when notes are successfully loaded.
 /// 
 /// This state contains the loaded notes data and any applied filters
-/// such as search queries or category filters.
+/// such as search queries or filter operations.
 class NotesLoaded extends NotesState {
-  /// List of loaded notes
+  /// All notes (never modified by search/filter)
+  final List<Note> allNotes;
+  
+  /// Visible notes after applying search, filter, and sort
   final List<Note> notes;
   
-  /// Optional search query if filtering is applied
-  final String? searchQuery;
+  /// Current search query
+  final String? query;
   
-  /// Optional category filter
-  final String? categoryFilter;
+  /// Selected category for filter
+  final String? selectedCategory;
+  
+  /// Current sort option
+  final Object? sortBy;
 
   /// Creates a new loaded notes state
   const NotesLoaded({
     required this.notes,
-    this.searchQuery,
-    this.categoryFilter,
-  });
+    List<Note>? allNotes,
+    this.query,
+    this.selectedCategory,
+    this.sortBy,
+  }) : allNotes = allNotes ?? const [];
 
   /// Create a copy of this state with updated values
-  /// 
-  /// This method allows for immutable state updates by creating
-  /// a new instance with modified properties.
   NotesLoaded copyWith({
     List<Note>? notes,
-    String? searchQuery,
-    String? categoryFilter,
-    bool clearSearchQuery = false,
-    bool clearCategoryFilter = false,
+    List<Note>? allNotes,
+    String? query,
+    String? selectedCategory,
+    Object? sortBy,
+    bool clearQuery = false,
+    bool clearFilter = false,
   }) {
     return NotesLoaded(
       notes: notes ?? this.notes,
-      searchQuery: clearSearchQuery ? null : (searchQuery ?? this.searchQuery),
-      categoryFilter: clearCategoryFilter ? null : (categoryFilter ?? this.categoryFilter),
+      allNotes: allNotes ?? this.allNotes,
+      query: clearQuery ? null : (query ?? this.query),
+      selectedCategory: clearFilter ? null : (selectedCategory ?? this.selectedCategory),
+      sortBy: sortBy ?? this.sortBy,
     );
   }
 
@@ -72,12 +81,14 @@ class NotesLoaded extends NotesState {
     
     return other is NotesLoaded &&
         other.notes == notes &&
-        other.searchQuery == searchQuery &&
-        other.categoryFilter == categoryFilter;
+        other.allNotes == allNotes &&
+        other.query == query &&
+        other.selectedCategory == selectedCategory &&
+        other.sortBy == sortBy;
   }
 
   @override
-  int get hashCode => notes.hashCode ^ searchQuery.hashCode ^ categoryFilter.hashCode;
+  int get hashCode => notes.hashCode ^ allNotes.hashCode ^ query.hashCode ^ selectedCategory.hashCode ^ sortBy.hashCode;
 }
 
 /// State when there's an error loading or managing notes.

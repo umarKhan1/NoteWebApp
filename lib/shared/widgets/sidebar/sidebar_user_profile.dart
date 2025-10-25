@@ -28,14 +28,14 @@ class SidebarUserProfile extends BaseStatelessWidget {
           height: 36,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
+              colors: [theme.primaryColor, theme.primaryColor.withValues(alpha: 0.8)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
-                color: theme.primaryColor.withOpacity(0.3),
+                color: theme.primaryColor.withValues(alpha: 0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -61,15 +61,15 @@ class SidebarUserProfile extends BaseStatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            theme.primaryColor.withOpacity(0.05),
-            theme.primaryColor.withOpacity(0.08),
+            theme.primaryColor.withValues(alpha: 0.05),
+            theme.primaryColor.withValues(alpha: 0.08),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.primaryColor.withOpacity(0.1),
+          color: theme.primaryColor.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -80,7 +80,7 @@ class SidebarUserProfile extends BaseStatelessWidget {
             height: 32,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
+                colors: [theme.primaryColor, theme.primaryColor.withValues(alpha: 0.8)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -116,7 +116,7 @@ class SidebarUserProfile extends BaseStatelessWidget {
                   AppStrings.userPlan,
                   style: TextStyle(
                     fontSize: 10,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -126,7 +126,7 @@ class SidebarUserProfile extends BaseStatelessWidget {
           PopupMenuButton<String>(
             icon: Icon(
               Icons.more_vert,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               size: 16,
             ),
             itemBuilder: (context) => [

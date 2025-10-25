@@ -42,7 +42,10 @@ class ActivityLocalDatasource {
 
       // Save back to SharedPreferences
       await prefs.setString(key, jsonEncode(activities));
-      if (kDebugMode) print('[Activity] ${activity.type.toString().split('.').last} ${activity.title} ${activity.timestamp}');
+      if (kDebugMode) {
+        final type = activity.type.toString().split('.').last;
+        print('[Activity] $type ${activity.title} ${activity.timestamp}');
+      }
     } catch (e) {
       if (kDebugMode) print('[Activity] Error: $e');
       throw ActivityDatasourceException(
@@ -60,9 +63,11 @@ class ActivityLocalDatasource {
       final json = prefs.getString(key) ?? '[]';
       final List activities = jsonDecode(json) as List;
 
-      return activities
+      final result = activities
           .map((a) => ActivityModel.fromJson(a as Map<String, dynamic>))
           .toList();
+      
+      return result;
     } catch (e) {
       throw ActivityDatasourceException(
         'Failed to get activities: ${e.toString()}',

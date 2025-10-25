@@ -236,7 +236,7 @@ class DashboardStatsGrid extends BaseStatelessWidget {
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: theme.colorScheme.outline.withOpacity(0.2),
+              color: theme.colorScheme.outline.withValues(alpha: 0.2),
               width: 1,
             ),
             boxShadow: [
@@ -259,7 +259,7 @@ class DashboardStatsGrid extends BaseStatelessWidget {
                   title,
                   style: TextStyle(
                     fontSize: titleFontSize,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     fontWeight: FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -294,7 +294,7 @@ class DashboardStatsGrid extends BaseStatelessWidget {
             subtitle,
             style: TextStyle(
               fontSize: subtitleFontSize,
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
         ],

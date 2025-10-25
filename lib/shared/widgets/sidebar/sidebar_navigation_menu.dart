@@ -40,7 +40,7 @@ class SidebarNavigationMenu extends BaseStatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   letterSpacing: 0.5,
                 ),
               ),
@@ -61,37 +61,8 @@ class SidebarNavigationMenu extends BaseStatelessWidget {
             showText: showText,
             currentPath: currentPath,
           ),
-          _SidebarNavItem(
-            icon: Icons.folder_outlined,
-            title: AppStrings.categories,
-            route: '/categories',
-            showText: showText,
-            currentPath: currentPath,
-          ),
-          _SidebarNavItem(
-            icon: Icons.search_outlined,
-            title: AppStrings.search,
-            route: '/search',
-            showText: showText,
-            currentPath: currentPath,
-          ),
-          _SidebarNavItem(
-            icon: Icons.analytics_outlined,
-            title: AppStrings.analytics,
-            route: '/analytics',
-            showText: showText,
-            currentPath: currentPath,
-          ),
           
           const SizedBox(height: 24),
-          
-          _SidebarNavItem(
-            icon: Icons.settings_outlined,
-            title: AppStrings.settings,
-            route: '/settings',
-            showText: showText,
-            currentPath: currentPath,
-          ),
         ],
       ),
     );
@@ -143,12 +114,12 @@ class _SidebarNavItem extends StatelessWidget {
                     color: isActive 
                       ? theme.primaryColor
                       : isHovered
-                        ? theme.primaryColor.withOpacity(0.08)
+                        ? theme.primaryColor.withValues(alpha: 0.08)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: isActive ? [
                       BoxShadow(
-                        color: theme.primaryColor.withOpacity(0.2),
+                        color: theme.primaryColor.withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -164,7 +135,7 @@ class _SidebarNavItem extends StatelessWidget {
                               ? Colors.white
                               : isHovered
                                 ? theme.primaryColor
-                                : theme.colorScheme.onSurface.withOpacity(0.6),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -177,7 +148,7 @@ class _SidebarNavItem extends StatelessWidget {
                                   ? Colors.white
                                   : isHovered
                                     ? theme.primaryColor
-                                    : theme.colorScheme.onSurface.withOpacity(0.7),
+                                    : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -192,7 +163,7 @@ class _SidebarNavItem extends StatelessWidget {
                             ? Colors.white
                             : isHovered
                               ? theme.primaryColor
-                              : theme.colorScheme.onSurface.withOpacity(0.6),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                 ),

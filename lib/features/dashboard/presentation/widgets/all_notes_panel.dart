@@ -35,7 +35,7 @@ class AllNotesPanel extends BaseStatelessWidget {
     return GestureDetector(
       onTap: onClose,
       child: Container(
-        color: Colors.black.withOpacity(0.3),
+        color: Colors.black.withValues(alpha:  0.3),
         child: Align(
           alignment: Alignment.centerRight,
           child: GestureDetector(
@@ -46,7 +46,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                 color: theme.colorScheme.surface,
                 boxShadow: [
                   BoxShadow(
-                    color: theme.shadowColor.withOpacity(0.2),
+                    color: theme.shadowColor.withValues(alpha: 0.2),
                     blurRadius: 12,
                     offset: const Offset(-2, 0),
                   ),
@@ -63,7 +63,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: theme.colorScheme.outline.withOpacity(0.1),
+                          color: theme.colorScheme.outline.withValues(alpha:  0.1),
                           width: 1,
                         ),
                       ),
@@ -155,7 +155,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                                 Icons.notes,
                                 size: 48,
                                 color: theme.colorScheme.onSurface
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                               ),
                               const SizedBox(height: 8),
                               Text(
@@ -163,7 +163,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: theme.colorScheme.onSurface
-                                      .withOpacity(0.5),
+                                      .withValues(alpha: 0.5),
                                 ),
                               ),
                             ],
@@ -202,7 +202,7 @@ class AllNotesPanel extends BaseStatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: noteColors.primary.withOpacity(0.2),
+            color: noteColors.primary.withValues(alpha: 0.2),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -275,7 +275,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                   Text(
                     note.content.trim(),
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.85),
+                      color: Colors.white.withValues(alpha: .85),
                       fontSize: 11,
                       height: 1.3,
                     ),
@@ -287,7 +287,7 @@ class AllNotesPanel extends BaseStatelessWidget {
                 Text(
                   _formatDate(note.updatedAt),
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.65),
+                    color: Colors.white.withValues(alpha: 0.65),
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
                   ),
@@ -310,7 +310,7 @@ class AllNotesPanel extends BaseStatelessWidget {
         );
         return (
           primary: color,
-          secondary: color.withOpacity(0.7),
+          secondary: color.withValues( alpha:  0.7),
         );
       } catch (e) {
         // Fall back to default if parsing fails

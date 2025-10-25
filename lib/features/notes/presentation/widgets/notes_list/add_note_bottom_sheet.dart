@@ -395,7 +395,7 @@ class _AddNoteBottomSheetContentState extends State<_AddNoteBottomSheetContent>
                         ),
                         borderRadius: BorderRadius.circular(6),
                         color: isPinned
-                            ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+                            ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
                             : Colors.transparent,
                       ),
                       child: Row(

@@ -30,7 +30,7 @@ class DashboardHeader extends BaseStatelessWidget {
         color: theme.colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -45,7 +45,7 @@ class DashboardHeader extends BaseStatelessWidget {
                 onPressed: onMenuPressed,
                 icon: Icon(
                   Icons.menu,
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
               const SizedBox(width: 8),
@@ -70,7 +70,7 @@ class DashboardHeader extends BaseStatelessWidget {
               },
               icon: Icon(
                 Icons.notifications_outlined,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(width: 8),
@@ -80,7 +80,7 @@ class DashboardHeader extends BaseStatelessWidget {
               },
               icon: Icon(
                 Icons.search,
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],

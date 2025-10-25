@@ -15,9 +15,16 @@ import '../../features/dashboard/domain/usecases/get_recent_activities_usecase.d
 import '../../features/dashboard/domain/usecases/load_dashboard_usecase.dart';
 import '../../features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import '../../features/dashboard/presentation/cubit/dashboard_ui_cubit.dart';
+import '../../features/notes/data/repositories/notes_repository_impl.dart';
+import '../../features/notes/domain/repositories/notes_repository.dart';
+import '../../features/notes/domain/usecases/add_note_usecase.dart';
+import '../../features/notes/domain/usecases/delete_note_usecase.dart';
+import '../../features/notes/domain/usecases/get_notes_usecase.dart';
+import '../../features/notes/domain/usecases/update_note_usecase.dart';
 import '../../features/notes/presentation/cubit/notes_cubit.dart';
 import '../../features/notes/presentation/cubit/notes_ui_cubit.dart';
 import '../../shared/cubit/responsive_sidebar_cubit.dart';
+import '../../shared/cubit/theme_cubit.dart';
 
 /// Provides a list of application-wide Bloc providers following OOP principles
 class ApplicationProviders {
@@ -26,6 +33,9 @@ class ApplicationProviders {
   
   /// Returns a list of Bloc providers used in the application.
   static List<BlocProvider> get providers => [
+    BlocProvider<ThemeCubit>(
+      create: (context) => ThemeCubit(),
+    ),
     BlocProvider<LoginCubit>(
       create: (context) => LoginCubit(),
     ),
@@ -73,17 +83,30 @@ class ApplicationProviders {
   
   /// Creates notes cubit with proper dependency injection
   static NotesCubit _createNotesCubit(BuildContext context) {
-    // Create activity tracking services
+    // Notes repository
+    final NotesRepository notesRepository = NotesRepositoryImpl();
+    
+    // Notes use cases
+    final getNotesUseCase = GetNotesUseCase(notesRepository);
+    final createNoteUseCase = CreateNoteUseCase(notesRepository);
+    final updateNoteUseCase = UpdateNoteUseCase(notesRepository);
+    final deleteNoteUseCase = DeleteNoteUseCase(notesRepository);
+    
+    // Activity service for logging
     final ActivityRepository activityRepository = ActivityRepositoryImpl(
       ActivityLocalDatasource(),
     );
     final activityService = ActivityService(activityRepository);
     
-    // Get DashboardCubit from context if available
+    // Get dashboard cubit for activity refresh callbacks
     final dashboardCubit = context.read<DashboardCubit>();
     
-    // Return notes cubit with activity service and dashboard cubit
+    // Return notes cubit with all dependencies
     return NotesCubit(
+      getNotesUseCase: getNotesUseCase,
+      createNoteUseCase: createNoteUseCase,
+      updateNoteUseCase: updateNoteUseCase,
+      deleteNoteUseCase: deleteNoteUseCase,
       activityService: activityService,
       dashboardCubit: dashboardCubit,
     );

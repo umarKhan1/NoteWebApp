@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/user_utils.dart';
 import '../../../../shared/widgets/responsive_sidebar.dart';
-import '../../../notes/presentation/cubit/notes_cubit.dart';
 import '../cubit/dashboard_cubit.dart';
 import '../cubit/dashboard_state.dart';
 import '../cubit/dashboard_ui_cubit.dart';
@@ -40,13 +41,6 @@ class _DashboardViewState extends State<_DashboardView> {
     super.initState();
     _dashboardCubit = context.read<DashboardCubit>();
     
-    // Set up callback BEFORE loading dashboard to ensure it's ready
-    NotesCubit.onNoteOperationCompleted = () async {
-      if (mounted) {
-        await _dashboardCubit.refreshActivities();
-      }
-    };
-    
     Future.delayed(Duration.zero, () async {
       if (!mounted) return;
       
@@ -66,8 +60,6 @@ class _DashboardViewState extends State<_DashboardView> {
 
   @override
   void dispose() {
-    // Clear callback on dispose
-    NotesCubit.onNoteOperationCompleted = null;
     super.dispose();
   }
 

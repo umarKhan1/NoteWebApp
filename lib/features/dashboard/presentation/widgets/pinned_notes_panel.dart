@@ -35,7 +35,7 @@ class PinnedNotesPanel extends BaseStatelessWidget {
     return GestureDetector(
       onTap: onClose,
       child: Container(
-        color: Colors.black.withOpacity(0.3),
+        color: Colors.black.withValues(alpha: 0.3),
         child: Align(
           alignment: Alignment.centerRight,
           child: GestureDetector(
@@ -46,7 +46,7 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                 color: theme.colorScheme.surface,
                 boxShadow: [
                   BoxShadow(
-                    color: theme.shadowColor.withOpacity(0.2),
+                    color: theme.shadowColor.withValues(alpha: 0.2),
                     blurRadius: 12,
                     offset: const Offset(-2, 0),
                   ),
@@ -63,7 +63,7 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: theme.colorScheme.outline.withOpacity(0.1),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),
@@ -140,7 +140,7 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                                     Icons.push_pin_outlined,
                                     size: 48,
                                     color: theme.colorScheme.onSurface
-                                        .withOpacity(0.3),
+                                        .withValues(alpha: 0.3),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
@@ -148,7 +148,7 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: theme.colorScheme.onSurface
-                                          .withOpacity(0.5),
+                                          .withValues(alpha: 0.5),
                                     ),
                                   ),
                                 ],
@@ -177,7 +177,7 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                                 Icons.push_pin_outlined,
                                 size: 48,
                                 color: theme.colorScheme.onSurface
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                               ),
                               const SizedBox(height: 8),
                               Text(
@@ -185,7 +185,7 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: theme.colorScheme.onSurface
-                                      .withOpacity(0.5),
+                                      .withValues(alpha: 0.5),
                                 ),
                               ),
                             ],
@@ -211,15 +211,15 @@ class PinnedNotesPanel extends BaseStatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withOpacity(0.15),
+        color: theme.colorScheme.primary.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: theme.colorScheme.primary.withOpacity(0.3),
+          color: theme.colorScheme.primary.withValues(alpha: 0.3),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.primary.withOpacity(0.1),
+            color: theme.colorScheme.primary.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -244,16 +244,16 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                     color: const Color(0xFFEF4444),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.push_pin,
                         size: 12,
                         color: Colors.white,
                       ),
-                      const SizedBox(width: 4),
-                      const Text(
+                      SizedBox(width: 4),
+                      Text(
                         'Pinned',
                         style: TextStyle(
                           color: Colors.white,
@@ -287,7 +287,7 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                           'on ${note.category}',
                           style: TextStyle(
                             fontSize: 11,
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -300,7 +300,7 @@ class PinnedNotesPanel extends BaseStatelessWidget {
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           color:
-                              theme.colorScheme.onSurface.withOpacity(0.5),
+                              theme.colorScheme.onSurface.withValues(alpha:0.5),
                         ),
                       ),
                     ],

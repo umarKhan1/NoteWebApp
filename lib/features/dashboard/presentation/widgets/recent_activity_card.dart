@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/base/base_stateless_widget.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/constants/app_animations.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../shared/widgets/animations/animation_widgets.dart';
 import '../../domain/entities/activity.dart';
 
+
 /// Recent activity card widget
 class RecentActivityCard extends BaseStatelessWidget {
-  /// List of recent activities
-  final List<Activity> activities;
 
+  // ignore: public_member_api_docs
   const RecentActivityCard({
     super.key,
     required this.activities,
   });
+  /// List of recent activities
+  final List<Activity> activities;
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +33,12 @@ class RecentActivityCard extends BaseStatelessWidget {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
             width: 1,
           ),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.02),
+            color: theme.shadowColor.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -62,7 +64,7 @@ class RecentActivityCard extends BaseStatelessWidget {
               const SizedBox(width: 8),
               TextButton(
                 onPressed: () {
-                  // TODO: Show all activity
+                 
                 },
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.symmetric(
@@ -105,7 +107,7 @@ class RecentActivityCard extends BaseStatelessWidget {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: theme.colorScheme.outline.withOpacity(0.1),
+            color: theme.colorScheme.outline.withValues(alpha: 0.1),
             width: 0.5,
           ),
         ),
@@ -115,7 +117,7 @@ class RecentActivityCard extends BaseStatelessWidget {
               width: responsiveInfo.isMobile ? 28 : 32,
               height: responsiveInfo.isMobile ? 28 : 32,
               decoration: BoxDecoration(
-                color: theme.primaryColor.withOpacity(0.1),
+                color: theme.primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Center(
@@ -148,7 +150,7 @@ class RecentActivityCard extends BaseStatelessWidget {
                     activity.getTimeAgo(),
                     style: TextStyle(
                       fontSize: responsiveInfo.isMobile ? 10 : 11,
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -168,14 +170,14 @@ class RecentActivityCard extends BaseStatelessWidget {
           Icon(
             Icons.history,
             size: responsiveInfo.isMobile ? 40 : 48,
-            color: theme.colorScheme.onSurface.withOpacity(0.4),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
           ),
           const SizedBox(height: 8),
           Text(
             AppStrings.noRecentActivity,
             style: TextStyle(
               fontSize: responsiveInfo.isMobile ? 12 : 14,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],

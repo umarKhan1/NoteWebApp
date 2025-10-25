@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/base/base_stateless_widget.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../cubit/theme_cubit.dart';
 
 /// Sidebar header widget with logo and toggle button
 class SidebarHeader extends BaseStatelessWidget {
@@ -33,17 +35,23 @@ class SidebarHeader extends BaseStatelessWidget {
     
     return Container(
       padding: const EdgeInsets.all(16),
-      child: Row(
+      child: Column(
         children: [
-       
-          if (showText) ...[
-            const SizedBox(width: 12),
-            _buildTitle(theme),
-          ],
-          if (!responsive.isMobile) ...[
-            const SizedBox(width: 8),
-            _buildToggleButton(theme),
-          ],
+          // Top row: Title and toggle button
+          Row(
+            children: [
+              if (showText) ...[
+                _buildTitle(theme),
+              ],
+              if (!responsive.isMobile) ...[
+                const SizedBox(width: 8),
+                _buildToggleButton(theme),
+              ],
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Light/Dark mode toggle
+          if (showText) _buildThemeToggle(theme, context),
         ],
       ),
     );
@@ -78,10 +86,79 @@ class SidebarHeader extends BaseStatelessWidget {
           padding: const EdgeInsets.all(6),
           child: Icon(
             isExpanded ? Icons.menu_open : Icons.menu,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             size: 18,
           ),
         ),
+      ),
+    );
+  }
+
+  /// Builds the theme toggle (Light/Dark mode)
+  Widget _buildThemeToggle(ThemeData theme, BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Light mode button
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                context.read<ThemeCubit>().setLightTheme();
+              },
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: theme.brightness == Brightness.light
+                      ? theme.colorScheme.primary
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(
+                  Icons.light_mode,
+                  size: 18,
+                  color: theme.brightness == Brightness.light
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          // Dark mode button
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                context.read<ThemeCubit>().setDarkTheme();
+              },
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: theme.brightness == Brightness.dark
+                      ? theme.colorScheme.primary
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(
+                  Icons.dark_mode,
+                  size: 18,
+                  color: theme.brightness == Brightness.dark
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

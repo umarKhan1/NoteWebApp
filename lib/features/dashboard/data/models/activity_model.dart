@@ -6,20 +6,19 @@ import '../../domain/entities/activity.dart';
 class ActivityModel extends Activity {
   /// Creates an [ActivityModel] instance
   const ActivityModel({
-    required String id,
-    required ActivityType type,
-    required String title,
-    required String description,
-    required DateTime timestamp,
-    String? noteId,
-  }) : super(
-    id: id,
-    type: type,
-    title: title,
-    description: description,
-    timestamp: timestamp,
-    noteId: noteId,
-  );
+    required super.id,
+    required super.type,
+    required super.title,
+    required super.description,
+    required super.timestamp,
+    super.noteId,
+  });
+
+  /// Create from JSON string
+  factory ActivityModel.fromJsonString(String jsonString) {
+    final json = jsonDecode(jsonString) as Map<String, dynamic>;
+    return ActivityModel.fromJson(json);
+  }
 
   /// Create from Activity entity
   factory ActivityModel.fromEntity(Activity activity) {
@@ -62,10 +61,4 @@ class ActivityModel extends Activity {
 
   /// Convert to JSON string
   String toJsonString() => jsonEncode(toJson());
-
-  /// Create from JSON string
-  factory ActivityModel.fromJsonString(String jsonString) {
-    final json = jsonDecode(jsonString) as Map<String, dynamic>;
-    return ActivityModel.fromJson(json);
-  }
 }

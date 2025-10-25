@@ -101,7 +101,6 @@ class AppRouter {
         ],
       ),
       
-      // TODO: Add more routes here (profile, etc.)
     ],
     
     // Error handling

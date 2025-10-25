@@ -3,6 +3,16 @@ import '../constants/app_animations.dart';
 
 /// Base class for animated widgets following OOP principles.
 abstract class BaseAnimatedWidget extends StatefulWidget {
+  
+  // ignore: public_member_api_docs
+  const BaseAnimatedWidget({
+    super.key,
+    required this.child,
+    this.duration = AppAnimations.normal,
+    this.curve = AppAnimations.easeInOut,
+    this.delay = Duration.zero,
+    this.autoStart = true,
+  });
   /// The child widget to animate.
   final Widget child;
   
@@ -17,15 +27,6 @@ abstract class BaseAnimatedWidget extends StatefulWidget {
   
   /// Whether to auto-start the animation.
   final bool autoStart;
-  
-  const BaseAnimatedWidget({
-    super.key,
-    required this.child,
-    this.duration = AppAnimations.normal,
-    this.curve = AppAnimations.easeInOut,
-    this.delay = Duration.zero,
-    this.autoStart = true,
-  });
 }
 
 /// Base state class for animated widgets.

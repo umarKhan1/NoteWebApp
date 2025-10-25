@@ -1,14 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/notes/presentation/cubit/notes_cubit.dart';
+import '../../features/notes/presentation/widgets/category_filter_popover.dart';
+import '../../features/notes/presentation/widgets/sort_popover.dart';
 import 'responsive_sidebar.dart';
-
+/// Main shell widget with responsive sidebar and header
 class MainShell extends StatefulWidget {
+  /// Creates a [MainShell].
   const MainShell({
     super.key,
     required this.child,
   });
-
+  /// The child widget to display in the main content area.
   final Widget child;
 
   @override
@@ -100,14 +107,6 @@ class _MainShellState extends State<MainShell> {
     String pageTitle = 'Dashboard';
     if (currentPath.contains('/notes')) {
       pageTitle = 'All Notes';
-    } else if (currentPath.contains('/categories')) {
-      pageTitle = 'Categories';
-    } else if (currentPath.contains('/search')) {
-      pageTitle = 'Search';
-    } else if (currentPath.contains('/analytics')) {
-      pageTitle = 'Analytics';
-    } else if (currentPath.contains('/settings')) {
-      pageTitle = 'Settings';
     }
 
     return Container(
@@ -120,7 +119,7 @@ class _MainShellState extends State<MainShell> {
         color: theme.colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -138,7 +137,7 @@ class _MainShellState extends State<MainShell> {
                 },
                 icon: Icon(
                   Icons.menu,
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 tooltip: 'Open navigation menu',
               ),
@@ -171,34 +170,269 @@ class _MainShellState extends State<MainShell> {
   ) {
     final theme = Theme.of(context);
 
+    // For notes page, show Search/Filter/Sort UI
+    if (currentPath.contains('/notes')) {
+      return _NotesHeaderActions(theme: theme);
+    }
+
+    // For other pages, show default icons
+    return const SizedBox();}
+}
+
+class _NotesHeaderActions extends StatefulWidget {
+  final ThemeData theme;
+
+  const _NotesHeaderActions({required this.theme});
+
+  @override
+  State<_NotesHeaderActions> createState() => _NotesHeaderActionsState();
+}
+
+class _NotesHeaderActionsState extends State<_NotesHeaderActions> {
+  late TextEditingController _searchController;
+  bool _isSearchExpanded = false;
+  Timer? _searchDebounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchDebounce?.cancel();
+    super.dispose();
+  }
+
+  void _toggleSearch() {
+    setState(() {
+      _isSearchExpanded = !_isSearchExpanded;
+      if (!_isSearchExpanded) {
+        _searchController.clear();
+        context.read<NotesCubit>().resetFilters();
+      }
+    });
+  }
+
+  void _onSearchChanged(String query) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+      context.read<NotesCubit>().searchNotes(query);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.notifications_outlined,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+        // Search field (appears when expanded)
+        if (_isSearchExpanded)
+          SizedBox(
+            width: 200,
+            height: 40,
+            child: TextField(
+              controller: _searchController,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'Search notes...',
+                prefixIcon: const Icon(Icons.search, size: 20),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, size: 20),
+                        onPressed: () {
+                          _searchController.clear();
+                          context.read<NotesCubit>().resetFilters();
+                          setState(() {});
+                        },
+                      )
+                    : null,
+                filled: true,
+                fillColor: theme.colorScheme.surfaceContainerHighest,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              ),
+              onChanged: (value) {
+                _onSearchChanged(value);
+                setState(() {});
+              },
+            ),
+          )
+        else
+          const SizedBox(width: 0),
+        const SizedBox(width: 8),
+        // Search icon
+        SizedBox(
+          width: 40,
+          height: 40,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: _toggleSearch,
+              borderRadius: BorderRadius.circular(8),
+              child: Icon(
+                Icons.search,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                size: 22,
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 8),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.search,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+        // Filter menu
+        _FilterMenuAnchor(),
+        const SizedBox(width: 8),
+        // Sort menu
+        _SortMenuAnchor(),
+        const SizedBox(width: 8),
+      ],
+    );
+  }
+}
+
+class _FilterMenuAnchor extends StatefulWidget {
+  @override
+  State<_FilterMenuAnchor> createState() => _FilterMenuAnchorState();
+}
+
+class _FilterMenuAnchorState extends State<_FilterMenuAnchor> {
+  final _anchorKey = GlobalKey();
+  late OverlayEntry? _overlayEntry;
+
+  void _showFilterMenu() {
+    final cubit = context.read<NotesCubit>();
+    final renderBox =
+        _anchorKey.currentContext?.findRenderObject() as RenderBox?;
+    final size = renderBox?.size ?? const Size(40, 40);
+    final offset = renderBox?.localToGlobal(Offset.zero) ?? Offset.zero;
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: offset.dx - 280 + size.width,
+        top: offset.dy + size.height + 8,
+        child: Material(
+          color: Colors.transparent,
+          child: CategoryFilterPopover(
+            initialCategory: cubit.selectedCategory,
+            onApply: () {
+              _overlayEntry?.remove();
+              _overlayEntry = null;
+            },
+            onCancel: () {
+              _overlayEntry?.remove();
+              _overlayEntry = null;
+            },
           ),
         ),
-        if (currentPath.contains('/notes')) ...[
-          const SizedBox(width: 8),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.add,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
-            ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  @override
+  void dispose() {
+    _overlayEntry?.remove();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return SizedBox(
+      key: _anchorKey,
+      width: 40,
+      height: 40,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _showFilterMenu,
+          borderRadius: BorderRadius.circular(8),
+          child: Icon(
+            Icons.tune,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            size: 22,
           ),
-        ],
-      ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SortMenuAnchor extends StatefulWidget {
+  @override
+  State<_SortMenuAnchor> createState() => _SortMenuAnchorState();
+}
+
+class _SortMenuAnchorState extends State<_SortMenuAnchor> {
+  final _anchorKey = GlobalKey();
+  late OverlayEntry? _overlayEntry;
+
+  void _showSortMenu() {
+    final cubit = context.read<NotesCubit>();
+    final renderBox =
+        _anchorKey.currentContext?.findRenderObject() as RenderBox?;
+    final size = renderBox?.size ?? const Size(40, 40);
+    final offset = renderBox?.localToGlobal(Offset.zero) ?? Offset.zero;
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: offset.dx - 280 + size.width,
+        top: offset.dy + size.height + 8,
+        child: Material(
+          color: Colors.transparent,
+          child: SortPopover(
+            initialSort: cubit.sortBy as NoteSortBy?,
+            onApply: () {
+              _overlayEntry?.remove();
+              _overlayEntry = null;
+            },
+            onCancel: () {
+              _overlayEntry?.remove();
+              _overlayEntry = null;
+            },
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  @override
+  void dispose() {
+    _overlayEntry?.remove();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return SizedBox(
+      key: _anchorKey,
+      width: 40,
+      height: 40,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _showSortMenu,
+          borderRadius: BorderRadius.circular(8),
+          child: Icon(
+            Icons.sort,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            size: 22,
+          ),
+        ),
+      ),
     );
   }
 }

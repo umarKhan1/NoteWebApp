@@ -63,7 +63,6 @@ class DashboardCubit extends BaseCubit<DashboardState> {
           stats: currentState.stats,
           recentActivity: activities,
         ));
-        if (kDebugMode) print('[Activity] ${activities.length} activities refreshed');
       } else if (currentState is DashboardInitial || currentState is DashboardLoading) {
         // If still loading, fetch the full dashboard
         await loadDashboard(userId: _currentUserId);

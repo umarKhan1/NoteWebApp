@@ -1,398 +1,382 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/user_utils.dart';
-import '../../data/repositories/notes_repository_impl.dart';
 import '../../domain/entities/note.dart';
 import '../../domain/usecases/add_note_usecase.dart';
 import '../../domain/usecases/delete_note_usecase.dart';
-import '../../domain/usecases/get_categories_usecase.dart';
-import '../../domain/usecases/get_note_by_id_usecase.dart';
-import '../../domain/usecases/get_notes_by_category_usecase.dart';
 import '../../domain/usecases/get_notes_usecase.dart';
-import '../../domain/usecases/search_notes_usecase.dart';
-import '../../domain/usecases/toggle_pin_note_usecase.dart';
 import '../../domain/usecases/update_note_usecase.dart';
 import '../../../dashboard/domain/services/activity_service.dart';
 import '../../../dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'notes_state.dart';
 
-/// Cubit for managing notes state and operations.
-/// 
-/// This cubit handles all notes-related business logic including
-/// CRUD operations, searching, filtering, and state management
-/// using the clean architecture pattern with use cases.
-/// 
-/// It also integrates with ActivityService to track note operations
-/// for the admin dashboard.
+/// Cubit for managing notes operations and state
 class NotesCubit extends Cubit<NotesState> {
-  // Use cases for notes operations
-  late final GetNotesUseCase _getNotesUseCase;
-  late final CreateNoteUseCase _createNoteUseCase;
-  late final UpdateNoteUseCase _updateNoteUseCase;
-  late final DeleteNoteUseCase _deleteNoteUseCase;
-  late final SearchNotesUseCase _searchNotesUseCase;
-  late final GetNoteByIdUseCase _getNoteByIdUseCase;
-  late final GetNotesByCategoryUseCase _getNotesByCategoryUseCase;
-  late final TogglePinNoteUseCase _togglePinNoteUseCase;
-  late final GetCategoriesUseCase _getCategoriesUseCase;
-  
-  // Activity service for tracking operations
-  final ActivityService? _activityService;
-  
-  // Dashboard cubit for refreshing activities
-  final DashboardCubit? _dashboardCubit;
-  
-  /// Static callback to refresh dashboard after note operations (fallback)
-  static Future<void> Function()? onNoteOperationCompleted;
-
-  /// Creates a new instance of [NotesCubit]
-  /// 
-  /// Accepts optional [ActivityService] for activity tracking and [DashboardCubit] for refreshing.
-  /// Initializes with [NotesInitial] state and sets up all use cases
-  /// with the repository implementation.
+  /// Creates a new [NotesCubit].
   NotesCubit({
+    required GetNotesUseCase getNotesUseCase,
+    required CreateNoteUseCase createNoteUseCase,
+    required UpdateNoteUseCase updateNoteUseCase,
+    required DeleteNoteUseCase deleteNoteUseCase,
     ActivityService? activityService,
     DashboardCubit? dashboardCubit,
-  }) 
-      : _activityService = activityService,
+  })  : _getNotesUseCase = getNotesUseCase,
+        _createNoteUseCase = createNoteUseCase,
+        _updateNoteUseCase = updateNoteUseCase,
+        _deleteNoteUseCase = deleteNoteUseCase,
+        _activityService = activityService,
         _dashboardCubit = dashboardCubit,
-        super(const NotesInitial()) {
-    // Initialize use cases with repository
-    final repository = NotesRepositoryImpl();
-    _getNotesUseCase = GetNotesUseCase(repository);
-    _createNoteUseCase = CreateNoteUseCase(repository);
-    _updateNoteUseCase = UpdateNoteUseCase(repository);
-    _deleteNoteUseCase = DeleteNoteUseCase(repository);
-    _searchNotesUseCase = SearchNotesUseCase(repository);
-    _getNoteByIdUseCase = GetNoteByIdUseCase(repository);
-    _getNotesByCategoryUseCase = GetNotesByCategoryUseCase(repository);
-    _togglePinNoteUseCase = TogglePinNoteUseCase(repository);
-    _getCategoriesUseCase = GetCategoriesUseCase(repository);
-  }
+        super(const NotesInitial());
 
-  /// Load all notes
+  final GetNotesUseCase _getNotesUseCase;
+  final CreateNoteUseCase _createNoteUseCase;
+  final UpdateNoteUseCase _updateNoteUseCase;
+  final DeleteNoteUseCase _deleteNoteUseCase;
+  final ActivityService? _activityService;
+  final DashboardCubit? _dashboardCubit;
+
+  // Single source of truth
+  List<Note> _allNotes = [];
+  String _query = '';
+  String? _selectedCategory;
+  NoteSortBy _sortBy = NoteSortBy.recentlyUpdated;
+
+  /// Gets all notes
+  List<Note> get allNotes => _allNotes;
+
+  /// Gets visible notes
+  List<Note> get visibleNotes => (state is NotesLoaded) ? (state as NotesLoaded).notes : [];
+
+  /// Gets current query
+  String get query => _query;
+
+  /// Gets selected category
+  String? get selectedCategory => _selectedCategory;
+
+  /// Gets current sort
+  NoteSortBy get sortBy => _sortBy;
+
+  /// Loads all notes for the current user
   Future<void> loadNotes() async {
     try {
       emit(const NotesLoading());
+      
       final notes = await _getNotesUseCase();
-      emit(NotesLoaded(notes: notes));
+      
+      _allNotes = notes;
+      _query = '';
+      _selectedCategory = null;
+      _sortBy = NoteSortBy.recentlyUpdated;
+      
+      if (kDebugMode) {
+        developer.log('Loaded ${notes.length} notes', 
+          name: 'NotesCubit');
+      }
+      
+      _rebuildVisible();
     } catch (e) {
-      emit(NotesError(
-        message: 'Failed to load notes',
-        details: e.toString(),
-      ));
+      if (kDebugMode) {
+        developer.log('Error loading notes: $e', 
+          name: 'NotesCubit', error: e);
+      }
+      emit(NotesError(message: e.toString()));
     }
   }
 
-  /// Create a new note and log activity
+  /// Rebuilds visible notes from all notes with current filters and sort
+  void _rebuildVisible() {
+    // Start from all notes
+    var visible = List<Note>.from(_allNotes);
+    
+    // Apply search query on title and content
+    if (_query.isNotEmpty) {
+      final queryLower = _query.toLowerCase();
+      visible = visible.where((note) =>
+          note.title.toLowerCase().contains(queryLower) ||
+          note.content.toLowerCase().contains(queryLower) ||
+          (note.category?.toLowerCase().contains(queryLower) ?? false)
+      ).toList();
+    }
+    
+    // Apply category filter
+    if (_selectedCategory != null) {
+      visible = visible.where((note) =>
+          note.category?.toLowerCase() == _selectedCategory!.toLowerCase()
+      ).toList();
+    }
+    
+    // Apply sorting
+    switch (_sortBy) {
+      case NoteSortBy.recentlyUpdated:
+        visible.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+        break;
+      case NoteSortBy.oldestFirst:
+        visible.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        break;
+      case NoteSortBy.titleAtoZ:
+        visible.sort((a, b) => a.title.compareTo(b.title));
+        break;
+      case NoteSortBy.titleZtoA:
+        visible.sort((a, b) => b.title.compareTo(a.title));
+        break;
+      case NoteSortBy.pinnedFirst:
+        visible.sort((a, b) {
+          if (a.isPinned != b.isPinned) {
+            return a.isPinned ? -1 : 1;
+          }
+          return b.updatedAt.compareTo(a.updatedAt);
+        });
+        break;
+    }
+    
+    emit(NotesLoaded(
+      notes: visible,
+      allNotes: _allNotes,
+      query: _query.isEmpty ? null : _query,
+      selectedCategory: _selectedCategory,
+      sortBy: _sortBy,
+    ));
+  }
+
+  /// Creates a new note
   Future<void> createNote({
     required String title,
     required String content,
-    String? category,
-    bool isPinned = false,
-    String? color,
+    required String category,
+    required bool isPinned,
   }) async {
     try {
-      final currentState = state;
-      List<Note> currentNotes = [];
+      final userId = await UserUtils.getCurrentUserId() ?? 
+                     UserUtils.getDefaultUserId();
       
-      if (currentState is NotesLoaded) {
-        currentNotes = currentState.notes;
-        emit(NotesOperationInProgress(
-          notes: currentNotes,
-          operation: 'Creating note...',
-        ));
-      } else {
-        emit(const NotesOperationInProgress(operation: 'Creating note...'));
+      final note = await _createNoteUseCase(
+        CreateNoteParams(
+          title: title,
+          content: content,
+          category: category,
+          isPinned: isPinned,
+        ),
+      );
+
+      // Log activity
+      await _activityService?.logNoteCreated(userId, title, note.id);
+      
+      if (kDebugMode) {
+        developer.log('[Activity] create $title', name: 'NotesCubit');
       }
 
-      await _createNoteUseCase(CreateNoteParams(
-        title: title,
-        content: content,
-        category: category,
-        isPinned: isPinned,
-        color: color,
-      ));
+      // Refresh dashboard activities
+      await _dashboardCubit?.refreshActivities();
 
-      // Log activity if service is available
-      await _logNoteCreatedActivity(title);
-
-      // Reload all notes to get the updated list
+      // Reload notes to reflect changes
       await loadNotes();
-      
-      // Refresh dashboard to show new activity
-      await _refreshDashboard();
     } catch (e) {
-      emit(NotesError(
-        message: 'Failed to create note',
-        details: e.toString(),
-      ));
-    }
-  }
-
-  /// Helper to refresh dashboard from anywhere
-  Future<void> _refreshDashboard() async {
-    try {
-      // Use injected DashboardCubit first, then fallback to callback
-      if (_dashboardCubit != null) {
-        await _dashboardCubit.refreshActivities();
-      } else if (onNoteOperationCompleted != null) {
-        await onNoteOperationCompleted!.call();
+      if (kDebugMode) {
+        developer.log('Error creating note: $e', 
+          name: 'NotesCubit', error: e);
       }
-      // Small delay to ensure state propagates in web
-      await Future.delayed(const Duration(milliseconds: 100));
-    } catch (e) {
-      if (kDebugMode) print('[Activity] Refresh error: $e');
+      emit(NotesError(message: e.toString()));
     }
   }
 
-  /// Update an existing note and log activity
+  /// Updates an existing note
   Future<void> updateNote({
     required String id,
-    String? title,
-    String? content,
-    String? category,
-    bool? isPinned,
-    String? color,
+    required String title,
+    required String content,
+    required String category,
+    required bool isPinned,
   }) async {
     try {
-      final currentState = state;
-      if (currentState is NotesLoaded) {
-        emit(NotesOperationInProgress(
-          notes: currentState.notes,
-          operation: 'Updating note...',
-        ));
-      } else {
-        emit(const NotesOperationInProgress(operation: 'Updating note...'));
-      }
-
-      // Get the note before updating to get its title
-      final oldNote = await _getNoteByIdUseCase(id);
-
-      await _updateNoteUseCase(UpdateNoteParams(
-        id: id,
-        title: title,
-        content: content,
-        category: category,
-        isPinned: isPinned,
-        color: color,
-      ));
-
-      // Log activity if service is available
-      final noteTitle = title ?? oldNote?.title ?? 'Unknown';
-      await _logNoteUpdatedActivity(noteTitle, id);
-
-      // Reload all notes to get the updated list
-      await loadNotes();
+      final userId = await UserUtils.getCurrentUserId() ?? 
+                     UserUtils.getDefaultUserId();
       
-      // Refresh dashboard to show updated activity
-      await _refreshDashboard();
-    } catch (e) {
-      emit(NotesError(
-        message: 'Failed to update note',
-        details: e.toString(),
-      ));
-    }
-  }
+      await _updateNoteUseCase(
+        UpdateNoteParams(
+          id: id,
+          title: title,
+          content: content,
+          category: category,
+          isPinned: isPinned,
+        ),
+      );
 
-  /// Delete a note and log activity
-  Future<void> deleteNote(String id) async {
-    try {
-      final currentState = state;
-      if (currentState is NotesLoaded) {
-        emit(NotesOperationInProgress(
-          notes: currentState.notes,
-          operation: 'Deleting note...',
-        ));
-      } else {
-        emit(const NotesOperationInProgress(operation: 'Deleting note...'));
-      }
-
-      // Get the note before deleting to get its title
-      final note = await _getNoteByIdUseCase(id);
-
-      final success = await _deleteNoteUseCase(id);
-      if (!success) {
-        throw Exception('Note not found');
-      }
-
-      // Log activity if service is available
-      final noteTitle = note?.title ?? 'Unknown';
-      await _logNoteDeletedActivity(noteTitle, id);
-
-      // Reload all notes to get the updated list
-      await loadNotes();
+      // Log activity
+      await _activityService?.logNoteUpdated(userId, title, id);
       
-      // Refresh dashboard to show deleted activity
-      await _refreshDashboard();
-    } catch (e) {
-      emit(NotesError(
-        message: 'Failed to delete note',
-        details: e.toString(),
-      ));
-    }
-  }
-
-  /// Search notes by query
-  Future<void> searchNotes(String query) async {
-    try {
-      emit(const NotesLoading());
-      final notes = await _searchNotesUseCase(query);
-      emit(NotesLoaded(
-        notes: notes,
-        searchQuery: query.isEmpty ? null : query,
-      ));
-    } catch (e) {
-      emit(NotesError(
-        message: 'Failed to search notes',
-        details: e.toString(),
-      ));
-    }
-  }
-
-  /// Filter notes by category
-  Future<void> filterByCategory(String category) async {
-    try {
-      emit(const NotesLoading());
-      final notes = await _getNotesByCategoryUseCase(category);
-      emit(NotesLoaded(
-        notes: notes,
-        categoryFilter: category,
-      ));
-    } catch (e) {
-      emit(NotesError(
-        message: 'Failed to filter notes by category',
-        details: e.toString(),
-      ));
-    }
-  }
-
-  /// Toggle pin status of a note and log activity
-  Future<void> togglePinNote(String id) async {
-    try {
-      final currentState = state;
-      if (currentState is NotesLoaded) {
-        emit(NotesOperationInProgress(
-          notes: currentState.notes,
-          operation: 'Updating note...',
-        ));
+      if (kDebugMode) {
+        developer.log('[Activity] update $title', name: 'NotesCubit');
       }
 
-      // Get the note before toggling to get its title and current pin state
-      final note = await _getNoteByIdUseCase(id);
-      final isPinning = !(note?.isPinned ?? false);
+      // Refresh dashboard activities
+      await _dashboardCubit?.refreshActivities();
 
-      await _togglePinNoteUseCase(id);
-
-      // Log activity if service is available
-      final noteTitle = note?.title ?? 'Unknown';
-      if (isPinning) {
-        await _logNotePinnedActivity(noteTitle, id);
-      } else {
-        await _logNoteUnpinnedActivity(noteTitle, id);
-      }
-
+      // Reload notes to reflect changes
       await loadNotes();
+    } catch (e) {
+      if (kDebugMode) {
+        developer.log('Error updating note: $e', 
+          name: 'NotesCubit', error: e);
+      }
+      emit(NotesError(message: e.toString()));
+    }
+  }
+
+  /// Deletes a note
+  Future<void> deleteNote(String noteId) async {
+    try {
+      final userId = await UserUtils.getCurrentUserId() ?? 
+                     UserUtils.getDefaultUserId();
       
-      // Refresh dashboard to show pin/unpin activity
-      await _refreshDashboard();
+      // Get the note title before deleting (for activity logging)
+      String noteTitle = 'Note';
+      if (state is NotesLoaded) {
+        final currentNotes = (state as NotesLoaded).notes;
+        final noteIndex = currentNotes.indexWhere((n) => n.id == noteId);
+        if (noteIndex != -1) {
+          noteTitle = currentNotes[noteIndex].title;
+        }
+      }
+      
+      await _deleteNoteUseCase(noteId);
+
+      // Log activity
+      await _activityService?.logNoteDeleted(userId, noteTitle);
+
+      if (kDebugMode) {
+        developer.log('[Activity] delete $noteTitle', name: 'NotesCubit');
+      }
+
+      // Refresh dashboard activities
+      await _dashboardCubit?.refreshActivities();
+
+      // Reload notes to reflect changes
+      await loadNotes();
     } catch (e) {
-      emit(NotesError(
-        message: 'Failed to update note',
-        details: e.toString(),
-      ));
+      if (kDebugMode) {
+        developer.log('Error deleting note: $e', 
+          name: 'NotesCubit', error: e);
+      }
+      emit(NotesError(message: e.toString()));
     }
   }
 
-  /// Clear any filters and show all notes
-  Future<void> clearFilters() async {
-    await loadNotes();
-  }
-
-  /// Get a specific note by ID (for editing)
-  Future<Note?> getNoteById(String id) async {
-    try {
-      return await _getNoteByIdUseCase(id);
-    } catch (e) {
-      return null;
+  /// Toggles the pinned state of a note (alias for togglePinned)
+  Future<void> togglePinNote(String noteId) async {
+    if (state is NotesLoaded) {
+      final currentNotes = (state as NotesLoaded).notes;
+      final noteIndex = currentNotes.indexWhere((n) => n.id == noteId);
+      
+      if (noteIndex != -1) {
+        final note = currentNotes[noteIndex];
+        await togglePinned(noteId, note.isPinned);
+      }
     }
   }
 
-  /// Get all available categories
-  Future<List<String>> getCategories() async {
-    try {
-      return await _getCategoriesUseCase();
-    } catch (e) {
-      return [];
-    }
-  }
-
-  // ============= Activity Logging Methods =============
-
-  /// Log note created activity
-  Future<void> _logNoteCreatedActivity(String noteTitle) async {
-    if (_activityService == null) return;
-    
-    try {
-      final userId = await UserUtils.getCurrentUserId() ?? 
-                     UserUtils.getDefaultUserId();
-      final noteId = DateTime.now().millisecondsSinceEpoch.toString();
-      await _activityService.logNoteCreated(userId, noteTitle, noteId);
-    } catch (e) {
-      if (kDebugMode) print('[Activity] Error logging create: $e');
-    }
-  }
-
-  /// Log note updated activity
-  Future<void> _logNoteUpdatedActivity(String noteTitle, String noteId) async {
-    if (_activityService == null) return;
-    
+  /// Toggles the pinned state of a note
+  Future<void> togglePinned(String noteId, bool currentPinned) async {
     try {
       final userId = await UserUtils.getCurrentUserId() ?? 
                      UserUtils.getDefaultUserId();
-      await _activityService.logNoteUpdated(userId, noteTitle, noteId);
+
+      if (state is NotesLoaded) {
+        final currentNotes = (state as NotesLoaded).notes;
+        final noteIndex = currentNotes.indexWhere((n) => n.id == noteId);
+        
+        if (noteIndex != -1) {
+          final note = currentNotes[noteIndex];
+          
+          await _updateNoteUseCase(
+            UpdateNoteParams(
+              id: noteId,
+              title: note.title,
+              content: note.content,
+              category: note.category,
+              isPinned: !currentPinned,
+            ),
+          );
+
+          // Log activity
+          if (currentPinned) {
+            await _activityService?.logNoteUnpinned(userId, note.title, noteId);
+            if (kDebugMode) {
+              print('[Activity] unpin ${note.title} ${DateTime.now()}');
+            }
+          } else {
+            await _activityService?.logNotePinned(userId, note.title, noteId);
+            if (kDebugMode) {
+              print('[Activity] pin ${note.title} ${DateTime.now()}');
+            }
+          }
+
+          // Refresh dashboard activities
+          await _dashboardCubit?.refreshActivities();
+
+          // Reload notes to reflect changes
+          await loadNotes();
+        }
+      }
     } catch (e) {
-      if (kDebugMode) print('[Activity] Error logging update: $e');
+      if (kDebugMode) {
+        developer.log('Error toggling pin: $e', 
+          name: 'NotesCubit', error: e);
+      }
+      emit(NotesError(message: e.toString()));
     }
   }
 
-  /// Log note deleted activity
-  Future<void> _logNoteDeletedActivity(String noteTitle, String noteId) async {
-    if (_activityService == null) return;
-    
-    try {
-      final userId = await UserUtils.getCurrentUserId() ?? 
-                     UserUtils.getDefaultUserId();
-      await _activityService.logNoteDeleted(userId, noteTitle);
-    } catch (e) {
-      if (kDebugMode) print('[Activity] Error logging delete: $e');
-    }
+  /// Searches notes based on query
+  void searchNotes(String query) {
+    _query = query;
+    _rebuildVisible();
   }
 
-  /// Log note pinned activity
-  Future<void> _logNotePinnedActivity(String noteTitle, String noteId) async {
-    if (_activityService == null) return;
-    
-    try {
-      final userId = await UserUtils.getCurrentUserId() ?? 
-                     UserUtils.getDefaultUserId();
-      await _activityService.logNotePinned(userId, noteTitle, noteId);
-    } catch (e) {
-      if (kDebugMode) print('[Activity] Error logging pin: $e');
-    }
+  /// Filters notes by category
+  void filterByCategory(String? category) {
+    _selectedCategory = category;
+    _rebuildVisible();
   }
 
-  /// Log note unpinned activity
-  Future<void> _logNoteUnpinnedActivity(String noteTitle, String noteId) async {
-    if (_activityService == null) return;
-    
-    try {
-      final userId = await UserUtils.getCurrentUserId() ?? 
-                     UserUtils.getDefaultUserId();
-      await _activityService.logNoteUnpinned(userId, noteTitle, noteId);
-    } catch (e) {
-      if (kDebugMode) print('[Activity] Error logging unpin: $e');
-    }
+  /// Clears filter
+  void clearFilter() {
+    _selectedCategory = null;
+    _rebuildVisible();
   }
+
+  /// Sorts notes by different criteria
+  void sortNotes(NoteSortBy sortBy) {
+    _sortBy = sortBy;
+    _rebuildVisible();
+  }
+
+  /// Resets all filters and search
+  void resetFilters() {
+    _query = '';
+    _selectedCategory = null;
+    _sortBy = NoteSortBy.recentlyUpdated;
+    _rebuildVisible();
+  }
+
+  /// Resets all filters, search, and sort
+  void resetAll() {
+    resetFilters();
+  }
+}
+
+/// Enum for sorting options
+enum NoteSortBy {
+  /// Sort by most recently updated
+  recentlyUpdated,
+  /// Sort by oldest first
+  oldestFirst,
+  /// Sort by title A to Z
+  titleAtoZ,
+  /// Sort by title Z to A
+  titleZtoA,
+  /// Sort with pinned notes first
+  pinnedFirst,
 }

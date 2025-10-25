@@ -46,4 +46,40 @@ class AppConstants {
   // Font Weights
   /// Font family name for Lato font.
   static const String fontFamilyLato = 'Lato';
+  
+  // Filter UI Labels
+  /// Filter title in popover
+  static const String filterTitle = 'Filter';
+  /// Filter apply button label
+  static const String filterApply = 'Apply Filter';
+  /// Filter operator: is
+  static const String filterOperatorIs = 'is';
+  /// Filter operator: is not
+  static const String filterOperatorIsNot = 'is not';
+  /// Filter operator: contains
+  static const String filterOperatorContains = 'contains';
+  /// Filter operator: has any value
+  static const String filterOperatorHasAnyValue = 'has any value';
+  /// Filter value hint text
+  static const String filterValueHint = 'Enter value';
+  
+  // Sort UI Labels
+  /// Sort title in popover
+  static const String sortTitle = 'Sort';
+  /// Sort apply button label
+  static const String sortApply = 'Apply Sort';
+  /// Sort option: recently updated
+  static const String sortRecentlyUpdated = 'Recently Updated';
+  /// Sort option: oldest first
+  static const String sortOldestFirst = 'Oldest First';
+  /// Sort option: title A-Z
+  static const String sortTitleAtoZ = 'Title (A-Z)';
+  /// Sort option: title Z-A
+  static const String sortTitleZtoA = 'Title (Z-A)';
+  /// Sort option: pinned first
+  static const String sortPinnedFirst = 'Pinned First';
+  
+  // Search UI Labels
+  /// Search placeholder text
+  static const String searchHint = 'Search notes...';
 }

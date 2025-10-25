@@ -28,12 +28,12 @@ class RecentNotesPreview extends BaseStatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05),
+            color: theme.shadowColor.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -128,7 +128,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black.withOpacity(0.3),
+      barrierColor: Colors.black.withValues(alpha: 0.3),
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (BuildContext buildContext, Animation animation,
           Animation secondaryAnimation) {
@@ -169,7 +169,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: noteColors.primary.withOpacity(0.3),
+            color: noteColors.primary.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -194,10 +194,10 @@ class RecentNotesPreview extends BaseStatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.25),
+                      color: Colors.white.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.white.withValues(alpha: 0.4),
                         width: 1,
                       ),
                     ),
@@ -230,7 +230,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
                     child: Text(
                       note.content.trim(),
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 12,
                         height: 1.4,
                       ),
@@ -245,7 +245,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
                 Text(
                   _formatDate(note.updatedAt),
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                   ),
@@ -266,7 +266,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
         final color = Color(int.parse('FF${colorHex.replaceFirst('#', '')}', radix: 16));
         return (
           primary: color,
-          secondary: color.withOpacity(0.7),
+          secondary: color.withValues(alpha: 0.7),
         );
       } catch (e) {
         // Fall back to default if parsing fails
@@ -306,7 +306,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 4),
@@ -314,7 +314,7 @@ class RecentNotesPreview extends BaseStatelessWidget {
                 AppStrings.createFirstNote,
                 style: TextStyle(
                   fontSize: 12,
-                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
               ),
             ],

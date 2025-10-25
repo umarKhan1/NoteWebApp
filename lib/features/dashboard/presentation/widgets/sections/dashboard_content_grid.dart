@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../shared/extensions/widget_extensions.dart';
+import '../../../domain/entities/activity.dart';
 import '../../cubit/dashboard_cubit.dart';
 import '../../cubit/dashboard_state.dart';
-import '../../../domain/entities/activity.dart';
 import '../recent_activity_card.dart';
 import '../recent_notes_preview.dart';
 import '../upcoming_deadlines_card.dart';
@@ -59,7 +59,7 @@ class DashboardContentGrid extends StatelessWidget {
         // Right Column
         Expanded(
           flex: isTablet ? 2 : 1,
-          child: BlocBuilder<DashboardCubit, DashboardState>(
+          child:          BlocBuilder<DashboardCubit, DashboardState>(
             builder: (context, state) {
               List<Activity> activity = [];
               if (state is DashboardLoaded) {

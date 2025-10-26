@@ -71,13 +71,13 @@ Password: password123
 
 ### Requirements
 - Flutter SDK >= 3.0  
-- Chrome or Edge browser
+- Chrome 
 
 ### Steps
-git clone https://github.com/umarKhan1/NoteWebApp.git
-cd notewebapp
-flutter pub get
-flutter run -d chrome
+- git clone https://github.com/umarKhan1/NoteWebApp.git
+- cd notewebapp
+- flutter pub get
+- flutter run -d chrome
 
 ## Note: Dont forget Credential 
 Email: demo@example.com

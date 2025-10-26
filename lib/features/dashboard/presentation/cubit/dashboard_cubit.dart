@@ -78,6 +78,28 @@ class DashboardCubit extends BaseCubit<DashboardState> {
     }
   }
 
+  /// Refresh dashboard stats in real-time (called after note operations)
+  Future<void> refreshStats() async {
+    if (_currentUserId == null || _currentUserId!.isEmpty) {
+      _currentUserId =
+          (await UserUtils.getCurrentUserId()) ?? UserUtils.getDefaultUserId();
+    }
+
+    try {
+      final dashboardData = await _loadDashboardUseCase.execute(refresh: true);
+
+      // Get recent activities
+      List<Activity> activities = [];
+      activities = await _getRecentActivitiesUseCase(_currentUserId!, limit: 10);
+
+      emit(
+        DashboardLoaded(stats: dashboardData.stats, recentActivity: activities),
+      );
+    } catch (e) {
+      if (kDebugMode) print('[Dashboard] Stats refresh error: $e');
+    }
+  }
+
   /// Refresh dashboard data
   Future<void> refreshDashboard({String? userId}) async {
     logDebug('Refreshing dashboard data');

@@ -180,8 +180,8 @@ class NotesCubit extends Cubit<NotesState> {
         developer.log('[Activity] create $title', name: 'NotesCubit');
       }
 
-      // Refresh dashboard activities
-      await _dashboardCubit?.refreshActivities();
+      // Refresh dashboard stats and activities in real-time
+      await _dashboardCubit?.refreshStats();
 
       // Reload notes to reflect changes
       await loadNotes();
@@ -226,8 +226,8 @@ class NotesCubit extends Cubit<NotesState> {
         developer.log('[Activity] update $title', name: 'NotesCubit');
       }
 
-      // Refresh dashboard activities
-      await _dashboardCubit?.refreshActivities();
+      // Refresh dashboard stats and activities in real-time
+      await _dashboardCubit?.refreshStats();
 
       // Reload notes to reflect changes
       await loadNotes();
@@ -264,8 +264,8 @@ class NotesCubit extends Cubit<NotesState> {
         developer.log('[Activity] delete $noteTitle', name: 'NotesCubit');
       }
 
-      // Refresh dashboard activities
-      await _dashboardCubit?.refreshActivities();
+      // Refresh dashboard stats and activities in real-time
+      await _dashboardCubit?.refreshStats();
 
       // Reload notes to reflect changes
       await loadNotes();
@@ -326,8 +326,8 @@ class NotesCubit extends Cubit<NotesState> {
             }
           }
 
-          // Refresh dashboard activities
-          await _dashboardCubit?.refreshActivities();
+          // Refresh dashboard stats and activities in real-time
+          await _dashboardCubit?.refreshStats();
 
           // Reload notes to reflect changes
           await loadNotes();

@@ -84,7 +84,7 @@ Email: demo@example.com
 Password: password123
 
 
-## 🔐 Security
+## Security
 
 - User-scoped data stored locally  
 - Safe markdown rendering  

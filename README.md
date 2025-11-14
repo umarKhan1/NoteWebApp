@@ -2,7 +2,7 @@
 
 ## Overview
 
-This application was developed as part of the **technical challenge for COCUS**.  
+This application was developed as part of the **technical challenge **.  
 It is a Flutter Web Notes Application that allows users to **create, view, update, and delete notes**, with **local data persistence** and a **modern UI**.  
 I used **Clean Architecture**, **BLoC/Cubit** for state management, and **SharedPreferences** for local storage.  
 
@@ -93,10 +93,10 @@ Password: password123
 
 ## Final Words
 
-Completing the COCUS technical challenge was more than a task — it was a chance to express my passion for creating meaningful digital experiences.  
+Completing the  technical challenge was more than a task  it was a chance to express my passion for creating meaningful digital experiences.  
 Every feature I built reflects my belief that clean code, thoughtful design, and consistent effort lead to impactful results.  
 
-This project reminded me why I love building with Flutter the freedom to turn ideas into elegant, working solutions.   I’m excited about the opportunity to bring this energy, creativity, and precision to **COCUS**, contributing to products that make a difference.  
+This project reminded me why I love building with Flutter the freedom to turn ideas into elegant, working solutions.   I’m excited about the opportunity to bring this energy, creativity, and precision 
 
 With regards,  
 **Muhammad Omar**
